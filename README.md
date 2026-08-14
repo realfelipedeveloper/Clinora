@@ -13,8 +13,13 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 8. docs/07-quality-security-gates.md
 9. docs/08-mcp-catalog.md
 10. docs/09-roadmap.md
-11. specs/001-platform-foundation/spec.md
-12. specs/001-platform-foundation/tasks.md
+11. docs/10-default-config.md
+12. docs/11-local-development.md
+13. docs/12-git-flow.md
+14. docs/13-java-build.md
+15. docs/14-frontend-workspace.md
+16. specs/001-platform-foundation/spec.md
+17. specs/001-platform-foundation/tasks.md
 
 ## Stack
 - Java 25 LTS + Spring Boot 4.1 + Maven
@@ -31,4 +36,4 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 ## Estado do bootstrap
 SPEC-001 aprovada. O repositorio foi iniciado pela TASK-001 com a estrutura poliglota em `apps`, `services`, `libs`, `infra` e `tools`.
 
-Ainda nao ha aplicacao executavel, workspace Angular, parent POM Maven ou Docker Compose. Consulte `docs/11-local-development.md` para o estado local e portas reservadas.
+Ainda nao ha aplicacao executavel ou Docker Compose. Consulte `docs/11-local-development.md` para o estado local e portas reservadas, `docs/12-git-flow.md` para o fluxo de branches, `docs/13-java-build.md` para o build Maven e `docs/14-frontend-workspace.md` para o workspace Angular.

@@ -3,12 +3,21 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-001",
-    "title": "estrutura poliglota",
-    "branch": "feature/spec-001-task-001",
+    "id": "TASK-003",
+    "title": "sincronizar branches base",
+    "branch": "feature/spec-001-task-005-branch-sync",
     "status": "completed",
     "startedAt": "2026-08-14",
-    "completedAt": "2026-08-14"
+    "completedAt": "2026-08-14",
+    "gitFlow": {
+      "defaultBranch": "development",
+      "baselineBranches": [
+        "development",
+        "homologation",
+        "main"
+      ],
+      "alignmentPolicy": "Promover baseline validada por PRs em cadeia: development -> homologation -> main."
+    }
   },
   "services": [
     "web",

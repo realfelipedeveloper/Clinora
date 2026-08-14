@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - libs/typescript/*
+  - tools/*
+
+engineStrict: true
+strictPeerDependencies: true
+
+peerDependencyRules:
+  allowedVersions:
+    listr2: "10.2.2"
