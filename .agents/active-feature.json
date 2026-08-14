@@ -3,12 +3,19 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-001",
-    "title": "estrutura poliglota",
-    "branch": "feature/spec-001-task-001",
+    "id": "TASK-005",
+    "title": "Git Flow, commitlint e PR templates",
+    "branch": "feature/spec-001-task-005",
     "status": "completed",
     "startedAt": "2026-08-14",
-    "completedAt": "2026-08-14"
+    "completedAt": "2026-08-14",
+    "remoteDefaults": {
+      "defaultBranch": "develop",
+      "protectedBranches": [
+        "main",
+        "develop"
+      ]
+    }
   },
   "services": [
     "web",
