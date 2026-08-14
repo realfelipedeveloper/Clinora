@@ -4,18 +4,19 @@
   "status": "approved",
   "currentTask": {
     "id": "TASK-003",
-    "title": "workspace Angular/pnpm",
-    "branch": "feature/spec-001-task-003",
+    "title": "sincronizar branches base",
+    "branch": "feature/spec-001-task-005-branch-sync",
     "status": "completed",
     "startedAt": "2026-08-14",
     "completedAt": "2026-08-14",
-    "frontend": {
-      "node": "24.15.0",
-      "pnpm": "11.20.0",
-      "angularCli": "22.1.4",
-      "angular": "22.1.x",
-      "typescript": "6.0.x",
-      "newProjectRoot": "apps"
+    "gitFlow": {
+      "defaultBranch": "development",
+      "baselineBranches": [
+        "development",
+        "homologation",
+        "main"
+      ],
+      "alignmentPolicy": "Promover baseline validada por PRs em cadeia: development -> homologation -> main."
     }
   },
   "services": [
