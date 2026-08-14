@@ -1,0 +1,36 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Node / Angular
+node_modules/
+.angular/
+dist/
+coverage/
+.nyc_output/
+
+# Java / Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Docker / ambiente local
+.env
+.env.*
+!.env.example
+
+# Artefatos temporarios
+tmp/
+temp/
+*.tmp
+

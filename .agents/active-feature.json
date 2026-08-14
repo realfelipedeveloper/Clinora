@@ -1,0 +1,39 @@
+{
+  "id": "SPEC-001",
+  "title": "Fundação da Plataforma Clinora",
+  "status": "approved",
+  "currentTask": {
+    "id": "TASK-001",
+    "title": "estrutura poliglota",
+    "branch": "feature/spec-001-task-001",
+    "status": "completed",
+    "startedAt": "2026-08-14",
+    "completedAt": "2026-08-14"
+  },
+  "services": [
+    "web",
+    "docs",
+    "core-api",
+    "payment-api",
+    "notification-api",
+    "integration-api",
+    "scheduler-worker"
+  ],
+  "risks": [
+    "port conflicts",
+    "configuration drift",
+    "RabbitMQ topology drift",
+    "unsafe local defaults"
+  ],
+  "requiredTests": [
+    "unit",
+    "integration",
+    "health",
+    "port-conflict",
+    "postgres",
+    "redis",
+    "rabbitmq",
+    "accessibility",
+    "e2e-smoke"
+  ]
+}
