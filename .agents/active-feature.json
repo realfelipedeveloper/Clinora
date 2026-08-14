@@ -3,28 +3,19 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-005",
-    "title": "corrigir fluxo de branches",
-    "branch": "feature/spec-001-task-005-branch-flow",
+    "id": "TASK-003",
+    "title": "workspace Angular/pnpm",
+    "branch": "feature/spec-001-task-003",
     "status": "completed",
     "startedAt": "2026-08-14",
     "completedAt": "2026-08-14",
-    "gitFlow": {
-      "defaultBranch": "development",
-      "promotionOrder": [
-        "feature/*",
-        "development",
-        "homologation",
-        "main"
-      ],
-      "protectedBranches": [
-        "development",
-        "homologation",
-        "main"
-      ],
-      "retiredBranches": [
-        "develop"
-      ]
+    "frontend": {
+      "node": "24.15.0",
+      "pnpm": "11.20.0",
+      "angularCli": "22.1.4",
+      "angular": "22.1.x",
+      "typescript": "6.0.x",
+      "newProjectRoot": "apps"
     }
   },
   "services": [
