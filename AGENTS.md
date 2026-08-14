@@ -18,5 +18,5 @@
 Load context → validate spec → impact analysis → concurrency/timezone review → threat/privacy model → tests → minimal implementation → validation → regression → security → diff review → context update → completion report.
 
 ## Git Flow
-main, develop, feature/*, release/* e hotfix/*.
-Sem commit direto em main/develop.
+main, homologation, development, feature/*, release/* e hotfix/*.
+Sem commit direto em main/homologation/development.

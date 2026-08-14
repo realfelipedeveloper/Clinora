@@ -2,15 +2,22 @@
 
 ## Branches
 - `main`: linha estavel de producao.
-- `develop`: linha principal de integracao e branch padrao do repositorio.
+- `homologation`: linha de validacao antes de `main`.
+- `development`: linha principal de integracao e branch padrao do repositorio.
 - `feature/spec-001-task-XXX`: branches de tarefa da SPEC-001.
 - `release/*`: preparacao de release.
 - `hotfix/*`: correcao urgente a partir de `main`.
 
-Nao fazer commit direto em `main` ou `develop`. Mudancas devem passar por Pull Request.
+Fluxo padrao:
+
+```text
+feature/* -> development -> homologation -> main
+```
+
+Nao fazer commit direto em `main`, `homologation` ou `development`. Mudancas devem passar por Pull Request.
 
 ## Protecoes remotas
-`main` e `develop` estao protegidas no GitHub com:
+`main`, `homologation` e `development` estao protegidas no GitHub com:
 - aplicacao das regras para administradores;
 - Pull Request obrigatorio;
 - 0 aprovacoes obrigatorias durante o bootstrap solo;
@@ -45,3 +52,7 @@ pnpm commitlint
 ## Pull Requests
 Usar o template em `.github/pull_request_template.md` e preencher spec, tarefa, validacoes, seguranca, privacidade, concorrencia, tempo, documentacao e memoria.
 
+Alvos esperados:
+- features e correcoes comuns entram em `development`;
+- validacoes de pre-producao entram de `development` para `homologation`;
+- promocao estavel entra de `homologation` para `main`.
