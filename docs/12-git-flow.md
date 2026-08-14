@@ -56,3 +56,14 @@ Alvos esperados:
 - features e correcoes comuns entram em `development`;
 - validacoes de pre-producao entram de `development` para `homologation`;
 - promocao estavel entra de `homologation` para `main`.
+
+## Alinhamento de baseline
+Durante o bootstrap da SPEC-001, quando uma tarefa ja estiver validada e o usuario pedir
+branches coesas, promover a mesma baseline por Pull Requests em cadeia:
+
+```text
+development -> homologation -> main
+```
+
+Ao final, `development`, `homologation` e `main` devem ter a mesma arvore de arquivos,
+mesmo que os hashes de commit sejam diferentes por causa de merge, squash ou rebase do GitHub.
