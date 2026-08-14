@@ -3,7 +3,9 @@
 ## Estado atual
 Bootstrap iniciado pela SPEC-001, TASK-001: estrutura poliglota.
 
-Ainda nao ha aplicacao executavel, workspace Angular, parent POM Maven ou Docker Compose. Esses itens entram nas proximas tarefas da SPEC-001.
+Ainda nao ha aplicacao executavel, workspace Angular ou Docker Compose. O Maven Wrapper e o parent POM foram iniciados na TASK-002.
+
+Para executar o build Java, `JAVA_HOME` deve apontar para um JDK 25.
 
 ## Portas reservadas
 As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem atualizar spec, docs e memoria:
@@ -39,10 +41,9 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-002: Maven Wrapper e parent POM.
-2. TASK-003: workspace Angular/pnpm.
-3. TASK-004: scripts globais e Taskfile.
+1. TASK-003: workspace Angular/pnpm.
+2. TASK-004: scripts globais e Taskfile.
+3. TASK-006: core-api.
 
 ## Seguranca e privacidade
 Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.
-

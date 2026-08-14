@@ -3,18 +3,17 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-005",
-    "title": "Git Flow, commitlint e PR templates",
-    "branch": "feature/spec-001-task-005",
+    "id": "TASK-002",
+    "title": "Maven Wrapper e parent POM",
+    "branch": "feature/spec-001-task-002",
     "status": "completed",
     "startedAt": "2026-08-14",
     "completedAt": "2026-08-14",
-    "remoteDefaults": {
-      "defaultBranch": "develop",
-      "protectedBranches": [
-        "main",
-        "develop"
-      ]
+    "build": {
+      "java": "25",
+      "maven": "3.9.16",
+      "mavenWrapper": "3.3.4",
+      "springBoot": "4.1.0"
     }
   },
   "services": [
