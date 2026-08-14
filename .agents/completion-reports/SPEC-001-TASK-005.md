@@ -3,6 +3,9 @@
 ## Tarefa
 SPEC-001, TASK-005: Git Flow, commitlint e PR templates.
 
+## Correcao posterior
+Em 2026-08-14, `develop` foi renomeada para `development` e a branch `homologation` foi adicionada antes de `main`. Ver `.agents/completion-reports/SPEC-001-TASK-005-BRANCH-FLOW.md`.
+
 ## Objetivo
 Organizar o fluxo Git remoto e local para impedir trabalho direto em branches base e preparar governanca minima de commits e Pull Requests.
 
