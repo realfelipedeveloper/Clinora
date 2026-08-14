@@ -6,3 +6,4 @@
 - 2026-08-14: Para a TASK-002, o Maven Wrapper `only-script` evita versionar `maven-wrapper.jar` e ainda permite validar SHA-256 da distribuicao Maven.
 - 2026-08-14: O fluxo correto usa `development` como integracao e `homologation` antes de `main`; `develop` foi aposentada.
 - 2026-08-14: Angular 22 exige Node `^22.22.3`, `^24.15.0` ou `>=26.0.0`; Node `24.14.1` e `22.22.2` locais ficam abaixo do minimo.
+- 2026-08-14: Quando o usuario pedir branches base sem destoar durante o bootstrap, alinhar conteudo por PRs em cadeia ate `main`.
