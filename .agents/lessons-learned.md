@@ -10,3 +10,4 @@
 - 2026-08-14: O binario `task` nao esta instalado globalmente; manter scripts `corepack pnpm ...` como caminho validavel e Taskfile como atalho opcional.
 - 2026-08-14: Todo PR e automacao de promocao devem usar titulo e corpo em PT-BR; merges em `development` e `homologation` devem abrir automaticamente o proximo PR do Git Flow.
 - 2026-08-14: Em GitHub Actions, heredoc dentro de `run: |` deve permanecer indentado no YAML; caso contrario a workflow falha antes de criar jobs e fica sem log util.
+- 2026-08-14: Com `required_linear_history` e squash/rebase, PR direto entre branches base pode conflitar por historico divergente; usar branch tecnica `promotion/*` baseada no destino e com arvore da origem.
