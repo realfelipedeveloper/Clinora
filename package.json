@@ -10,8 +10,13 @@
   },
   "scripts": {
     "ng": "ng",
+    "doctor": "node tools/clinora.mjs doctor",
+    "verify": "node tools/clinora.mjs verify",
+    "java:verify": "node tools/clinora.mjs java:verify",
+    "frontend:check": "node tools/clinora.mjs frontend:check",
     "frontend:version": "ng version",
     "frontend:workspace": "ng config cli.packageManager",
+    "git:remote": "node tools/clinora.mjs git:remote",
     "commitlint": "commitlint --from=HEAD~1 --to=HEAD --verbose"
   },
   "dependencies": {

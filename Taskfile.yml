@@ -1,0 +1,32 @@
+version: '3'
+
+tasks:
+  default:
+    desc: List available tasks.
+    cmds:
+      - task --list
+
+  doctor:
+    desc: Validate local toolchain and repository wiring.
+    cmds:
+      - corepack pnpm run doctor
+
+  verify:
+    desc: Run all foundation validations available in the current bootstrap.
+    cmds:
+      - corepack pnpm run verify
+
+  java:verify:
+    desc: Run Maven verify through the wrapper.
+    cmds:
+      - corepack pnpm run java:verify
+
+  frontend:check:
+    desc: Validate pnpm lockfile, peers and Angular workspace metadata.
+    cmds:
+      - corepack pnpm run frontend:check
+
+  git:remote:
+    desc: Ensure origin points only to realfelipedeveloper/Clinora.
+    cmds:
+      - corepack pnpm run git:remote
