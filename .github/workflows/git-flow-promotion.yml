@@ -1,0 +1,166 @@
+name: Promocao Git Flow
+
+on:
+  pull_request_target:
+    types:
+      - closed
+    branches:
+      - development
+      - homologation
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: git-flow-promotion-${{ github.event.pull_request.base.ref || 'manual' }}
+  cancel-in-progress: false
+
+jobs:
+  abrir-pr-promocao:
+    name: Abrir PR de promocao
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.pull_request.merged == true &&
+        (
+          github.event.pull_request.base.ref == 'development' ||
+          github.event.pull_request.base.ref == 'homologation'
+        )
+      )
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Definir proxima promocao
+        id: fluxo
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            base_atual="$(gh repo view "$REPO" --json defaultBranchRef --jq '.defaultBranchRef.name')"
+          else
+            base_atual="${{ github.event.pull_request.base.ref }}"
+          fi
+
+          case "$base_atual" in
+            development)
+              origem="development"
+              destino="homologation"
+              titulo="chore(git): promover development para homologation"
+              ;;
+            homologation)
+              origem="homologation"
+              destino="main"
+              titulo="chore(git): promover homologation para main"
+              ;;
+            *)
+              echo "Branch base sem promocao automatica: $base_atual"
+              echo "promover=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+
+          echo "promover=true" >> "$GITHUB_OUTPUT"
+          echo "origem=$origem" >> "$GITHUB_OUTPUT"
+          echo "destino=$destino" >> "$GITHUB_OUTPUT"
+          echo "titulo=$titulo" >> "$GITHUB_OUTPUT"
+
+      - name: Verificar diferenca entre branches
+        id: diff
+        if: steps.fluxo.outputs.promover == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origem="${{ steps.fluxo.outputs.origem }}"
+          destino="${{ steps.fluxo.outputs.destino }}"
+
+          ahead_by="$(gh api "repos/$REPO/compare/$destino...$origem" --jq '.ahead_by')"
+          status="$(gh api "repos/$REPO/compare/$destino...$origem" --jq '.status')"
+
+          echo "ahead_by=$ahead_by" >> "$GITHUB_OUTPUT"
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+          if [[ "$ahead_by" == "0" ]]; then
+            echo "Sem commits para promover de $origem para $destino."
+            echo "criar_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "criar_pr=true" >> "$GITHUB_OUTPUT"
+
+      - name: Evitar PR duplicado
+        id: existente
+        if: steps.diff.outputs.criar_pr == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origem="${{ steps.fluxo.outputs.origem }}"
+          destino="${{ steps.fluxo.outputs.destino }}"
+
+          existente="$(
+            gh pr list \
+              --repo "$REPO" \
+              --state open \
+              --base "$destino" \
+              --head "$origem" \
+              --json number \
+              --jq '.[0].number // empty'
+          )"
+
+          if [[ -n "$existente" ]]; then
+            echo "Ja existe PR aberto para $origem -> $destino: #$existente"
+            echo "criar_pr=false" >> "$GITHUB_OUTPUT"
+            echo "numero=$existente" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "criar_pr=true" >> "$GITHUB_OUTPUT"
+
+      - name: Abrir PR de promocao
+        if: steps.existente.outputs.criar_pr == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origem="${{ steps.fluxo.outputs.origem }}"
+          destino="${{ steps.fluxo.outputs.destino }}"
+          titulo="${{ steps.fluxo.outputs.titulo }}"
+          ahead_by="${{ steps.diff.outputs.ahead_by }}"
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            contexto="execucao manual da workflow"
+          else
+            contexto="merge do PR #${{ github.event.pull_request.number }} em \`${{ github.event.pull_request.base.ref }}\`"
+          fi
+
+          body="$(cat <<BODY
+## Resumo
+- PR automatico de promocao do Git Flow.
+- Origem: \`$origem\`
+- Destino: \`$destino\`
+
+## Contexto
+Criado apos $contexto.
+
+## Validacao
+- A workflow confirmou que \`$origem\` esta $ahead_by commit(s) a frente de \`$destino\`.
+- A workflow nao altera codigo por conta propria; apenas abre o Pull Request de promocao.
+
+## Seguranca e privacidade
+- Nao faz checkout de codigo de PR.
+- Nao acessa segredos alem do \`GITHUB_TOKEN\`.
+BODY
+)"
+
+          gh pr create \
+            --repo "$REPO" \
+            --base "$destino" \
+            --head "$origem" \
+            --title "$titulo" \
+            --body "$body"

@@ -8,3 +8,4 @@
 - 2026-08-14: Angular 22 exige Node `^22.22.3`, `^24.15.0` ou `>=26.0.0`; Node `24.14.1` e `22.22.2` locais ficam abaixo do minimo.
 - 2026-08-14: Quando o usuario pedir branches base sem destoar durante o bootstrap, alinhar conteudo por PRs em cadeia ate `main`.
 - 2026-08-14: O binario `task` nao esta instalado globalmente; manter scripts `corepack pnpm ...` como caminho validavel e Taskfile como atalho opcional.
+- 2026-08-14: Todo PR e automacao de promocao devem usar titulo e corpo em PT-BR; merges em `development` e `homologation` devem abrir automaticamente o proximo PR do Git Flow.

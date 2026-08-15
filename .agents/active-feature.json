@@ -3,21 +3,23 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-004",
-    "title": "scripts globais e Taskfile",
-    "branch": "feature/spec-001-task-004",
+    "id": "TASK-005",
+    "title": "Git Flow, commitlint e PR templates",
+    "branch": "feature/spec-001-task-005-automacao-promocao",
     "status": "completed",
     "startedAt": "2026-08-14",
     "completedAt": "2026-08-14",
-    "scripts": {
-      "entrypoint": "tools/clinora.mjs",
-      "taskfile": "Taskfile.yml",
-      "commands": [
-        "doctor",
-        "verify",
-        "java:verify",
-        "frontend:check",
-        "git:remote"
+    "correction": {
+      "reason": "Automatizar promocao Git Flow apos merge em development e homologation.",
+      "workflow": ".github/workflows/git-flow-promotion.yml",
+      "githubActionsPermissions": {
+        "defaultWorkflowPermissions": "read",
+        "canApprovePullRequestReviews": true
+      },
+      "flow": [
+        "feature/* -> development",
+        "development -> homologation",
+        "homologation -> main"
       ]
     }
   },
