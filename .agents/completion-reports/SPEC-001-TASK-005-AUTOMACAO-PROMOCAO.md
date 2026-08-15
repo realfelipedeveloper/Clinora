@@ -19,6 +19,7 @@ Garantir que, apos merge em `development`, seja aberto PR de `development` para 
 - Nao fazer merge automatico e nao aprovar Pull Requests.
 - Evitar PR duplicado para o mesmo par `origem -> destino`.
 - Manter titulos e corpos dos PRs automaticos em PT-BR.
+- Corrigir a indentacao do heredoc do body do PR para evitar falha de parse da workflow antes da criacao de jobs.
 
 ## Testes
 - `git diff --check` passou.
@@ -27,6 +28,7 @@ Garantir que, apos merge em `development`, seja aberto PR de `development` para 
 - `corepack pnpm run verify` passou.
 - `actionlint` nao estava disponivel localmente; tentativas via `pnpm dlx` nao forneceram binario valido.
 - `corepack pnpm run commitlint` validou o commit `ci(git): automatizar promocao do git flow`.
+- Run remoto inicial da workflow falhou antes de criar jobs; causa corrigida na branch `feature/spec-001-task-005-corrigir-workflow-promocao`.
 
 ## Seguranca e privacidade
 - Nenhum dado sensivel de saude introduzido.

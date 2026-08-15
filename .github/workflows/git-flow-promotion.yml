@@ -140,23 +140,23 @@ jobs:
           fi
 
           body="$(cat <<BODY
-## Resumo
-- PR automatico de promocao do Git Flow.
-- Origem: \`$origem\`
-- Destino: \`$destino\`
+          ## Resumo
+          - PR automatico de promocao do Git Flow.
+          - Origem: \`$origem\`
+          - Destino: \`$destino\`
 
-## Contexto
-Criado apos $contexto.
+          ## Contexto
+          Criado apos $contexto.
 
-## Validacao
-- A workflow confirmou que \`$origem\` esta $ahead_by commit(s) a frente de \`$destino\`.
-- A workflow nao altera codigo por conta propria; apenas abre o Pull Request de promocao.
+          ## Validacao
+          - A workflow confirmou que \`$origem\` esta $ahead_by commit(s) a frente de \`$destino\`.
+          - A workflow nao altera codigo por conta propria; apenas abre o Pull Request de promocao.
 
-## Seguranca e privacidade
-- Nao faz checkout de codigo de PR.
-- Nao acessa segredos alem do \`GITHUB_TOKEN\`.
-BODY
-)"
+          ## Seguranca e privacidade
+          - Nao faz checkout de codigo de PR.
+          - Nao acessa segredos alem do \`GITHUB_TOKEN\`.
+          BODY
+          )"
 
           gh pr create \
             --repo "$REPO" \
