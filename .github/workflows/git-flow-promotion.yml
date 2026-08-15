@@ -1,0 +1,173 @@
+name: Promocao Git Flow
+
+on:
+  pull_request_target:
+    types:
+      - closed
+    branches:
+      - development
+      - homologation
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: git-flow-promotion-${{ github.event.pull_request.base.ref || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  abrir-pr-promocao:
+    name: Abrir PR de promocao
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.pull_request.merged == true &&
+        (
+          github.event.pull_request.base.ref == 'development' ||
+          github.event.pull_request.base.ref == 'homologation'
+        )
+      )
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Definir proxima promocao
+        id: fluxo
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            base_atual="$(gh repo view "$REPO" --json defaultBranchRef --jq '.defaultBranchRef.name')"
+          else
+            base_atual="${{ github.event.pull_request.base.ref }}"
+          fi
+
+          case "$base_atual" in
+            development)
+              origem="development"
+              destino="homologation"
+              branch_promocao="promotion/development-para-homologation"
+              titulo="chore(git): promover development para homologation"
+              ;;
+            homologation)
+              origem="homologation"
+              destino="main"
+              branch_promocao="promotion/homologation-para-main"
+              titulo="chore(git): promover homologation para main"
+              ;;
+            *)
+              echo "Branch base sem promocao automatica: $base_atual"
+              echo "promover=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+
+          echo "promover=true" >> "$GITHUB_OUTPUT"
+          echo "origem=$origem" >> "$GITHUB_OUTPUT"
+          echo "destino=$destino" >> "$GITHUB_OUTPUT"
+          echo "branch_promocao=$branch_promocao" >> "$GITHUB_OUTPUT"
+          echo "titulo=$titulo" >> "$GITHUB_OUTPUT"
+
+      - name: Preparar branch de promocao
+        id: preparar
+        if: steps.fluxo.outputs.promover == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origem="${{ steps.fluxo.outputs.origem }}"
+          destino="${{ steps.fluxo.outputs.destino }}"
+          branch_promocao="${{ steps.fluxo.outputs.branch_promocao }}"
+          titulo="${{ steps.fluxo.outputs.titulo }}"
+
+          git init clinora-promocao
+          cd clinora-promocao
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          git fetch --no-tags --depth=1 origin \
+            "+refs/heads/$origem:refs/remotes/origin/$origem" \
+            "+refs/heads/$destino:refs/remotes/origin/$destino"
+
+          git checkout -B "$branch_promocao" "origin/$destino"
+          git read-tree --reset -u "origin/$origem"
+
+          if git diff --cached --quiet --exit-code; then
+            echo "A arvore de $origem ja esta igual a $destino."
+            echo "criar_pr=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git commit -m "$titulo"
+          git fetch --no-tags --depth=1 origin \
+            "+refs/heads/$branch_promocao:refs/remotes/origin/$branch_promocao" || true
+          git push --force-with-lease origin "HEAD:refs/heads/$branch_promocao"
+
+          echo "criar_pr=true" >> "$GITHUB_OUTPUT"
+
+      - name: Criar ou atualizar PR de promocao
+        if: steps.preparar.outputs.criar_pr == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          origem="${{ steps.fluxo.outputs.origem }}"
+          destino="${{ steps.fluxo.outputs.destino }}"
+          branch_promocao="${{ steps.fluxo.outputs.branch_promocao }}"
+          titulo="${{ steps.fluxo.outputs.titulo }}"
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            contexto="execucao manual da workflow"
+          else
+            contexto="merge do PR #${{ github.event.pull_request.number }} em \`${{ github.event.pull_request.base.ref }}\`"
+          fi
+
+          cat > pr-body.md <<BODY
+          ## Resumo
+          - PR automatico de promocao do Git Flow.
+          - Origem logica: \`$origem\`
+          - Destino: \`$destino\`
+          - Branch tecnica: \`$branch_promocao\`
+
+          ## Contexto
+          Criado apos $contexto.
+
+          ## Validacao
+          - A branch tecnica parte de \`$destino\` e aplica a arvore atual de \`$origem\`.
+          - Isso preserva o fluxo por Pull Request e evita conflitos causados por historicos divergentes.
+
+          ## Seguranca e privacidade
+          - Nao faz checkout de codigo de PR externo.
+          - Usa apenas branches protegidas e confiaveis como origem da promocao.
+          - Usa \`GITHUB_TOKEN\` com \`contents: write\` e \`pull-requests: write\`.
+          BODY
+
+          existente="$(
+            gh pr list \
+              --repo "$REPO" \
+              --state open \
+              --base "$destino" \
+              --head "$branch_promocao" \
+              --json number \
+              --jq '.[0].number // empty'
+          )"
+
+          if [[ -n "$existente" ]]; then
+            gh pr edit "$existente" \
+              --repo "$REPO" \
+              --title "$titulo" \
+              --body-file pr-body.md
+            echo "PR de promocao atualizado: #$existente"
+            exit 0
+          fi
+
+          gh pr create \
+            --repo "$REPO" \
+            --base "$destino" \
+            --head "$branch_promocao" \
+            --title "$titulo" \
+            --body-file pr-body.md
