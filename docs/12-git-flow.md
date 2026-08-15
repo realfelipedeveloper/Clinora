@@ -61,17 +61,18 @@ Alvos esperados:
 A workflow `.github/workflows/git-flow-promotion.yml` abre PRs de promocao em cadeia:
 
 ```text
-merge em development  -> abre PR development -> homologation
-merge em homologation -> abre PR homologation -> main
+merge em development  -> abre PR promovendo development para homologation
+merge em homologation -> abre PR promovendo homologation para main
 ```
 
 A automacao nao faz merge, nao aprova PR e nao faz checkout do codigo do PR de origem. Ela apenas:
 - reage a PRs mergeados em `development` ou `homologation`;
-- verifica se a branch de origem esta a frente da branch destino;
-- evita abrir PR duplicado para o mesmo par de branches;
+- cria ou atualiza uma branch tecnica `promotion/*` baseada no destino;
+- aplica nessa branch tecnica a arvore atual da origem logica;
+- evita conflitos causados por historicos divergentes entre branches promovidas por squash ou rebase;
 - abre o proximo PR com titulo e corpo em PT-BR.
 
-O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura, habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow declarar `pull-requests: write` somente para este uso especifico.
+O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura, habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow declarar `contents: write` e `pull-requests: write` somente para este uso especifico.
 
 ## Alinhamento de baseline
 Durante o bootstrap da SPEC-001, quando uma tarefa ja estiver validada e o usuario pedir

@@ -16,6 +16,10 @@
         "defaultWorkflowPermissions": "read",
         "canApprovePullRequestReviews": true
       },
+      "promotionBranches": [
+        "promotion/development-para-homologation",
+        "promotion/homologation-para-main"
+      ],
       "flow": [
         "feature/* -> development",
         "development -> homologation",
