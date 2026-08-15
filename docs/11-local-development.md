@@ -7,6 +7,7 @@ Ainda nao ha aplicacao executavel ou Docker Compose. O Maven Wrapper e o parent 
 
 Para executar o build Java, `JAVA_HOME` deve apontar para um JDK 25.
 Para executar o workspace frontend, use Node `24.15.0` ou outra versao suportada pelo Angular 22.
+Para validar a fundacao atual, use `corepack pnpm run verify`.
 
 ## Portas reservadas
 As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem atualizar spec, docs e memoria:
@@ -42,9 +43,9 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-004: scripts globais e Taskfile.
-2. TASK-006: core-api.
-3. TASK-013: Angular web.
+1. TASK-006: core-api.
+2. TASK-013: Angular web.
+3. TASK-018: portal docs.
 
 ## Seguranca e privacidade
 Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.

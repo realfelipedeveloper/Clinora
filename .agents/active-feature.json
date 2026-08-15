@@ -3,20 +3,22 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-003",
-    "title": "sincronizar branches base",
-    "branch": "feature/spec-001-task-005-branch-sync",
+    "id": "TASK-004",
+    "title": "scripts globais e Taskfile",
+    "branch": "feature/spec-001-task-004",
     "status": "completed",
     "startedAt": "2026-08-14",
     "completedAt": "2026-08-14",
-    "gitFlow": {
-      "defaultBranch": "development",
-      "baselineBranches": [
-        "development",
-        "homologation",
-        "main"
-      ],
-      "alignmentPolicy": "Promover baseline validada por PRs em cadeia: development -> homologation -> main."
+    "scripts": {
+      "entrypoint": "tools/clinora.mjs",
+      "taskfile": "Taskfile.yml",
+      "commands": [
+        "doctor",
+        "verify",
+        "java:verify",
+        "frontend:check",
+        "git:remote"
+      ]
     }
   },
   "services": [
