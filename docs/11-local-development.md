@@ -2,7 +2,8 @@
 
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
-O workspace Angular/pnpm ainda nao tem aplicacao inicial e nao ha Docker Compose.
+O workspace Angular/pnpm inclui a aplicacao web e a biblioteca Clinora UI.
+Ainda nao ha Docker Compose.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
 
@@ -17,6 +18,7 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 | --- | ---: |
 | web | 44210 |
 | docs | 44211 |
+| storybook | 44212 |
 | core-api | 44220 |
 | payment-api | 44221 |
 | notification-api | 44222 |
@@ -36,7 +38,7 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 ## Checagem manual de portas
 
 ```powershell
-$ports = @(44210,44211,44220,44221,44222,44223,44224,44230,44240,44250,44251,44260,44261,44270,44271,44280,44281)
+$ports = @(44210,44211,44212,44220,44221,44222,44223,44224,44230,44240,44250,44251,44260,44261,44270,44271,44280,44281)
 $listeners = netstat -ano -p tcp
 foreach ($port in $ports) {
   $matches = $listeners | Select-String -Pattern ":$port\s"
@@ -45,9 +47,9 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-011: libs Java.
-2. TASK-013: Angular web.
-3. TASK-018: portal docs.
+1. TASK-017: landing Clinora.
+2. TASK-018: portal docs.
+3. TASK-019: Docker Compose.
 
 ## Seguranca e privacidade
 Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.

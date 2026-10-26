@@ -7,7 +7,7 @@ Fundacao Angular/pnpm da SPEC-001, TASK-003, TASK-013 e TASK-014.
 - Node `24.15.0`
 - pnpm `11.20.0`
 - Angular CLI `22.1.4`
-- Angular framework `22.1.x`
+- Angular framework `22.2.x`
 - TypeScript `6.0.x`
 - RxJS `7.8.x`
 
@@ -52,6 +52,8 @@ corepack pnpm web:build
 corepack pnpm web:serve
 corepack pnpm ui:test
 corepack pnpm ui:build
+corepack pnpm ui:storybook
+corepack pnpm ui:storybook:build
 ```
 
 O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
@@ -61,7 +63,7 @@ O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
 As configuracoes pnpm ficam em `pnpm-workspace.yaml`, conforme pnpm 11.
 
 ## Proximos projetos
-- `apps/web`: Storybook e landing entram nas TASK-016 e TASK-017.
+- `apps/web`: landing entra na TASK-017; Storybook da biblioteca entra na TASK-016.
 - `apps/docs`: entra na TASK-018.
 
 ## Seguranca e privacidade
