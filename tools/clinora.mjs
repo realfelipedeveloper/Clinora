@@ -4,6 +4,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const EXPECTED_REMOTE = 'https://github.com/realfelipedeveloper/Clinora.git';
+const ALLOWED_REMOTES = new Set([
+  EXPECTED_REMOTE,
+  'https://github.com/realfelipedeveloper/Clinora',
+]);
 const EXPECTED_NODE = '24.15.0';
 const EXPECTED_PNPM = '11.20.0';
 const EXPECTED_ANGULAR_PACKAGE_MANAGER = 'pnpm';
@@ -110,13 +114,13 @@ function gitRemote() {
   const fetchUrl = runText(executable('git'), ['remote', 'get-url', 'origin']);
   const pushUrl = runText(executable('git'), ['remote', 'get-url', '--push', 'origin']);
 
-  if (fetchUrl !== EXPECTED_REMOTE || pushUrl !== EXPECTED_REMOTE) {
+  if (!ALLOWED_REMOTES.has(fetchUrl) || !ALLOWED_REMOTES.has(pushUrl)) {
     fail(
       `origin must point only to ${EXPECTED_REMOTE}. Current fetch=${fetchUrl}, push=${pushUrl}`,
     );
   }
 
-  console.log(`Git remote OK: ${EXPECTED_REMOTE}`);
+  console.log(`Git remote OK: ${fetchUrl}`);
 }
 
 function checkNode() {

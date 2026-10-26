@@ -9,7 +9,7 @@ guard do remote Git com testes de caixa-preta.
 
 ## Arquivos alterados
 - Workflow `Qualidade Clinora`, scripts globais e Taskfile.
-- Quatro testes do guard Git e disparo explicito da qualidade na promocao.
+- Cinco testes do guard Git e disparo explicito da qualidade na promocao.
 - Runbooks de qualidade, Git Flow e regressao; memoria da tarefa.
 
 ## Decisoes
@@ -22,9 +22,11 @@ guard do remote Git com testes de caixa-preta.
   scripts, Maven, lockfile/peers, Vitest e builds web/UI/Storybook.
 
 ## Testes
-- Quatro testes de caixa-preta: remote oficial, fetch incorreto, push
-  incorreto e `origin` ausente.
-- `corepack pnpm run verify`: aprovado localmente com 4 testes dos scripts,
+- Cinco testes de caixa-preta: as duas URLs oficiais do remote, fetch
+  incorreto, push incorreto e `origin` ausente.
+- Primeiro run remoto revelou que `actions/checkout` usa a URL oficial sem
+  `.git`; teste reproduziu a falha antes da correcao por allowlist literal.
+- `corepack pnpm run verify`: aprovado localmente com testes dos scripts,
   18 Java em 11 suites, 2 Vitest web, 10 Vitest UI e tres builds.
 - Prettier dos arquivos de codigo/YAML e `git diff --check`: aprovados.
 - Camadas: unidade, integracao HTTP, seguranca do remote e build.

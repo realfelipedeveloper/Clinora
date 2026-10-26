@@ -41,6 +41,14 @@ test('aceita somente o remote oficial para fetch e push', () => {
   });
 });
 
+test('aceita a URL oficial sem sufixo git usada pelo checkout do CI', () => {
+  withRepository((dir) => {
+    git(dir, ['remote', 'add', 'origin', 'https://github.com/realfelipedeveloper/Clinora']);
+    const result = check(dir);
+    assert.equal(result.status, 0, result.stderr);
+  });
+});
+
 test('rejeita fetch para outro repositorio', () => {
   withRepository((dir) => {
     git(dir, ['remote', 'add', 'origin', 'https://github.com/outro/Clinora.git']);

@@ -10,7 +10,7 @@ afirmar que a suite anterior continuou verde.
 
 | Tarefas | Comportamento | Cobertura automatizada atual | Lacuna e tarefa de fechamento |
 | --- | --- | --- | --- |
-| 001-005 | Estrutura, toolchain, scripts e Git Flow | `doctor` valida toolchain, workspace e remote; quatro testes de caixa-preta cobrem fetch/push incorretos e falta de `origin`; commitlint local | Testes de falha de configuracao e politica de branch/PR ainda pendentes |
+| 001-005 | Estrutura, toolchain, scripts e Git Flow | `doctor` valida toolchain, workspace e remote; cinco testes de caixa-preta cobrem as duas URLs oficiais, fetch/push incorretos e falta de `origin`; commitlint local | Testes de falha de configuracao e politica de branch/PR ainda pendentes |
 | 006-010 | Cinco servicos HTTP | Dez testes Spring Boot em porta aleatoria verificam health e observabilidade por servico | Readiness em containers: TASK-027/029 |
 | 011 | Verificador HTTP compartilhado | Oito testes JUnit/Mockito/AssertJ cobrem resposta, URL loopback, privacidade e erros | Nenhuma lacuna conhecida no contrato atual |
 | 012 | Actuator e Prometheus | Testes HTTP dos cinco servicos e testes unitarios do verificador | Verificacao de metricas e logs em CI: TASK-035/036 |
