@@ -1,6 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "clinora-ui": ["./dist/clinora-ui"]
+    },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
@@ -24,6 +27,12 @@
     },
     {
       "path": "./apps/web/tsconfig.spec.json"
+    },
+    {
+      "path": "./libs/typescript/clinora-ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./libs/typescript/clinora-ui/tsconfig.spec.json"
     }
   ]
 }
