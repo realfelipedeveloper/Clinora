@@ -21,6 +21,7 @@ const commands = {
   'frontend:check': frontendCheck,
   'frontend:verify': frontendVerify,
   'tools:test': toolsTest,
+  'security:check': securityCheck,
   'git:remote': gitRemote,
 };
 
@@ -52,6 +53,7 @@ Commands:
   frontend:check  Run pnpm frozen install, peer check and Angular workspace checks.
   frontend:verify Run Angular tests and builds, including Storybook.
   tools:test      Run tests for repository scripts.
+  security:check  Reject high production and critical dependency advisories.
   git:remote      Validate that origin points to realfelipedeveloper/Clinora.
 `);
 }
@@ -61,6 +63,7 @@ async function verify() {
   toolsTest();
   await javaVerify();
   await frontendVerify();
+  securityCheck();
 }
 
 async function doctor() {
@@ -107,7 +110,12 @@ function frontendVerify() {
 }
 
 function toolsTest() {
-  run(process.execPath, ['--test', 'tools/clinora.test.mjs']);
+  run(process.execPath, ['--test', 'tools/clinora.test.mjs', 'tools/quality-status.test.mjs']);
+}
+
+function securityCheck() {
+  runCorepackPnpm(['audit', '--prod', '--audit-level', 'high']);
+  runCorepackPnpm(['audit', '--audit-level', 'critical']);
 }
 
 function gitRemote() {

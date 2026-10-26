@@ -75,6 +75,13 @@ A automacao nao faz merge, nao aprova PR e nao faz checkout do codigo do PR de o
   publicada na branch padrao, evitando depender da aprovacao manual exigida
   pelo GitHub para workflows acionados por PR criado com `GITHUB_TOKEN`.
 
+O run por `workflow_dispatch` nao satisfaz, sozinho, um status check exigido
+num PR. A workflow `.github/workflows/quality-status.yml`, acionada ao fim de
+`Qualidade Clinora`, publica `clinora/qualidade` para o SHA testado apenas se
+ele ainda for a ponta de um PR aberto do proprio repositorio. Ela baixa
+somente o publicador da branch padrao e nao executa codigo do PR com o token
+que possui `statuses: write`.
+
 O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura,
 habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow de
 promocao declarar `actions: write`, `contents: write` e `pull-requests: write`

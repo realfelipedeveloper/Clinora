@@ -36,6 +36,11 @@ tasks:
     cmds:
       - corepack pnpm run tools:test
 
+  security:check:
+    desc: Check production and critical dependency advisories.
+    cmds:
+      - corepack pnpm run security:check
+
   git:remote:
     desc: Ensure origin points only to realfelipedeveloper/Clinora.
     cmds:
