@@ -10,7 +10,8 @@ Escopo futuro: holds, expiracoes, recorrencias, lembretes e lista de espera. Reg
 Na raiz do repositorio, com Java 25 e `JAVA_HOME` configurado:
 
 ```powershell
-.\mvnw.cmd -pl services/scheduler-worker spring-boot:run
+.\mvnw.cmd -pl services/scheduler-worker -am package
+java -jar services/scheduler-worker/target/scheduler-worker-0.0.1-SNAPSHOT.jar
 ```
 
 Porta padrao `44224`, configuravel por `CLINORA_SCHEDULER_WORKER_PORT`.

@@ -10,7 +10,8 @@ Escopo futuro: convenios, calendarios, telemedicina e preparacao para FHIR.
 Na raiz do repositorio, com Java 25 e `JAVA_HOME` configurado:
 
 ```powershell
-.\mvnw.cmd -pl services/integration-api spring-boot:run
+.\mvnw.cmd -pl services/integration-api -am package
+java -jar services/integration-api/target/integration-api-0.0.1-SNAPSHOT.jar
 ```
 
 Porta padrao `44223`, configuravel por `CLINORA_INTEGRATION_API_PORT`.
