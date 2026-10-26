@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-042",
-    "title": "Publicacao de status por run validado",
-    "branch": "feature/spec-001-task-042",
+    "id": "TASK-043",
+    "title": "Disparo automatico do publicador de status",
+    "branch": "feature/spec-001-task-043",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"

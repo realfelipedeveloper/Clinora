@@ -21,7 +21,8 @@ sem depender de `workflow_run` para runs iniciados pelo token do repositorio.
 - Suite dos scripts: 22 testes aprovados.
 - `verify` completo aprovado: 22 testes dos scripts, Maven/JaCoCo,
   12 testes Angular, builds web/UI/Storybook e auditorias.
-- CI remoto e publicacao de status no PR: pendentes.
+- CI remoto do PR #60 aprovado. `clinora/qualidade` foi publicado nos SHAs
+  atuais dos PRs #59 e #61, apos runs de promocao aprovados.
 
 ## Seguranca, privacidade, concorrencia e tempo
 - Token com `actions: read`, `contents: read` e `statuses: write` somente no
@@ -30,8 +31,7 @@ sem depender de `workflow_run` para runs iniciados pelo token do repositorio.
 - Nao ha mudanca em dados clinicos, reservas, tenant ou instantes globais.
 
 ## Risco residual
-- O disparo ainda e manual nesta tarefa. TASK-043 ligara o disparo automatico
-  somente depois da publicacao e validacao desta workflow na branch padrao.
+- O disparo permanece manual nesta tarefa; TASK-043 liga o disparo automatico.
 - Branch protection nao pode exigir este status antes do ciclo remoto completo.
 - Testes de integracao, E2E e seguranca da plataforma seguem a matriz da SPEC-001.
 
@@ -45,4 +45,4 @@ ate o status automatico estar comprovado.
 `active-feature.json` e `lessons-learned.md` atualizados.
 
 ## Status final
-Implementacao e verificacao local concluidas; validacao remota pendente.
+Concluida e validada remotamente; o disparo automatico pertence a TASK-043.

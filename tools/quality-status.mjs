@@ -1,5 +1,8 @@
 const BASE_BRANCHES = new Set(['development', 'homologation', 'main']);
 const CONTEXT = 'clinora/qualidade';
+const PENDING_STATUSES = new Set(['queued', 'in_progress', 'waiting', 'pending', 'requested']);
+
+class PendingQualityRunError extends Error {}
 
 export async function loadQualityRun(runId, { repository, token, request = fetch }) {
   if (!/^[1-9][0-9]{0,15}$/.test(runId ?? '')) {
@@ -24,15 +27,42 @@ export async function loadQualityRun(runId, { repository, token, request = fetch
   }
   const run = await response.json();
   if (
-    run.status !== 'completed' ||
     run.name !== 'Qualidade Clinora' ||
     run.path !== '.github/workflows/quality.yml' ||
-    run.repository?.full_name !== repository ||
-    !run.conclusion
+    run.repository?.full_name !== repository
   ) {
     throw new Error('Run nao e resultado concluido da workflow oficial');
   }
+  if (PENDING_STATUSES.has(run.status) && !run.conclusion) {
+    throw new PendingQualityRunError('Run nao e resultado concluido da workflow oficial');
+  }
+  if (run.status !== 'completed' || !run.conclusion) {
+    throw new Error('Run nao e resultado concluido da workflow oficial');
+  }
   return run;
+}
+
+export async function waitForQualityRun(
+  runId,
+  { attempts = 20, delay = () => new Promise((resolve) => setTimeout(resolve, 3000)), ...options },
+) {
+  if (!Number.isInteger(attempts) || attempts < 1 || attempts > 60) {
+    throw new Error('Numero de tentativas invalido');
+  }
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await loadQualityRun(runId, options);
+    } catch (error) {
+      if (!(error instanceof PendingQualityRunError)) {
+        throw error;
+      }
+      if (attempt === attempts - 1) {
+        break;
+      }
+      await delay();
+    }
+  }
+  throw new Error('Run nao concluiu no prazo');
 }
 
 export async function publishQualityStatus(run, { repository, token, request = fetch }) {
