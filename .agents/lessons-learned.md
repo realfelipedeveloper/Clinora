@@ -19,3 +19,4 @@
 - 2026-10-26: SPEC-001 exigia health/readiness do scheduler-worker sem porta reservada; `44224` foi acrescentada ao catalogo e verificada livre antes do uso.
 - 2026-10-26: O Actuator 4.1 pode incluir campos adicionais no JSON de health; o teste verifica `status=UP` e ausencia de `components` sem exigir igualdade do corpo completo.
 - 2026-10-26: Bibliotecas Java compartilhadas devem nascer de reutilizacao concreta; `clinora-test-support` centraliza o contrato HTTP repetido pelos cinco servicos, sem criar dependencia de dominio entre eles.
+- 2026-10-26: Prometheus requer registry Micrometer e exposicao do endpoint; o perfil `observability` mantem o scrape fora do perfil padrao e o bind local padrao limita acesso ao host.
