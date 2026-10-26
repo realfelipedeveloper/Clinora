@@ -20,8 +20,9 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 15. docs/14-frontend-workspace.md
 16. docs/15-global-scripts.md
 17. docs/16-observability.md
-18. specs/001-platform-foundation/spec.md
-19. specs/001-platform-foundation/tasks.md
+18. docs/17-regression-tests.md
+19. specs/001-platform-foundation/spec.md
+20. specs/001-platform-foundation/tasks.md
 
 ## Stack
 - Java 25 LTS + Spring Boot 4.1 + Maven

@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-016",
-    "title": "Storybook",
-    "branch": "feature/spec-001-task-016",
+    "id": "TASK-028",
+    "title": "JUnit, Mockito e AssertJ",
+    "branch": "feature/spec-001-task-028",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"
