@@ -1,9 +1,8 @@
 # Desenvolvimento Local
 
 ## Estado atual
-Bootstrap iniciado pela SPEC-001, TASK-001: estrutura poliglota.
-
-Ainda nao ha aplicacao executavel ou Docker Compose. O Maven Wrapper e o parent POM foram iniciados na TASK-002. O workspace Angular/pnpm foi iniciado na TASK-003 sem aplicacao inicial.
+Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
+O workspace Angular/pnpm ainda nao tem aplicacao inicial e nao ha Docker Compose.
 
 Para executar o build Java, `JAVA_HOME` deve apontar para um JDK 25.
 Para executar o workspace frontend, use Node `24.15.0` ou outra versao suportada pelo Angular 22.
@@ -20,6 +19,7 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 | payment-api | 44221 |
 | notification-api | 44222 |
 | integration-api | 44223 |
+| scheduler-worker | 44224 |
 | postgres | 44230 |
 | redis | 44240 |
 | rabbitmq amqp | 44250 |
@@ -34,7 +34,7 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 ## Checagem manual de portas
 
 ```powershell
-$ports = @(44210,44211,44220,44221,44222,44223,44230,44240,44250,44251,44260,44261,44270,44271,44280,44281)
+$ports = @(44210,44211,44220,44221,44222,44223,44224,44230,44240,44250,44251,44260,44261,44270,44271,44280,44281)
 $listeners = netstat -ano -p tcp
 foreach ($port in $ports) {
   $matches = $listeners | Select-String -Pattern ":$port\s"
@@ -43,7 +43,7 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-006: core-api.
+1. TASK-011: libs Java.
 2. TASK-013: Angular web.
 3. TASK-018: portal docs.
 
