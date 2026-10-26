@@ -16,3 +16,4 @@
 - 2026-10-26: O ambiente local define `DEBUG=release`; testes Spring Boot devem fixar `debug=false` para evitar logs de depuracao durante requisicoes HTTP.
 - 2026-10-26: Servicos ainda sem regras de negocio podem validar readiness em porta aleatoria sem disputar portas reservadas do host.
 - 2026-10-26: Na fundacao, integration-api deve iniciar sem credenciais ou chamadas externas; adaptadores fake entram em spec posterior.
+- 2026-10-26: SPEC-001 exigia health/readiness do scheduler-worker sem porta reservada; `44224` foi acrescentada ao catalogo e verificada livre antes do uso.
