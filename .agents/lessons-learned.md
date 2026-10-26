@@ -13,3 +13,4 @@
 - 2026-08-14: Com `required_linear_history` e squash/rebase, PR direto entre branches base pode conflitar por historico divergente; usar branch tecnica `promotion/*` baseada no destino e com arvore da origem.
 - 2026-10-26: O Maven Wrapper precisa de acesso de escrita ao cache `.m2` do usuario para baixar novas dependencias; o sandbox local pode bloquear esse caminho.
 - 2026-10-26: Spring Boot 4.1.0 inicia o `core-api` com Actuator; os probes de liveness/readiness precisam ser habilitados explicitamente para uso local.
+- 2026-10-26: O ambiente local define `DEBUG=release`; testes Spring Boot devem fixar `debug=false` para evitar logs de depuracao durante requisicoes HTTP.
