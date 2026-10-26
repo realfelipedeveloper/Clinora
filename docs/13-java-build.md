@@ -40,6 +40,10 @@ Os modulos `services/core-api`, `services/payment-api`,
 usam Spring Boot Web MVC e Actuator, com testes HTTP de health, liveness e
 readiness em portas aleatorias.
 O Surefire `3.5.5` e gerenciado pelo parent POM.
+Todos os servicos tambem incluem o registry Prometheus do Micrometer, mas o
+endpoint de scrape so e exposto no perfil `observability`.
+Todos os servicos tambem incluem o registry Prometheus do Micrometer, mas o
+endpoint de scrape so e exposto no perfil `observability`.
 
 O modulo `libs/java/clinora-test-support` centraliza a verificacao HTTP dos
 probes. Os servicos o declaram apenas como dependencia de teste. Para testar

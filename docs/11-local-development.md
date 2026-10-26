@@ -3,6 +3,8 @@
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
 O workspace Angular/pnpm ainda nao tem aplicacao inicial e nao ha Docker Compose.
+Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
+habilita Prometheus; veja `docs/16-observability.md`.
 
 Para executar o build Java, `JAVA_HOME` deve apontar para um JDK 25.
 Para executar o workspace frontend, use Node `24.15.0` ou outra versao suportada pelo Angular 22.
