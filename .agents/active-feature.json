@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-012",
-    "title": "Actuator, observabilidade e shutdown",
-    "branch": "feature/spec-001-task-012",
+    "id": "TASK-013",
+    "title": "Angular web",
+    "branch": "feature/spec-001-task-013",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"

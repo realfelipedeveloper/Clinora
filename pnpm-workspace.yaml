@@ -9,3 +9,9 @@ strictPeerDependencies: true
 peerDependencyRules:
   allowedVersions:
     listr2: "10.2.2"
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  lmdb: true
+  msgpackr-extract: true
