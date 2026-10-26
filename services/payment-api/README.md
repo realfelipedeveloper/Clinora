@@ -10,7 +10,8 @@ Escopo futuro: credito, debito, Pix, assinaturas, reembolsos, chargebacks e webh
 Na raiz do repositorio, com Java 25 e `JAVA_HOME` configurado:
 
 ```powershell
-.\mvnw.cmd -pl services/payment-api spring-boot:run
+.\mvnw.cmd -pl services/payment-api -am package
+java -jar services/payment-api/target/payment-api-0.0.1-SNAPSHOT.jar
 ```
 
 Porta padrao `44221`, configuravel por `CLINORA_PAYMENT_API_PORT`. Verifique
