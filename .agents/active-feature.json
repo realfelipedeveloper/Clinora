@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-036",
-    "title": "Cobertura e gates de seguranca",
-    "branch": "feature/spec-001-task-036",
+    "id": "TASK-042",
+    "title": "Publicacao de status por run validado",
+    "branch": "feature/spec-001-task-042",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"

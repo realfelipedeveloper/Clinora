@@ -56,5 +56,6 @@ Os comandos Angular exigem Node/pnpm indicados no README. A suite E2E e os
 gates de seguranca amplos ainda nao estao implementados; `verify` cobre
 somente as camadas presentes na matriz. A workflow `Qualidade Clinora` executa
 `corepack pnpm run verify` em PRs para as tres branches base. A workflow de
-publicacao confere PR aberto, repositorio e SHA antes de registrar
-`clinora/qualidade`. Forks ainda nao sao elegiveis para esse status.
+publicacao confere run concluido, PR aberto, repositorio e SHA antes de
+registrar `clinora/qualidade`; TASK-043 ligara o disparo automatico.
+Forks ainda nao sao elegiveis para esse status.

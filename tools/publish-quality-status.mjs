@@ -1,12 +1,12 @@
-import { readFileSync } from 'node:fs';
-import { publishQualityStatus } from './quality-status.mjs';
+import { loadQualityRun, publishQualityStatus } from './quality-status.mjs';
 
 try {
-  const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
-  const result = await publishQualityStatus(event.workflow_run, {
+  const options = {
     repository: process.env.GITHUB_REPOSITORY,
     token: process.env.GITHUB_TOKEN,
-  });
+  };
+  const run = await loadQualityRun(process.env.QUALITY_RUN_ID, options);
+  const result = await publishQualityStatus(run, options);
   console.log(`Status de qualidade: ${result}`);
 } catch (error) {
   console.error(error.message);
