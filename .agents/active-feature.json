@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-013",
-    "title": "Angular web",
-    "branch": "feature/spec-001-task-013",
+    "id": "TASK-014",
+    "title": "Tailwind e tokens",
+    "branch": "feature/spec-001-task-014",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"

@@ -19,6 +19,7 @@ describe('App', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Clinora');
+    expect(compiled.querySelector('h1')?.classList.contains('text-ink')).toBe(true);
     expect(compiled.querySelector('main')?.textContent).toContain('Gestão de clínicas');
   });
 });

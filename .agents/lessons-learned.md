@@ -21,3 +21,4 @@
 - 2026-10-26: Bibliotecas Java compartilhadas devem nascer de reutilizacao concreta; `clinora-test-support` centraliza o contrato HTTP repetido pelos cinco servicos, sem criar dependencia de dominio entre eles.
 - 2026-10-26: Prometheus requer registry Micrometer e exposicao do endpoint; o perfil `observability` mantem o scrape fora do perfil padrao e o bind local padrao limita acesso ao host.
 - 2026-10-26: Angular CLI 22 gera projeto Vitest com `ng generate application`; no Windows, o sandbox pode bloquear o subprocesso do esbuild durante testes e build, exigindo execucao autorizada.
+- 2026-10-26: Tailwind CSS 4 integra com Angular via `@tailwindcss/postcss`; `@theme` em CSS gera variaveis e utilitarios a partir dos mesmos tokens, sem `tailwind.config.js`.
