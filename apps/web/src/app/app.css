@@ -12,18 +12,18 @@
   align-items: center;
   min-height: 72px;
   padding: 0 clamp(24px, 5vw, 80px);
-  border-bottom: 1px solid #d9e4e1;
+  border-bottom: 1px solid var(--color-line);
 }
 
 .brand {
-  color: #133f40;
+  color: var(--color-ink);
   font-size: 1.4rem;
   font-weight: 750;
   text-decoration: none;
 }
 
 .brand span {
-  color: #dc7158;
+  color: var(--color-accent);
 }
 
 main {
@@ -37,7 +37,7 @@ main {
 }
 
 .eyebrow {
-  color: #367f79;
+  color: var(--color-brand);
   font-size: 0.9rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -45,13 +45,12 @@ main {
 
 h1 {
   margin: 12px 0;
-  color: #163c3e;
   font-size: 4rem;
   line-height: 1.1;
 }
 
 .subtitle {
-  color: #465e62;
+  color: var(--color-muted);
   font-size: 1.25rem;
   line-height: 1.5;
 }
