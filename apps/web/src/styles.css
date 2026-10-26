@@ -8,6 +8,9 @@
   --color-line: #d9e4e1;
   --color-surface: #f7fbfa;
   --color-paper: #ffffff;
+  --color-success: #287849;
+  --color-warning: #a4631f;
+  --color-danger: #b34141;
   --font-sans: Arial, Helvetica, sans-serif;
   --radius-control: 4px;
 }

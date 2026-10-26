@@ -19,6 +19,8 @@
     "web:serve": "ng serve web --host 127.0.0.1 --port 44210",
     "web:build": "ng build web",
     "web:test": "ng test web --watch=false",
+    "ui:build": "ng build clinora-ui",
+    "ui:test": "ng test clinora-ui --watch=false",
     "git:remote": "node tools/clinora.mjs git:remote",
     "commitlint": "commitlint --from=HEAD~1 --to=HEAD --verbose"
   },
@@ -40,6 +42,7 @@
     "@commitlint/config-conventional": "^21.2.2",
     "@tailwindcss/postcss": "^4.3.3",
     "jsdom": "^28.0.0",
+    "ng-packagr": "^22.1.0",
     "postcss": "^8.5.31",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.3.3",
