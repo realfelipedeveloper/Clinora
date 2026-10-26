@@ -26,6 +26,16 @@ tasks:
     cmds:
       - corepack pnpm run frontend:check
 
+  frontend:verify:
+    desc: Run Angular tests and builds, including Storybook.
+    cmds:
+      - corepack pnpm run frontend:verify
+
+  tools:test:
+    desc: Run tests for repository scripts.
+    cmds:
+      - corepack pnpm run tools:test
+
   git:remote:
     desc: Ensure origin points only to realfelipedeveloper/Clinora.
     cmds:
