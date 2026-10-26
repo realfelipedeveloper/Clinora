@@ -34,8 +34,9 @@ O `pom.xml` raiz e um parent/aggregator com:
 - plugin management para Compiler Plugin e Spring Boot Maven Plugin;
 - Maven Enforcer em `validate` para exigir Maven `3.9.16+` e Java `25`.
 
-O primeiro modulo Maven, `services/core-api`, foi adicionado na TASK-006.
-Ele usa Spring Boot Web MVC e Actuator, com teste de inicializacao JUnit.
+Os modulos `services/core-api` e `services/payment-api` foram adicionados nas
+TASK-006 e TASK-007. Eles usam Spring Boot Web MVC e Actuator, com testes HTTP
+de health, liveness e readiness em portas aleatorias.
 O Surefire `3.5.5` e gerenciado pelo parent POM.
 
 ## Comandos
