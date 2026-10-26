@@ -45,6 +45,8 @@ TASK-033 Pact/WireMock
 TASK-034 PIT
 TASK-035 GitHub Actions
 TASK-036 coverage e security gates
+TASK-042 publicacao de status por run validado
+TASK-043 disparo automatico do publicador de status
 
 ## EPIC-006 Memória
 TASK-037 ADR template

@@ -12,6 +12,7 @@ corepack pnpm run java:verify
 corepack pnpm run frontend:check
 corepack pnpm run frontend:verify
 corepack pnpm run tools:test
+corepack pnpm run security:check
 corepack pnpm run git:remote
 ```
 
@@ -27,6 +28,7 @@ task java:verify
 task frontend:check
 task frontend:verify
 task tools:test
+task security:check
 task git:remote
 ```
 
@@ -35,12 +37,15 @@ usar `corepack pnpm run ...` sem perder cobertura.
 
 ## Validacoes
 - `doctor`: toolchain local, arquivos de fundacao, Angular workspace, Java e remoto Git.
-- `verify`: executa `doctor`, `tools:test`, `java:verify` e `frontend:verify`.
+- `verify`: executa `doctor`, `tools:test`, `java:verify`, `frontend:verify` e
+  `security:check`.
 - `java:verify`: executa `mvnw verify` com Java 25.
 - `frontend:check`: valida lockfile congelado, peer dependencies e Angular workspace.
 - `frontend:verify`: executa `frontend:check`, testes Vitest de web/UI e builds
   de web/UI/Storybook.
 - `tools:test`: testa o guard do remote em repositorios Git temporarios.
+- `security:check`: auditoria pnpm, bloqueando alertas altos em producao e
+  criticos em todas as dependencias.
 - `git:remote`: bloqueia qualquer remoto diferente de `realfelipedeveloper/Clinora`.
 
 ## Limites
