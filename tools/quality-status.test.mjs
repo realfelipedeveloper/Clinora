@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { loadQualityRun, publishQualityStatus } from './quality-status.mjs';
+import { loadQualityRun, publishQualityStatus, waitForQualityRun } from './quality-status.mjs';
 
 const repository = 'realfelipedeveloper/Clinora';
 const sha = 'a'.repeat(40);
@@ -11,6 +11,19 @@ test('workflow manual nao depende do payload workflow_run', () => {
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /quality_run_id:/);
   assert.doesNotMatch(workflow, /github\.event\.workflow_run/);
+});
+
+test('qualidade dispara publicador isolado mesmo quando o gate falha', () => {
+  const workflow = readFileSync('.github/workflows/quality.yml', 'utf8');
+  assert.match(workflow, /permissions:\s*\n  contents: read/);
+  const dispatcher = workflow.split('\n  solicitar-status:\n')[1];
+  assert.ok(dispatcher, 'Job de disparo ausente');
+  assert.match(dispatcher, /needs: fundacao/);
+  assert.match(dispatcher, /if: always\(\)/);
+  assert.match(dispatcher, /permissions:\s*\n      actions: write/);
+  assert.match(dispatcher, /github\.run_id/);
+  assert.match(dispatcher, /gh workflow run quality-status\.yml/);
+  assert.doesNotMatch(dispatcher, /actions\/checkout/);
 });
 
 function run(overrides = {}) {
@@ -225,4 +238,73 @@ test('falha fechado se a API do run estiver indisponivel', async () => {
     loadQualityRun('123', { ...options, request }),
     /Falha ao consultar run: HTTP 503/,
   );
+});
+
+test('aguarda conclusao do run sem aprovar resultado prematuro', async () => {
+  let calls = 0;
+  let waits = 0;
+  const request = async () => ({
+    ok: true,
+    json: async () => ({
+      ...run(),
+      name: 'Qualidade Clinora',
+      path: '.github/workflows/quality.yml',
+      status: ++calls === 1 ? 'in_progress' : 'completed',
+      conclusion: calls === 1 ? null : 'success',
+    }),
+  });
+  const loaded = await waitForQualityRun('123', {
+    ...options,
+    request,
+    attempts: 2,
+    delay: async () => {
+      waits += 1;
+    },
+  });
+  assert.equal(loaded.status, 'completed');
+  assert.equal(calls, 2);
+  assert.equal(waits, 1);
+});
+
+test('nao espera indefinidamente por run pendente', async () => {
+  let calls = 0;
+  const request = async () => {
+    calls += 1;
+    return {
+      ok: true,
+      json: async () => ({
+        ...run(),
+        name: 'Qualidade Clinora',
+        path: '.github/workflows/quality.yml',
+        status: 'in_progress',
+        conclusion: null,
+      }),
+    };
+  };
+  await assert.rejects(
+    waitForQualityRun('123', { ...options, request, attempts: 2, delay: async () => {} }),
+    /Run nao concluiu no prazo/,
+  );
+  assert.equal(calls, 2);
+});
+
+test('nao repete consulta de run de outra workflow', async () => {
+  let calls = 0;
+  const request = async () => {
+    calls += 1;
+    return {
+      ok: true,
+      json: async () => ({
+        ...run(),
+        name: 'Outra workflow',
+        path: '.github/workflows/outra.yml',
+        status: 'in_progress',
+      }),
+    };
+  };
+  await assert.rejects(
+    waitForQualityRun('123', { ...options, request, attempts: 2, delay: async () => {} }),
+    /Run nao e resultado concluido/,
+  );
+  assert.equal(calls, 1);
 });
