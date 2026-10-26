@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>libs/java/clinora-test-support</module>
         <module>services/core-api</module>
         <module>services/payment-api</module>
         <module>services/notification-api</module>
