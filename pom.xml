@@ -11,6 +11,7 @@
 
     <modules>
         <module>services/core-api</module>
+        <module>services/payment-api</module>
     </modules>
 
     <name>Clinora Parent</name>
