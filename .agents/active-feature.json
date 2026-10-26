@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-009",
-    "title": "integration-api",
-    "branch": "feature/spec-001-task-009",
+    "id": "TASK-010",
+    "title": "scheduler-worker",
+    "branch": "feature/spec-001-task-010",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"
