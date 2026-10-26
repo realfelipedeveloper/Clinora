@@ -1,22 +1,21 @@
 name: Publicar status de qualidade
 
 on:
-  workflow_run:
-    workflows:
-      - Qualidade Clinora
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      quality_run_id:
+        description: ID do run de qualidade concluido
+        required: true
+        type: string
 
 permissions:
+  actions: read
   contents: read
   statuses: write
 
 jobs:
   publicar:
     name: Publicar status do PR
-    if: >-
-      github.event.workflow_run.event == 'pull_request' ||
-      github.event.workflow_run.event == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -36,3 +35,4 @@ jobs:
         run: node tools/publish-quality-status.mjs
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          QUALITY_RUN_ID: ${{ inputs.quality_run_id }}

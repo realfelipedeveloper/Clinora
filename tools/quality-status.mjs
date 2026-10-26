@@ -1,6 +1,40 @@
 const BASE_BRANCHES = new Set(['development', 'homologation', 'main']);
 const CONTEXT = 'clinora/qualidade';
 
+export async function loadQualityRun(runId, { repository, token, request = fetch }) {
+  if (!/^[1-9][0-9]{0,15}$/.test(runId ?? '')) {
+    throw new Error('ID de run invalido');
+  }
+  if (!/^[\w.-]+\/[\w.-]+$/.test(repository) || !token) {
+    throw new Error('Repositorio ou credencial de workflow ausente');
+  }
+
+  const response = await request(
+    `https://api.github.com/repos/${repository}/actions/runs/${runId}`,
+    {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${token}`,
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Falha ao consultar run: HTTP ${response.status}`);
+  }
+  const run = await response.json();
+  if (
+    run.status !== 'completed' ||
+    run.name !== 'Qualidade Clinora' ||
+    run.path !== '.github/workflows/quality.yml' ||
+    run.repository?.full_name !== repository ||
+    !run.conclusion
+  ) {
+    throw new Error('Run nao e resultado concluido da workflow oficial');
+  }
+  return run;
+}
+
 export async function publishQualityStatus(run, { repository, token, request = fetch }) {
   if (
     !run ||

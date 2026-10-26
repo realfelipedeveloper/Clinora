@@ -1,9 +1,17 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { publishQualityStatus } from './quality-status.mjs';
+import { loadQualityRun, publishQualityStatus } from './quality-status.mjs';
 
 const repository = 'realfelipedeveloper/Clinora';
 const sha = 'a'.repeat(40);
+
+test('workflow manual nao depende do payload workflow_run', () => {
+  const workflow = readFileSync('.github/workflows/quality-status.yml', 'utf8');
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /quality_run_id:/);
+  assert.doesNotMatch(workflow, /github\.event\.workflow_run/);
+});
 
 function run(overrides = {}) {
   return {
@@ -153,4 +161,68 @@ test('rejeita URL de resultado fora do repositorio', async () => {
     /URL do run fora do repositorio oficial/,
   );
   assert.equal(calls.length, 0);
+});
+
+test('carrega apenas run concluido da workflow oficial', async () => {
+  const calls = [];
+  const request = async (url) => {
+    calls.push(url);
+    return {
+      ok: true,
+      json: async () => ({
+        ...run(),
+        status: 'completed',
+        name: 'Qualidade Clinora',
+        path: '.github/workflows/quality.yml',
+      }),
+    };
+  };
+  const loaded = await loadQualityRun('123', { ...options, request });
+  assert.equal(loaded.head_sha, sha);
+  assert.deepEqual(calls, [`https://api.github.com/repos/${repository}/actions/runs/123`]);
+});
+
+test('rejeita ID de run invalido sem chamar API', async () => {
+  const request = () => assert.fail('Nao deve consultar a API');
+  await assert.rejects(loadQualityRun('../123', { ...options, request }), /ID de run invalido/);
+});
+
+test('rejeita run ainda em andamento', async () => {
+  const request = async () => ({
+    ok: true,
+    json: async () => ({
+      ...run(),
+      status: 'in_progress',
+      name: 'Qualidade Clinora',
+      path: '.github/workflows/quality.yml',
+    }),
+  });
+  await assert.rejects(
+    loadQualityRun('123', { ...options, request }),
+    /Run nao e resultado concluido/,
+  );
+});
+
+test('rejeita run de outra workflow', async () => {
+  const request = async () => ({
+    ok: true,
+    json: async () => ({
+      ...run(),
+      status: 'completed',
+      name: 'Outra workflow',
+      path: '.github/workflows/outra.yml',
+    }),
+  });
+  await assert.rejects(
+    loadQualityRun('123', { ...options, request }),
+    /Run nao e resultado concluido/,
+  );
+});
+
+test('falha fechado se a API do run estiver indisponivel', async () => {
+  const request = async () => ({ ok: false, status: 503 });
+  await assert.rejects(
+    loadQualityRun('123', { ...options, request }),
+    /Falha ao consultar run: HTTP 503/,
+  );
 });
