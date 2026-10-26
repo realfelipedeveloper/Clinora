@@ -14,3 +14,4 @@
 - 2026-10-26: O Maven Wrapper precisa de acesso de escrita ao cache `.m2` do usuario para baixar novas dependencias; o sandbox local pode bloquear esse caminho.
 - 2026-10-26: Spring Boot 4.1.0 inicia o `core-api` com Actuator; os probes de liveness/readiness precisam ser habilitados explicitamente para uso local.
 - 2026-10-26: O ambiente local define `DEBUG=release`; testes Spring Boot devem fixar `debug=false` para evitar logs de depuracao durante requisicoes HTTP.
+- 2026-10-26: Servicos ainda sem regras de negocio podem validar readiness em porta aleatoria sem disputar portas reservadas do host.
