@@ -10,13 +10,13 @@ afirmar que a suite anterior continuou verde.
 
 | Tarefas | Comportamento | Cobertura automatizada atual | Lacuna e tarefa de fechamento |
 | --- | --- | --- | --- |
-| 001-005 | Estrutura, toolchain, scripts e Git Flow | `doctor` valida toolchain, workspace e remote; commitlint local | Testes de falha de configuracao, branch/PR e CI: TASK-035 |
+| 001-005 | Estrutura, toolchain, scripts e Git Flow | `doctor` valida toolchain, workspace e remote; quatro testes de caixa-preta cobrem fetch/push incorretos e falta de `origin`; commitlint local | Testes de falha de configuracao e politica de branch/PR ainda pendentes |
 | 006-010 | Cinco servicos HTTP | Dez testes Spring Boot em porta aleatoria verificam health e observabilidade por servico | Readiness em containers: TASK-027/029 |
 | 011 | Verificador HTTP compartilhado | Oito testes JUnit/Mockito/AssertJ cobrem resposta, URL loopback, privacidade e erros | Nenhuma lacuna conhecida no contrato atual |
 | 012 | Actuator e Prometheus | Testes HTTP dos cinco servicos e testes unitarios do verificador | Verificacao de metricas e logs em CI: TASK-035/036 |
 | 013-014 | Web Angular e tokens Tailwind | Dois testes Vitest verificam identidade pt-BR e classes de token; `ng build web` valida CSS | Teste de navegador, responsividade e acessibilidade: TASK-031/032 |
 | 015 | Sete componentes UI | Dez testes Vitest cobrem formulario, estados, modal e semantica | Interacao E2E e axe-core: TASK-031/032 |
-| 016 | Storybook | Build estatico e smoke test executados na TASK-016 | Script e gate CI permanentes: TASK-035 |
+| 016 | Storybook | Build estatico e smoke test executados na TASK-016; build permanente no `verify` e CI | Smoke test de servidor em CI ainda pendente |
 
 O projeto ainda nao implementa tenant, pacientes, reservas, agenda ou
 pagamentos. Portanto nao ha testes desses dominios a declarar nesta spec.
@@ -42,6 +42,7 @@ para liberar pipeline.
 ## Comandos disponiveis agora
 
 ```powershell
+corepack pnpm run verify
 .\mvnw.cmd verify
 corepack pnpm web:test
 corepack pnpm ui:test
@@ -51,5 +52,6 @@ corepack pnpm ui:storybook:build
 ```
 
 Os comandos Angular exigem Node/pnpm indicados no README. A suite E2E e os
-gates de seguranca ainda nao estao implementados; nao considerar `verify`
-global como evidencia dessas camadas ate a TASK-035.
+gates de seguranca amplos ainda nao estao implementados; `verify` cobre
+somente as camadas presentes na matriz. A workflow `Qualidade Clinora` executa
+`corepack pnpm run verify` em PRs para as tres branches base.

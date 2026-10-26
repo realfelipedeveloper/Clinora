@@ -15,6 +15,8 @@ const commands = {
   verify,
   'java:verify': javaVerify,
   'frontend:check': frontendCheck,
+  'frontend:verify': frontendVerify,
+  'tools:test': toolsTest,
   'git:remote': gitRemote,
 };
 
@@ -41,17 +43,20 @@ Usage:
 
 Commands:
   doctor          Validate local toolchain and repository wiring.
-  verify          Run doctor, Java verify and frontend checks.
+  verify          Run all foundation tests, builds and checks.
   java:verify     Run Maven verify through the wrapper.
   frontend:check  Run pnpm frozen install, peer check and Angular workspace checks.
+  frontend:verify Run Angular tests and builds, including Storybook.
+  tools:test      Run tests for repository scripts.
   git:remote      Validate that origin points to realfelipedeveloper/Clinora.
 `);
 }
 
 async function verify() {
   await doctor();
+  toolsTest();
   await javaVerify();
-  await frontendCheck();
+  await frontendVerify();
 }
 
 async function doctor() {
@@ -73,7 +78,8 @@ async function doctor() {
 function javaVerify() {
   const javaHome = resolveJavaHome();
   const command = process.platform === 'win32' ? 'cmd.exe' : './mvnw';
-  const args = process.platform === 'win32' ? ['/d', '/s', '/c', '.\\mvnw.cmd', 'verify'] : ['verify'];
+  const args =
+    process.platform === 'win32' ? ['/d', '/s', '/c', '.\\mvnw.cmd', 'verify'] : ['verify'];
   run(command, args, {
     env: {
       ...process.env,
@@ -87,6 +93,17 @@ function frontendCheck() {
   runCorepackPnpm(['peers', 'check']);
   runCorepackPnpm(['frontend:workspace']);
   runCorepackPnpm(['frontend:version']);
+}
+
+function frontendVerify() {
+  frontendCheck();
+  for (const command of ['web:test', 'ui:test', 'web:build', 'ui:build', 'ui:storybook:build']) {
+    runCorepackPnpm([command]);
+  }
+}
+
+function toolsTest() {
+  run(process.execPath, ['--test', 'tools/clinora.test.mjs']);
 }
 
 function gitRemote() {
