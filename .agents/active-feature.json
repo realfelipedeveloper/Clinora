@@ -3,29 +3,12 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-005",
-    "title": "Git Flow, commitlint e PR templates",
-    "branch": "feature/spec-001-task-005-automacao-promocao",
+    "id": "TASK-006",
+    "title": "core-api",
+    "branch": "feature/spec-001-task-006",
     "status": "completed",
-    "startedAt": "2026-08-14",
-    "completedAt": "2026-08-14",
-    "correction": {
-      "reason": "Automatizar promocao Git Flow apos merge em development e homologation.",
-      "workflow": ".github/workflows/git-flow-promotion.yml",
-      "githubActionsPermissions": {
-        "defaultWorkflowPermissions": "read",
-        "canApprovePullRequestReviews": true
-      },
-      "promotionBranches": [
-        "promotion/development-para-homologation",
-        "promotion/homologation-para-main"
-      ],
-      "flow": [
-        "feature/* -> development",
-        "development -> homologation",
-        "homologation -> main"
-      ]
-    }
+    "startedAt": "2026-10-26",
+    "completedAt": "2026-10-26"
   },
   "services": [
     "web",
