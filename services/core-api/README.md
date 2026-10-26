@@ -11,7 +11,8 @@ e agenda. A SPEC-001 cobre apenas a fundacao executavel.
 Na raiz do repositorio, com Java 25 e `JAVA_HOME` configurado:
 
 ```powershell
-.\mvnw.cmd -pl services/core-api spring-boot:run
+.\mvnw.cmd -pl services/core-api -am package
+java -jar services/core-api/target/core-api-0.0.1-SNAPSHOT.jar
 ```
 
 Por padrao o servico usa a porta `44220`, configuravel por

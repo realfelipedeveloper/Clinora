@@ -10,7 +10,8 @@ Escopo futuro: e-mail, WhatsApp, SMS, in-app, templates e consentimentos.
 Na raiz do repositorio, com Java 25 e `JAVA_HOME` configurado:
 
 ```powershell
-.\mvnw.cmd -pl services/notification-api spring-boot:run
+.\mvnw.cmd -pl services/notification-api -am package
+java -jar services/notification-api/target/notification-api-0.0.1-SNAPSHOT.jar
 ```
 
 Porta padrao `44222`, configuravel por `CLINORA_NOTIFICATION_API_PORT`.
