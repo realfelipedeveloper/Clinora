@@ -23,3 +23,5 @@
 - 2026-10-26: Angular CLI 22 gera projeto Vitest com `ng generate application`; no Windows, o sandbox pode bloquear o subprocesso do esbuild durante testes e build, exigindo execucao autorizada.
 - 2026-10-26: Tailwind CSS 4 integra com Angular via `@tailwindcss/postcss`; `@theme` em CSS gera variaveis e utilitarios a partir dos mesmos tokens, sem `tailwind.config.js`.
 - 2026-10-26: `ControlValueAccessor` com `OnPush` precisa chamar `markForCheck()` em `writeValue` e `setDisabledState`; no select, opcoes adicionadas depois do valor inicial precisam marcar a opcao selecionada explicitamente.
+- 2026-10-26: Storybook 10.6.3 com builder Angular/Webpack aceita Angular 22; `@angular/platform-browser-dynamic` deve acompanhar a versao do framework no lockfile. O builder usa porta exclusiva e pode compilar as historias da biblioteca sem Compodoc.
+- 2026-10-26: O servidor Storybook Angular precisa de `browserTarget` explicito mesmo quando o build estatico funciona sem ele; apontar para `web:build` permite herdar configuracao da aplicacao.
