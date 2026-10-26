@@ -70,9 +70,20 @@ A automacao nao faz merge, nao aprova PR e nao faz checkout do codigo do PR de o
 - cria ou atualiza uma branch tecnica `promotion/*` baseada no destino;
 - aplica nessa branch tecnica a arvore atual da origem logica;
 - evita conflitos causados por historicos divergentes entre branches promovidas por squash ou rebase;
-- abre o proximo PR com titulo e corpo em PT-BR.
+- abre o proximo PR com titulo e corpo em PT-BR;
+- dispara a workflow de qualidade na branch tecnica quando ela ja estiver
+  publicada na branch padrao, evitando depender da aprovacao manual exigida
+  pelo GitHub para workflows acionados por PR criado com `GITHUB_TOKEN`.
 
-O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura, habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow declarar `contents: write` e `pull-requests: write` somente para este uso especifico.
+O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura,
+habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow de
+promocao declarar `actions: write`, `contents: write` e `pull-requests: write`
+somente para este uso especifico. A workflow de qualidade usa apenas
+`contents: read` e nao recebe segredos de negocio.
+
+No primeiro merge que publica `quality.yml`, o disparo automatico na promocao
+pode ser pulado ate a workflow existir na branch padrao. Validar esse bootstrap
+localmente e nos PRs; as promocoes seguintes usam o disparo automatico.
 
 ## Alinhamento de baseline
 Durante o bootstrap da SPEC-001, quando uma tarefa ja estiver validada e o usuario pedir

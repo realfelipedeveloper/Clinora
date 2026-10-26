@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -171,3 +172,16 @@ jobs:
             --head "$branch_promocao" \
             --title "$titulo" \
             --body-file pr-body.md
+
+      - name: Disparar validacao da promocao
+        if: steps.preparar.outputs.criar_pr == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh workflow view quality.yml --repo "$REPO" >/dev/null 2>&1; then
+            gh workflow run quality.yml \
+              --repo "$REPO" \
+              --ref "${{ steps.fluxo.outputs.branch_promocao }}"
+          else
+            echo "Workflow de qualidade ainda nao publicada na branch padrao."
+          fi
