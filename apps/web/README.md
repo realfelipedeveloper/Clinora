@@ -14,6 +14,6 @@ corepack pnpm web:serve
 ```
 
 O servidor local usa `127.0.0.1:44210`; confirme que a porta esta livre antes
-de inicia-lo. Tailwind, Design System e landing completa pertencem as tarefas
-seguintes.
+de inicia-lo. Tailwind CSS 4 e os tokens de cor ficam em `src/styles.css`.
+Design System e landing completa pertencem as tarefas seguintes.
 

@@ -1,7 +1,7 @@
 # Workspace Frontend
 
 ## Escopo
-Fundacao Angular/pnpm da SPEC-001, TASK-003 e TASK-013.
+Fundacao Angular/pnpm da SPEC-001, TASK-003, TASK-013 e TASK-014.
 
 ## Versoes
 - Node `24.15.0`
@@ -30,6 +30,12 @@ libs/typescript/
 `apps/web` com roteamento e Vitest. A interface inicial usa `pt-BR` e
 nao acessa APIs nem dados de saude.
 
+Tailwind CSS 4 usa `@tailwindcss/postcss` em `.postcssrc.json` e tokens CSS
+em `apps/web/src/styles.css`. Nao ha configuracao JavaScript de tema. Os
+tokens `ink`, `brand`, `accent`, `muted`, `line`, `surface` e `paper` geram
+classes utilitarias e variaveis CSS. Componentes podem consumir as mesmas
+variaveis com `var(--color-*)`.
+
 ## Comandos
 
 ```powershell
@@ -50,7 +56,7 @@ O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
 As configuracoes pnpm ficam em `pnpm-workspace.yaml`, conforme pnpm 11.
 
 ## Proximos projetos
-- `apps/web`: Tailwind, componentes, Storybook e landing entram nas TASK-014 a TASK-017.
+- `apps/web`: componentes, Storybook e landing entram nas TASK-015 a TASK-017.
 - `apps/docs`: entra na TASK-018.
 
 ## Seguranca e privacidade
