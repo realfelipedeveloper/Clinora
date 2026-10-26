@@ -78,10 +78,13 @@ A automacao nao faz merge, nao aprova PR e nao faz checkout do codigo do PR de o
 O run por `workflow_dispatch` nao satisfaz, sozinho, um status check exigido
 num PR. A workflow `.github/workflows/quality-status.yml` publica
 `clinora/qualidade` para o SHA testado apenas se ele ainda for a ponta de um
-PR aberto do proprio repositorio. Ela recebe um ID de run concluido, consulta
-a API e baixa somente o publicador da branch padrao; nao executa codigo do
-PR com o token que possui `statuses: write`. TASK-042 habilita disparo manual
-para verificar o bootstrap. TASK-043 ligara o disparo automatico a qualidade.
+PR aberto do proprio repositorio. Ela recebe um ID de run, aguarda a conclusao
+por tempo limitado, consulta a API e baixa somente o publicador da branch
+padrao; nao executa codigo do PR com o token que possui `statuses: write`.
+O job `solicitar-status` da qualidade dispara o publicador mesmo quando os
+testes falham, sem checkout e com `actions: write` restrito a esse job.
+TASK-042 comprovou o bootstrap manual nos PRs #59 e #61; TASK-043 automatiza
+o disparo. Exigir o status nas bases somente apos validar o ciclo remoto.
 
 O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura,
 habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow de
