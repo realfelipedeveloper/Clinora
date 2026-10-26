@@ -56,6 +56,12 @@ corepack pnpm ui:storybook
 corepack pnpm ui:storybook:build
 ```
 
+Os alvos `web:test` e `ui:test` geram cobertura V8 e falham abaixo dos pisos
+em `angular.json`. Web: 50% statements/funcoes, 90% branches e 25% linhas.
+Clinora UI: 85% statements/branches, 70% funcoes e 90% linhas. Todos os
+arquivos TS de producao entram na medicao; specs e historias ficam fora.
+Relatorios locais ficam em `coverage/web` e `coverage/clinora-ui`.
+
 O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
 `@angular/cli@22.1.4` declara essa versao diretamente enquanto
 `@listr2/prompt-adapter-inquirer@4.2.4` ainda pede `10.2.1`.

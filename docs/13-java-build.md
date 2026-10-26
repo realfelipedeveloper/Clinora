@@ -33,6 +33,8 @@ O `pom.xml` raiz e um parent/aggregator com:
 - dependency management do `spring-boot-dependencies`;
 - plugin management para Compiler Plugin e Spring Boot Maven Plugin;
 - Maven Enforcer em `validate` para exigir Maven `3.9.16+` e Java `25`.
+- JaCoCo `0.8.15` em `verify` para relatorio e piso de 80% de linhas por
+  classe com logica; classes `*Application` de bootstrap ficam fora do check.
 
 Os modulos `services/core-api`, `services/payment-api`,
 `services/notification-api`, `services/integration-api` e
@@ -40,8 +42,6 @@ Os modulos `services/core-api`, `services/payment-api`,
 usam Spring Boot Web MVC e Actuator, com testes HTTP de health, liveness e
 readiness em portas aleatorias.
 O Surefire `3.5.5` e gerenciado pelo parent POM.
-Todos os servicos tambem incluem o registry Prometheus do Micrometer, mas o
-endpoint de scrape so e exposto no perfil `observability`.
 Todos os servicos tambem incluem o registry Prometheus do Micrometer, mas o
 endpoint de scrape so e exposto no perfil `observability`.
 
@@ -70,6 +70,10 @@ Linux/macOS:
 ```sh
 ./mvnw verify
 ```
+
+Os relatorios JaCoCo ficam em `target/site/jacoco` de cada modulo. O modulo
+`clinora-test-support` parte de 30/36 linhas cobertas; novas classes de
+producao entram automaticamente na regra, exceto bootstrap.
 
 ## Decisoes de seguranca
 - Sem binario Maven Wrapper versionado.

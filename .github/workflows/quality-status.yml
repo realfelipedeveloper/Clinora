@@ -1,0 +1,38 @@
+name: Publicar status de qualidade
+
+on:
+  workflow_dispatch:
+    inputs:
+      quality_run_id:
+        description: ID do run de qualidade concluido
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+  statuses: write
+
+jobs:
+  publicar:
+    name: Publicar status do PR
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Baixar publicador da branch padrao
+        uses: actions/checkout@v7
+        with:
+          ref: development
+          persist-credentials: false
+
+      - name: Configurar Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      - name: Publicar resultado sem executar codigo do PR
+        run: node tools/publish-quality-status.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          QUALITY_RUN_ID: ${{ inputs.quality_run_id }}
