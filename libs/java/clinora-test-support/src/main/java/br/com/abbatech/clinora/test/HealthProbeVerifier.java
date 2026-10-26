@@ -29,6 +29,19 @@ public final class HealthProbeVerifier {
             }
 
             requireStatus(get(client, port, "/actuator/env"), 404, "/actuator/env");
+            requireStatus(get(client, port, "/actuator/prometheus"), 404,
+                    "/actuator/prometheus");
+        }
+    }
+
+    public static void verifyPrometheus(int port) throws IOException, InterruptedException {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpResponse<String> response = get(client, port, "/actuator/prometheus");
+            requireStatus(response, 200, "/actuator/prometheus");
+            if (!response.body().contains("jvm_")) {
+                throw new AssertionError("/actuator/prometheus deve expor metricas JVM");
+            }
+            requireStatus(get(client, port, "/actuator/env"), 404, "/actuator/env");
         }
     }
 
