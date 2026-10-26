@@ -25,3 +25,4 @@
 - 2026-10-26: `ControlValueAccessor` com `OnPush` precisa chamar `markForCheck()` em `writeValue` e `setDisabledState`; no select, opcoes adicionadas depois do valor inicial precisam marcar a opcao selecionada explicitamente.
 - 2026-10-26: Storybook 10.6.3 com builder Angular/Webpack aceita Angular 22; `@angular/platform-browser-dynamic` deve acompanhar a versao do framework no lockfile. O builder usa porta exclusiva e pode compilar as historias da biblioteca sem Compodoc.
 - 2026-10-26: O servidor Storybook Angular precisa de `browserTarget` explicito mesmo quando o build estatico funciona sem ele; apontar para `web:build` permite herdar configuracao da aplicacao.
+- 2026-10-26: A suite retroativa deve distinguir teste unitario do verificador, teste HTTP real dos servicos e gates ainda ausentes. Mockito/AssertJ/JUnit ficam explicitos no modulo de suporte para testar respostas de saude e exposicao indevida de endpoints sem abrir portas fixas.
