@@ -2,5 +2,6 @@
 
 Pacotes TypeScript compartilhados.
 
-Ainda sem implementacao na TASK-001.
+`clinora-ui` e a biblioteca Angular do Design System da SPEC-001. Consulte
+`clinora-ui/README.md` para componentes, comandos e contratos.
 
