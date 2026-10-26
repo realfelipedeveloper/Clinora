@@ -64,7 +64,18 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "coverage": true,
+            "coverageInclude": ["apps/web/src/**/*.ts"],
+            "coverageExclude": ["**/*.spec.ts", "**/*.test.ts"],
+            "coverageThresholds": {
+              "statements": 50,
+              "branches": 90,
+              "functions": 50,
+              "lines": 25
+            }
+          }
         }
       }
     },
@@ -89,7 +100,16 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "libs/typescript/clinora-ui/tsconfig.spec.json"
+            "tsConfig": "libs/typescript/clinora-ui/tsconfig.spec.json",
+            "coverage": true,
+            "coverageInclude": ["libs/typescript/clinora-ui/src/**/*.ts"],
+            "coverageExclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.stories.ts"],
+            "coverageThresholds": {
+              "statements": 85,
+              "branches": 85,
+              "functions": 70,
+              "lines": 90
+            }
           }
         },
         "storybook": {
