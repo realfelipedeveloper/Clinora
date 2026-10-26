@@ -15,6 +15,7 @@ logs/
 
 # Node / Angular
 node_modules/
+.pnpm-store/
 .angular/
 dist/
 coverage/
