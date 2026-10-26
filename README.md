@@ -37,7 +37,8 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 ## Estado do bootstrap
 SPEC-001 aprovada. O repositorio foi iniciado pela TASK-001 com a estrutura poliglota em `apps`, `services`, `libs`, `infra` e `tools`.
 
-O primeiro servico executavel e `services/core-api`, com endpoints de saude.
+Os servicos `services/core-api` e `services/payment-api` estao executaveis,
+com endpoints de saude.
 Ainda nao ha Docker Compose. Consulte `docs/11-local-development.md` para o
 estado local e portas reservadas, `docs/12-git-flow.md` para o fluxo de branches,
 `docs/13-java-build.md` para o build Maven, `docs/14-frontend-workspace.md` para

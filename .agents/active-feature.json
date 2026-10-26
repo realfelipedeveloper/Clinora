@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-006",
-    "title": "core-api",
-    "branch": "feature/spec-001-task-006",
+    "id": "TASK-007",
+    "title": "payment-api",
+    "branch": "feature/spec-001-task-007",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"
