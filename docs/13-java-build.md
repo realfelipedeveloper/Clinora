@@ -41,6 +41,18 @@ usam Spring Boot Web MVC e Actuator, com testes HTTP de health, liveness e
 readiness em portas aleatorias.
 O Surefire `3.5.5` e gerenciado pelo parent POM.
 
+O modulo `libs/java/clinora-test-support` centraliza a verificacao HTTP dos
+probes. Os servicos o declaram apenas como dependencia de teste. Para testar
+um servico isoladamente, inclua suas dependencias no reactor:
+
+```powershell
+.\mvnw.cmd -pl services/core-api -am test
+```
+
+Para iniciar um servico em checkout novo, use `-am package` para construir
+tambem o modulo de suporte e execute o JAR gerado. Os READMEs dos servicos
+mostram os comandos completos.
+
 ## Comandos
 
 Windows:
