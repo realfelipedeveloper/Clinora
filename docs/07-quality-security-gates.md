@@ -14,12 +14,14 @@ arquivos TS de producao e aplica os pisos registrados em `angular.json`.
 criticos no conjunto total. Dois avisos altos transitivos de ferramentas de
 desenvolvimento permanecem documentados ate haver correcao compativel.
 
-`Publicar status de qualidade` recebe o ID de um run concluido da workflow
+`Publicar status de qualidade` recebe o ID de um run da workflow
 oficial e transforma o resultado em status de commit `clinora/qualidade`
 somente para PR aberto do proprio repositorio com SHA identico ao run.
-TASK-042 habilita disparo manual para validar o primeiro ciclo remoto;
-TASK-043 liga o disparo automatico. Exigir o status na protecao de branch
-somente apos essa validacao. PRs de forks ainda nao recebem esse status.
+TASK-042 validou o ciclo manual nos PRs de promocao #59 e #61. A TASK-043
+dispara o publicador automaticamente apos o gate, inclusive quando ele falha;
+o publicador aguarda por tempo limitado a conclusao do run. O job com escrita
+nao faz checkout do PR. Exigir o status na protecao de branch somente apos
+validar o disparo automatico remoto. PRs de forks ainda nao recebem esse status.
 
 Os itens abaixo sao o contrato de qualidade do projeto, nao uma declaracao
 de que todos os gates ja foram implementados na SPEC-001.

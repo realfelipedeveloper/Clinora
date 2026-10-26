@@ -17,6 +17,7 @@ afirmar que a suite anterior continuou verde.
 | 013-014 | Web Angular e tokens Tailwind | Dois testes Vitest verificam identidade pt-BR e classes de token; cobertura com pisos 50% statements/funcoes, 90% branches, 25% linhas; `ng build web` valida CSS | Teste de navegador, responsividade e acessibilidade: TASK-031/032 |
 | 015 | Sete componentes UI | Dez testes Vitest cobrem formulario, estados, modal e semantica; pisos 85% statements/branches, 70% funcoes, 90% linhas | Interacao E2E e axe-core: TASK-031/032 |
 | 016 | Storybook | Build estatico e smoke test executados na TASK-016; build permanente no `verify` e CI | Smoke test de servidor em CI ainda pendente |
+| 035-043 | CI, auditoria e status de qualidade | `verify` em PR; testes unitarios de run, SHA, fork, falha, timeout e permissao isolada do publicador; prova manual nos PRs #59 e #61 | Validar disparo automatico remoto e protecao obrigatoria nas tres bases |
 
 O projeto ainda nao implementa tenant, pacientes, reservas, agenda ou
 pagamentos. Portanto nao ha testes desses dominios a declarar nesta spec.
@@ -57,5 +58,6 @@ gates de seguranca amplos ainda nao estao implementados; `verify` cobre
 somente as camadas presentes na matriz. A workflow `Qualidade Clinora` executa
 `corepack pnpm run verify` em PRs para as tres branches base. A workflow de
 publicacao confere run concluido, PR aberto, repositorio e SHA antes de
-registrar `clinora/qualidade`; TASK-043 ligara o disparo automatico.
+registrar `clinora/qualidade`; o job isolado de TASK-043 solicita a publicacao
+ao fim da qualidade, inclusive se o gate falhar.
 Forks ainda nao sao elegiveis para esse status.
