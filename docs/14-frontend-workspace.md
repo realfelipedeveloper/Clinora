@@ -30,6 +30,9 @@ libs/typescript/
 `apps/web` com roteamento e Vitest. A interface inicial usa `pt-BR` e
 nao acessa APIs nem dados de saude.
 
+A TASK-015 adiciona a biblioteca Angular `clinora-ui` em
+`libs/typescript/clinora-ui`, com componentes compartilhados e testes Vitest.
+
 Tailwind CSS 4 usa `@tailwindcss/postcss` em `.postcssrc.json` e tokens CSS
 em `apps/web/src/styles.css`. Nao ha configuracao JavaScript de tema. Os
 tokens `ink`, `brand`, `accent`, `muted`, `line`, `surface` e `paper` geram
@@ -47,6 +50,8 @@ corepack pnpm frontend:version
 corepack pnpm web:test
 corepack pnpm web:build
 corepack pnpm web:serve
+corepack pnpm ui:test
+corepack pnpm ui:build
 ```
 
 O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
@@ -56,7 +61,7 @@ O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
 As configuracoes pnpm ficam em `pnpm-workspace.yaml`, conforme pnpm 11.
 
 ## Proximos projetos
-- `apps/web`: componentes, Storybook e landing entram nas TASK-015 a TASK-017.
+- `apps/web`: Storybook e landing entram nas TASK-016 e TASK-017.
 - `apps/docs`: entra na TASK-018.
 
 ## Seguranca e privacidade

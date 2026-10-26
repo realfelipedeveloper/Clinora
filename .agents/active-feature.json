@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-014",
-    "title": "Tailwind e tokens",
-    "branch": "feature/spec-001-task-014",
+    "id": "TASK-015",
+    "title": "Design System",
+    "branch": "feature/spec-001-task-015",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"
