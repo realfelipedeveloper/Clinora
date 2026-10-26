@@ -13,9 +13,15 @@
 10. Nunca usar portas comuns do host sem validação.
 11. Nunca deixar pendência quando puder existir configuração padrão.
 12. Nunca concluir tarefa sem atualizar documentação e memória.
+13. Toda correção, feature, hotfix ou regra de negócio exige testes automatizados de regressão proporcionais ao risco, com o cenário que falhava antes da correção sempre que reproduzível.
+13. Toda correção, feature, hotfix ou regra de negócio exige testes automatizados de regressão proporcionais ao risco, com o cenário que falhava antes da correção sempre que reproduzível.
 
 ## Fluxo obrigatório
 Load context → validate spec → impact analysis → concurrency/timezone review → threat/privacy model → tests → minimal implementation → validation → regression → security → diff review → context update → completion report.
+
+Registrar no relatório da tarefa os testes novos, as camadas exercitadas (unitário, integração, E2E, segurança) e as lacunas justificadas. Não marcar cobertura de camada inexistente como concluída.
+
+Registrar no relatório da tarefa os testes novos, as camadas exercitadas (unitário, integração, E2E, segurança) e as lacunas justificadas. Não marcar cobertura de camada inexistente como concluída.
 
 ## Git Flow
 main, homologation, development, feature/*, release/* e hotfix/*.
