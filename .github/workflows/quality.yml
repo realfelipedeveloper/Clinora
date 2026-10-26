@@ -1,0 +1,49 @@
+name: Qualidade Clinora
+
+on:
+  pull_request:
+    branches:
+      - development
+      - homologation
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qualidade-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fundacao:
+    name: Testes e builds da fundacao
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CI: 'true'
+      STORYBOOK_DISABLE_TELEMETRY: 'true'
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Configurar Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Configurar Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          package-manager-cache: false
+
+      - name: Habilitar pnpm via Corepack
+        run: corepack enable
+
+      - name: Validar scripts, Java e frontend
+        run: corepack pnpm run verify

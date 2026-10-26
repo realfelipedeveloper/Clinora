@@ -10,6 +10,8 @@ corepack pnpm run doctor
 corepack pnpm run verify
 corepack pnpm run java:verify
 corepack pnpm run frontend:check
+corepack pnpm run frontend:verify
+corepack pnpm run tools:test
 corepack pnpm run git:remote
 ```
 
@@ -23,6 +25,8 @@ task doctor
 task verify
 task java:verify
 task frontend:check
+task frontend:verify
+task tools:test
 task git:remote
 ```
 
@@ -31,16 +35,22 @@ usar `corepack pnpm run ...` sem perder cobertura.
 
 ## Validacoes
 - `doctor`: toolchain local, arquivos de fundacao, Angular workspace, Java e remoto Git.
-- `verify`: executa `doctor`, `java:verify` e `frontend:check`.
+- `verify`: executa `doctor`, `tools:test`, `java:verify` e `frontend:verify`.
 - `java:verify`: executa `mvnw verify` com Java 25.
 - `frontend:check`: valida lockfile congelado, peer dependencies e Angular workspace.
+- `frontend:verify`: executa `frontend:check`, testes Vitest de web/UI e builds
+  de web/UI/Storybook.
+- `tools:test`: testa o guard do remote em repositorios Git temporarios.
 - `git:remote`: bloqueia qualquer remoto diferente de `realfelipedeveloper/Clinora`.
 
 ## Limites
-O verificador completo de portas pertence a TASK-026. Esta tarefa nao inicia servicos locais.
+O verificador completo de portas pertence a TASK-026. `doctor` e
+`frontend:check` nao iniciam servicos; `verify` executa testes Spring Boot em
+portas aleatorias, sem ocupar as portas reservadas do host.
 
 ## Seguranca e privacidade
 - Nenhum dado sensivel de saude introduzido.
 - Nenhum segredo real criado.
-- Nenhum servico local iniciado.
+- Nenhum servico de negocio persistente e iniciado pelos scripts; testes HTTP
+  usam processos efemeros e portas aleatorias.
 - Nenhuma regra de agenda, tenant ou status de consulta implementada.

@@ -14,6 +14,8 @@
     "verify": "node tools/clinora.mjs verify",
     "java:verify": "node tools/clinora.mjs java:verify",
     "frontend:check": "node tools/clinora.mjs frontend:check",
+    "frontend:verify": "node tools/clinora.mjs frontend:verify",
+    "tools:test": "node tools/clinora.mjs tools:test",
     "frontend:version": "ng version",
     "frontend:workspace": "ng config cli.packageManager",
     "web:serve": "ng serve web --host 127.0.0.1 --port 44210",
