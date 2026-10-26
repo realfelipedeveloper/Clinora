@@ -25,6 +25,8 @@ Na raiz, com Node e pnpm da versao indicada em `.node-version`:
 ```powershell
 corepack pnpm ui:test
 corepack pnpm ui:build
+corepack pnpm ui:storybook
+corepack pnpm ui:storybook:build
 ```
 
 Para consumir a biblioteca por `import { UiButton } from 'clinora-ui'`,
@@ -33,3 +35,7 @@ aponta para `dist/clinora-ui`.
 
 Esta biblioteca nao implementa regras de consulta, reservas, tenant ou acesso
 a dados clinicos.
+
+Storybook serve apenas em `127.0.0.1:44212`, apos verificar a porta livre.
+As historias e a documentacao dos componentes usam pt-BR. O build estatico
+fica em `dist/storybook/clinora-ui` e nao deve ser publicado com dados reais.

@@ -91,6 +91,30 @@
           "options": {
             "tsConfig": "libs/typescript/clinora-ui/tsconfig.spec.json"
           }
+        },
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "browserTarget": "web:build",
+            "configDir": "libs/typescript/clinora-ui/.storybook",
+            "tsConfig": "libs/typescript/clinora-ui/tsconfig.storybook.json",
+            "port": 44212,
+            "host": "127.0.0.1",
+            "open": false,
+            "compodoc": false,
+            "styles": ["apps/web/src/styles.css"]
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "browserTarget": "web:build",
+            "configDir": "libs/typescript/clinora-ui/.storybook",
+            "tsConfig": "libs/typescript/clinora-ui/tsconfig.storybook.json",
+            "outputDir": "dist/storybook/clinora-ui",
+            "compodoc": false,
+            "styles": ["apps/web/src/styles.css"]
+          }
         }
       }
     }
