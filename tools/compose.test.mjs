@@ -43,7 +43,7 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
   assert.equal(config.networks.clinora.name, 'clinora-local-network');
   assert.deepEqual(
     Object.keys(config.services).sort(),
-    [...ports.keys(), 'postgres', 'redis', 'rabbitmq'].sort(),
+    [...ports.keys(), 'postgres', 'redis', 'rabbitmq', 'mailpit'].sort(),
   );
   for (const [name, port] of ports) {
     const service = config.services[name];
@@ -60,6 +60,43 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
       true,
     );
   }
+});
+
+test('Mailpit local captura email efemero com UI protegida', () => {
+  const mailpit = loadConfig().services.mailpit;
+  assert.equal(mailpit.image, 'axllent/mailpit:v1.32.0');
+  assert.deepEqual(
+    mailpit.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]),
+    [
+      ['127.0.0.1', 1025, 44260],
+      ['127.0.0.1', 8025, 44261],
+    ],
+  );
+  assert.equal(mailpit.user, '10001:10001');
+  assert.equal(mailpit.read_only, true);
+  assert.equal(mailpit.tmpfs.includes('/tmp'), true);
+  assert.equal(mailpit.volumes, undefined);
+  assert.deepEqual(mailpit.cap_drop, ['ALL']);
+  assert.equal(mailpit.security_opt.includes('no-new-privileges:true'), true);
+  assert.deepEqual(mailpit.healthcheck.test, ['CMD', '/mailpit', 'readyz']);
+  assert.equal(mailpit.environment.MP_DATABASE, '/tmp/mailpit.db');
+  assert.equal(mailpit.environment.MP_UI_AUTH, 'clinora_local:clinora_mail_local_only_2026');
+  assert.equal(mailpit.environment.MP_ALLOWED_HOSTS, 'mailpit,127.0.0.1:44261');
+  assert.equal(mailpit.environment.MP_MAX_MESSAGES, '100');
+  assert.equal(mailpit.environment.MP_MAX_AGE, '1d');
+  assert.equal(mailpit.environment.MP_MAX_MESSAGE_SIZE, '1');
+  assert.equal(mailpit.environment.MP_DISABLE_VERSION_CHECK, 'true');
+  assert.equal(mailpit.environment.MP_BLOCK_REMOTE_CSS_AND_FONTS, 'true');
+  assert.equal(mailpit.environment.MP_SMTP_ALLOWED_RECIPIENTS, '@example[.]test\\z');
+  assert.equal(mailpit.environment.MP_SMTP_RELAY_ALL, undefined);
+  assert.equal(mailpit.environment.MP_SMTP_FORWARD_CONFIG, undefined);
+});
+
+test('smoke Mailpit envia Host malicioso pelo cliente HTTP de baixo nivel', () => {
+  const smoke = readFileSync(new URL('./compose-smoke.mjs', import.meta.url), 'utf8');
+  assert.match(smoke, /request as httpRequest.*from 'node:http'/);
+  assert.match(smoke, /httpRequest\(/);
+  assert.match(smoke, /headers: \{ Host: 'evil\.example'/);
 });
 
 test('RabbitMQ local isola portas, usuario e topologia de teste com DLQ', () => {
@@ -247,6 +284,9 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
     CLINORA_REDIS_PORT: '44297',
     CLINORA_RABBIT_AMQP_PORT: '44296',
     CLINORA_RABBIT_UI_PORT: '44295',
+    CLINORA_MAIL_SMTP_PORT: '44294',
+    CLINORA_MAIL_UI_PORT: '44293',
+    CLINORA_MAIL_UI_AUTH: 'other_local:other_password_local_only',
   });
   assert.equal(config.services.web.ports[0].published, '44299');
   assert.equal(config.services.docs.ports[0].published, '44211');
@@ -254,4 +294,8 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
   assert.equal(config.services.redis.ports[0].published, '44297');
   assert.equal(config.services.rabbitmq.ports[0].published, '44296');
   assert.equal(config.services.rabbitmq.ports[1].published, '44295');
+  assert.equal(config.services.mailpit.ports[0].published, '44294');
+  assert.equal(config.services.mailpit.ports[1].published, '44293');
+  assert.equal(config.services.mailpit.environment.MP_UI_AUTH, 'other_local:other_password_local_only');
+  assert.equal(config.services.mailpit.environment.MP_ALLOWED_HOSTS, 'mailpit,127.0.0.1:44293');
 });
