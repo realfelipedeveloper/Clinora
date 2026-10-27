@@ -44,4 +44,6 @@ Desktop local segue sem permissao para iniciar `com.docker.service`.
 
 ## Documentacao e memoria
 README, runbook, infra/docker/README, matriz de regressao, active-feature e
-lessons-learned atualizados. Promocao protegida ainda pendente.
+lessons-learned atualizados. A TASK-023 foi promovida pelos PRs #95, #96 e
+#97 com status obrigatorio; as arvores de development, homologation e main
+terminaram identicas.

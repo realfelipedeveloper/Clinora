@@ -32,7 +32,8 @@ conhecida somente para desenvolvimento, substituivel por variavel local.
 Teste estrutural falhou antes e passou 12/12 depois. `pnpm run verify` local
 passou scripts, Maven, Angular, Storybook, 16 E2E e auditoria; esta reporta
 7 vulnerabilidades dentro dos limites atuais, nao ausencia de risco. Smoke
-Linux no CI pendente nesta etapa. Docker Desktop local indisponivel
+Linux passou no PR #98 (run 40596282964), incluindo cinco targets saudaveis,
+datasource autenticado e acesso anonimo negado. Docker Desktop local indisponivel
 por permissao do servico Windows.
 
 ## Documentacao e memoria
