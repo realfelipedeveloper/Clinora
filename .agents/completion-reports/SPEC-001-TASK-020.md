@@ -26,7 +26,9 @@ regras de negocio ou dados clinicos.
 - `verify` local aprovado na repeticao, incluindo 16 E2E. O primeiro gate
   teve falha intermitente de cobertura web em 0%; `web:test` isolado e o gate
   completo repetido passaram sem alterar codigo, testes ou thresholds.
-- Smoke de permissao no CI: pendente.
+- Smoke de permissao no CI Linux aprovado no PR #80, incluindo conexao
+  permitida ao proprio banco e acesso cruzado negado para os quatro papeis.
+  `clinora/qualidade` passou no SHA do PR.
 - Docker local inacessivel por permissao do Windows; nao alegar runtime local.
 
 ## Limites
@@ -42,4 +44,5 @@ README, runbook, matriz de regressao, active-feature, lessons-learned e este
 relatorio atualizados.
 
 ## Status final
-Em validacao.
+PR #80 mesclado em `development`; promocao para `homologation` e `main` em
+andamento pelos PRs automaticos.
