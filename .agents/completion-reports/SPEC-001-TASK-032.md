@@ -21,7 +21,8 @@ fundacao, cobrindo retroativamente a web inicial em desktop e mobile.
 - `corepack pnpm e2e:test`: quatro testes aprovados, desktop e mobile.
 - `verify` completo aprovado: 30 testes de scripts, Maven/JaCoCo,
   12 testes Angular, builds web/UI/Storybook, quatro E2E e auditorias.
-- CI remoto Linux: pendente.
+- CI remoto Linux aprovado na feature #68 e nas promocoes #69 e #70; status
+  obrigatorio `clinora/qualidade` aprovado nas tres bases.
 
 ## Seguranca, privacidade, concorrencia e tempo
 - Nenhum dado clinico ou segredo nos testes, screenshots apenas em falha e
@@ -43,4 +44,5 @@ README, runbooks local/frontend/qualidade, matriz de regressao,
 active-feature e lessons-learned atualizados.
 
 ## Status final
-Implementacao e verificacao local concluidas; CI remoto pendente.
+Concluida e promovida pelo Git Flow ate `main` em 2026-10-27. As arvores de
+`development`, `homologation` e `main` foram conferidas como identicas.

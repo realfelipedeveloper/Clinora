@@ -3,14 +3,109 @@
     <a class="brand" href="/" aria-label="Clinora, página inicial"
       >Clinora<span aria-hidden="true">.</span></a
     >
+    <nav aria-label="Navegação principal">
+      <a href="#visao">Visão</a>
+      <a href="#andamento">Andamento</a>
+    </nav>
+    <a
+      class="header-link"
+      href="https://github.com/realfelipedeveloper/Clinora"
+      target="_blank"
+      rel="noopener noreferrer"
+      >Código-fonte <span aria-hidden="true">↗</span></a
+    >
   </header>
 
   <main id="conteudo">
-    <div class="intro">
-      <p class="eyebrow">Plataforma Clinora</p>
-      <h1 class="text-ink">Clinora</h1>
-      <p class="subtitle">Gestão de clínicas com clareza para cada etapa do cuidado.</p>
+    <section class="hero" aria-labelledby="titulo-principal">
+      <img
+        class="hero-image"
+        src="/clinora-recepcao.png"
+        alt="Recepção iluminada de uma clínica contemporânea"
+        fetchpriority="high"
+      />
+      <div class="hero-content">
+        <p class="eyebrow">Plataforma para clínicas · em desenvolvimento</p>
+        <h1 id="titulo-principal" class="text-ink">Clinora</h1>
+        <p class="hero-description">
+          Mais clareza para organizar o cuidado, da rotina da clínica à experiência de quem é
+          atendido.
+        </p>
+        <a class="primary-link" href="#visao"
+          >Conhecer a proposta <span aria-hidden="true">→</span></a
+        >
+      </div>
+    </section>
+
+    <div class="status-band">
+      <span class="status-label">Em construção</span>
+      <p>A fundação da plataforma está em desenvolvimento.</p>
+      <a href="#andamento">Acompanhar etapas <span aria-hidden="true">↓</span></a>
     </div>
+
+    <section id="visao" class="vision content-section" aria-labelledby="titulo-visao">
+      <div class="section-heading">
+        <p class="eyebrow">Nossa visão</p>
+        <h2 id="titulo-visao">Uma rotina mais simples para quem cuida.</h2>
+      </div>
+      <div class="section-body">
+        <p class="lead">
+          A Clinora nasce para reunir os processos essenciais de uma clínica em uma experiência
+          clara, segura e conectada.
+        </p>
+        <div class="principles">
+          <div>
+            <span class="principle-number">01</span>
+            <h3>Organização</h3>
+            <p>Uma agenda pensada para equipes, espaços e recursos compartilhados.</p>
+          </div>
+          <div>
+            <span class="principle-number">02</span>
+            <h3>Confiança</h3>
+            <p>Privacidade, rastreabilidade e regras consistentes desde a base.</p>
+          </div>
+          <div>
+            <span class="principle-number">03</span>
+            <h3>Continuidade</h3>
+            <p>Informações e serviços preparados para acompanhar a operação.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="andamento" class="progress content-section" aria-labelledby="titulo-andamento">
+      <div class="section-heading">
+        <p class="eyebrow">Andamento</p>
+        <h2 id="titulo-andamento">Primeiro, uma base sólida.</h2>
+      </div>
+      <div class="section-body">
+        <p class="lead">
+          Estamos construindo a fundação técnica da Clinora. As funcionalidades de operação clínica
+          virão em etapas posteriores.
+        </p>
+        <div class="phase">
+          <span class="phase-marker" aria-hidden="true"></span>
+          <div>
+            <strong>Etapa atual: fundação da plataforma</strong>
+            <p>
+              Aplicações web, serviços, biblioteca de interface, testes automatizados e
+              infraestrutura local.
+            </p>
+          </div>
+        </div>
+        <a
+          class="text-link"
+          href="https://github.com/realfelipedeveloper/Clinora"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Acompanhar o projeto no GitHub <span aria-hidden="true">↗</span></a
+        >
+      </div>
+    </section>
     <router-outlet />
   </main>
+  <footer class="site-footer">
+    <a class="brand" href="/">Clinora<span aria-hidden="true">.</span></a>
+    <p>Feito para uma forma mais clara de cuidar.</p>
+  </footer>
 </div>
