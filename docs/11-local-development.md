@@ -10,6 +10,9 @@ habilita Prometheus; veja `docs/16-observability.md`.
 Para executar o build Java, `JAVA_HOME` deve apontar para um JDK 25.
 Para executar o workspace frontend, use Node `24.15.0` ou outra versao suportada pelo Angular 22.
 Para validar a fundacao atual, use `corepack pnpm run verify`.
+Instale Chromium uma vez com `corepack pnpm e2e:install`; `verify` executa
+Playwright/axe-core e precisa da porta web 44210 livre. O CI instala o
+navegador e dependencias de sistema automaticamente.
 
 ## Portas reservadas
 As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem atualizar spec, docs e memoria:
