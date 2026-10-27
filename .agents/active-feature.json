@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-044",
-    "title": "Status de qualidade obrigatorio nas branches base",
-    "branch": "feature/spec-001-task-044",
+    "id": "TASK-032",
+    "title": "Playwright e axe-core",
+    "branch": "feature/spec-001-task-032",
     "status": "completed",
     "startedAt": "2026-10-26",
     "completedAt": "2026-10-26"
