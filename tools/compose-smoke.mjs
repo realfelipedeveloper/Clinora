@@ -21,6 +21,13 @@ const databases = [
   ['clinora_notifications', 'clinora_notifications_user', 'CLINORA_NOTIFICATIONS_DB_PASSWORD'],
   ['clinora_integrations', 'clinora_integrations_user', 'CLINORA_INTEGRATIONS_DB_PASSWORD'],
 ];
+const redisUsers = [
+  ['core', 'CLINORA_CORE_REDIS_PASSWORD'],
+  ['payments', 'CLINORA_PAYMENTS_REDIS_PASSWORD'],
+  ['notifications', 'CLINORA_NOTIFICATIONS_REDIS_PASSWORD'],
+  ['integrations', 'CLINORA_INTEGRATIONS_REDIS_PASSWORD'],
+  ['scheduler', 'CLINORA_SCHEDULER_REDIS_PASSWORD'],
+];
 
 function compose(args) {
   const result = spawnSync('docker', ['compose', ...args], {
@@ -36,6 +43,35 @@ function postgresQuery(database, user, passwordVariable) {
     encoding: 'utf8',
     timeout: 15_000,
   });
+}
+
+function redisQuery(user, passwordVariable, args) {
+  const command = `REDISCLI_AUTH="$${passwordVariable}" redis-cli --user clinora_${user} ${args.join(' ')}`;
+  return spawnSync('docker', ['compose', 'exec', '-T', 'redis', 'sh', '-c', command], {
+    encoding: 'utf8',
+    timeout: 15_000,
+  });
+}
+
+function assertRedisPasswordRejected(password, reason) {
+  const result = spawnSync(
+    'docker',
+    [
+      'compose',
+      'run',
+      '--rm',
+      '-T',
+      '--no-deps',
+      '-e',
+      `CLINORA_CORE_REDIS_PASSWORD=${password}`,
+      'redis',
+    ],
+    { encoding: 'utf8', timeout: 30_000 },
+  );
+  const output = `${result.stdout}${result.stderr}`;
+  assert.notEqual(result.status, 0, 'Senha Redis invalida foi aceita');
+  assert.match(output, reason);
+  assert.equal(output.includes(password), false, 'Senha Redis apareceu no log');
 }
 
 async function assertPortFree(port) {
@@ -54,6 +90,7 @@ async function assertPortFree(port) {
 
 for (const [, port] of endpoints) await assertPortFree(port);
 await assertPortFree(44230);
+await assertPortFree(44240);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -79,6 +116,34 @@ try {
     assert.notEqual(crossTenant.status, 0, `${user} acessou ${otherDatabase}`);
     assert.match(crossTenant.stderr, /permission denied for database/i);
   }
+  const anonymous = spawnSync('docker', ['compose', 'exec', '-T', 'redis', 'redis-cli', 'ping'], {
+    encoding: 'utf8',
+    timeout: 15_000,
+  });
+  assert.match(`${anonymous.stdout}${anonymous.stderr}`, /NOAUTH/i);
+
+  for (let index = 0; index < redisUsers.length; index++) {
+    const [user, passwordVariable] = redisUsers[index];
+    const key = `clinora:${user}:smoke`;
+    const ownWrite = redisQuery(user, passwordVariable, ['SET', key, 'ok', 'EX', '30']);
+    assert.equal(ownWrite.status, 0, `${user}: ${ownWrite.stderr}`);
+    assert.equal(ownWrite.stdout.trim(), 'OK');
+    const ownRead = redisQuery(user, passwordVariable, ['GET', key]);
+    assert.equal(ownRead.status, 0, `${user}: ${ownRead.stderr}`);
+    assert.equal(ownRead.stdout.trim(), 'ok');
+
+    const other = redisUsers[(index + 1) % redisUsers.length][0];
+    const crossService = redisQuery(user, passwordVariable, [
+      'SET',
+      `clinora:${other}:smoke`,
+      'bad',
+    ]);
+    assert.match(`${crossService.stdout}${crossService.stderr}`, /NOPERM/i);
+    const globalDelete = redisQuery(user, passwordVariable, ['FLUSHALL']);
+    assert.match(`${globalDelete.stdout}${globalDelete.stderr}`, /NOPERM/i);
+  }
+  assertRedisPasswordRejected('short', /pelo menos 16 caracteres/);
+  assertRedisPasswordRejected('invalid$password$123', /apenas letras, numeros/);
   console.log('Clinora Compose smoke OK');
 } finally {
   compose(['down', '--remove-orphans']);
