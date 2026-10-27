@@ -25,7 +25,8 @@ ou fuso horario.
 testes e builds Angular/Storybook, 16 E2E Playwright/axe-core e auditoria
 de dependencias nos limites documentados. A suite do publicador passou com
 22 testes. Apos rebase sobre TASK-021, `tools:test` passou com 38 testes.
-Pendente: CI do PR e promocao protegida.
+CI e status obrigatorio aprovados nos PRs #87, #88 e #89. O merge ocorreu
+sem bypass e `development`, `homologation` e `main` ficaram com arvores iguais.
 
 ## Memoria
 `docs/07-quality-security-gates.md`, `docs/17-regression-tests.md` e
