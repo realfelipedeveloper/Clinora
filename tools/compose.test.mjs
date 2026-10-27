@@ -43,7 +43,7 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
   assert.equal(config.networks.clinora.name, 'clinora-local-network');
   assert.deepEqual(
     Object.keys(config.services).sort(),
-    [...ports.keys(), 'postgres', 'redis', 'rabbitmq', 'mailpit'].sort(),
+    [...ports.keys(), 'postgres', 'redis', 'rabbitmq', 'mailpit', 'prometheus', 'grafana'].sort(),
   );
   for (const [name, port] of ports) {
     const service = config.services[name];
@@ -90,6 +90,35 @@ test('Mailpit local captura email efemero com UI protegida', () => {
   assert.equal(mailpit.environment.MP_SMTP_ALLOWED_RECIPIENTS, '@example[.]test\\z');
   assert.equal(mailpit.environment.MP_SMTP_RELAY_ALL, undefined);
   assert.equal(mailpit.environment.MP_SMTP_FORWARD_CONFIG, undefined);
+});
+
+test('Prometheus e Grafana locais isolam portas, metricas e autenticacao', () => {
+  const config = loadConfig();
+  const prometheus = config.services.prometheus;
+  const grafana = config.services.grafana;
+  assert.equal(prometheus.image, 'prom/prometheus:v3.15.1');
+  assert.deepEqual(prometheus.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]), [['127.0.0.1', 9090, 44281]]);
+  assert.equal(prometheus.read_only, true);
+  assert.equal(prometheus.security_opt.includes('no-new-privileges:true'), true);
+  assert.equal(prometheus.volumes.some(({ target, read_only }) => target === '/etc/prometheus/prometheus.yml' && read_only), true);
+  assert.equal(grafana.image, 'grafana/grafana:13.3.0');
+  assert.deepEqual(grafana.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]), [['127.0.0.1', 3000, 44280]]);
+  assert.equal(grafana.security_opt.includes('no-new-privileges:true'), true);
+  assert.equal(grafana.environment.GF_SECURITY_ADMIN_USER, 'clinora_local');
+  assert.equal(grafana.environment.GF_SECURITY_ADMIN_PASSWORD, 'clinora_grafana_local_only_2026');
+  assert.equal(grafana.environment.GF_AUTH_ANONYMOUS_ENABLED, 'false');
+  assert.equal(grafana.environment.GF_USERS_ALLOW_SIGN_UP, 'false');
+  assert.equal(grafana.volumes.some(({ target, read_only }) => target === '/etc/grafana/provisioning/datasources/clinora.yml' && read_only), true);
+  for (const name of ['core-api', 'payment-api', 'notification-api', 'integration-api', 'scheduler-worker']) {
+    assert.equal(config.services[name].environment.SPRING_PROFILES_ACTIVE, 'observability');
+  }
+  const scrape = readFileSync(new URL('../infra/observability/prometheus.yml', import.meta.url), 'utf8');
+  for (const name of ['core-api', 'payment-api', 'notification-api', 'integration-api', 'scheduler-worker']) {
+    assert.ok(scrape.includes(`${name}:8080`));
+  }
+  assert.match(scrape, /\/actuator\/prometheus/);
+  const datasource = readFileSync(new URL('../infra/observability/grafana-datasource.yml', import.meta.url), 'utf8');
+  assert.match(datasource, /http:\/\/prometheus:9090/);
 });
 
 test('smoke Mailpit envia Host malicioso pelo cliente HTTP de baixo nivel', () => {
@@ -287,6 +316,9 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
     CLINORA_MAIL_SMTP_PORT: '44294',
     CLINORA_MAIL_UI_PORT: '44293',
     CLINORA_MAIL_UI_AUTH: 'other_local:other_password_local_only',
+    CLINORA_GRAFANA_PORT: '44292',
+    CLINORA_PROMETHEUS_PORT: '44291',
+    CLINORA_GRAFANA_ADMIN_PASSWORD: 'other_password_local_only',
   });
   assert.equal(config.services.web.ports[0].published, '44299');
   assert.equal(config.services.docs.ports[0].published, '44211');
@@ -298,4 +330,7 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
   assert.equal(config.services.mailpit.ports[1].published, '44293');
   assert.equal(config.services.mailpit.environment.MP_UI_AUTH, 'other_local:other_password_local_only');
   assert.equal(config.services.mailpit.environment.MP_ALLOWED_HOSTS, 'mailpit,127.0.0.1:44293');
+  assert.equal(config.services.grafana.ports[0].published, '44292');
+  assert.equal(config.services.prometheus.ports[0].published, '44291');
+  assert.equal(config.services.grafana.environment.GF_SECURITY_ADMIN_PASSWORD, 'other_password_local_only');
 });
