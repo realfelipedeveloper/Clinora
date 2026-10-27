@@ -1,5 +1,8 @@
 # Roadmap
 
+As specs propostas para as Releases 1–10 estão em [specs/README.md](../specs/README.md).
+Apenas a SPEC-001 está aprovada; os demais rascunhos não autorizam implementação.
+
 Release 0: fundação.
 Release 1: identidade, tenants e autorização.
 Release 2: pacientes, profissionais, especialidades, serviços, salas, equipamentos e convênios.
