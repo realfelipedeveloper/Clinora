@@ -37,10 +37,11 @@ o teste do probe Host falhou antes da correcao e a suite passou 11/11 depois.
 `node --check tools/compose-smoke.mjs` passou. `pnpm run verify` local passou:
 scripts, Maven, Angular, Storybook, 16 E2E Playwright/axe-core e auditoria.
 A auditoria reportou 7 vulnerabilidades (1 baixa, 4 moderadas, 2 altas),
-dentro dos limites atuais; isso nao significa ausencia de risco. Smoke Linux
-do CI corrigido pendente nesta etapa. Docker Desktop local segue sem permissao para
-iniciar `com.docker.service`.
+dentro dos limites atuais; isso nao significa ausencia de risco. O smoke
+Linux passou no PR #95 (run 40594103946), incluindo SMTP aceito e
+rejeitado, autenticacao negativa, Host indevido e captura pela API. Docker
+Desktop local segue sem permissao para iniciar `com.docker.service`.
 
 ## Documentacao e memoria
 README, runbook, infra/docker/README, matriz de regressao, active-feature e
-lessons-learned atualizados. Promocao ainda pendente.
+lessons-learned atualizados. Promocao protegida ainda pendente.
