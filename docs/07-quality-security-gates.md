@@ -3,7 +3,7 @@
 ## Estado executavel da fundacao
 `corepack pnpm run verify` executa `doctor`, testes do guard Git, `mvnw verify`,
 instalacao pnpm congelada, verificacao de peers, testes Vitest da web e UI,
-builds web/UI, build estatico do Storybook e auditoria pnpm. A workflow `Qualidade Clinora`
+builds web/UI, build estatico do Storybook, Playwright/axe-core e auditoria pnpm. A workflow `Qualidade Clinora`
 executa o mesmo comando em PRs para `development`, `homologation` e `main`.
 Veja `docs/17-regression-tests.md` para cobertura real e lacunas retroativas.
 

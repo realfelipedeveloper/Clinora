@@ -46,3 +46,5 @@ Ainda nao ha Docker Compose. Consulte `docs/11-local-development.md` para o
 estado local e portas reservadas, `docs/12-git-flow.md` para o fluxo de branches,
 `docs/13-java-build.md` para o build Maven, `docs/14-frontend-workspace.md` para
 o workspace Angular e `docs/15-global-scripts.md` para os comandos globais.
+Para o `verify` local, instale Chromium com `corepack pnpm e2e:install`;
+Playwright e axe-core rodam em desktop e mobile na porta reservada 44210.
