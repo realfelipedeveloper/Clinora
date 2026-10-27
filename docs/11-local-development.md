@@ -3,7 +3,7 @@
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
 O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
-`compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL e Redis depois do `verify`;
+`compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL, Redis e RabbitMQ depois do `verify`;
 veja `infra/docker/README.md`.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
@@ -56,9 +56,9 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-022: RabbitMQ e DLQ.
-2. TASK-023: Mailpit.
-3. TASK-024: MinIO.
+1. TASK-023: Mailpit.
+2. TASK-024: MinIO.
+3. TASK-025: Prometheus e Grafana.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
@@ -66,3 +66,5 @@ credenciais padrao em `compose.yaml` sao locais e nao servem para producao.
 Nenhum servico Java recebeu credenciais de banco nesta etapa.
 Redis usa ACLs por servico e chaves separadas, sem persistencia. Nao guarde
 nele a unica copia de qualquer reserva, token critico ou dado clinico.
+RabbitMQ local usa somente a topologia de teste e senha de desenvolvimento;
+consulte `infra/docker/README.md`. Nao envie eventos clinicos reais para ela.
