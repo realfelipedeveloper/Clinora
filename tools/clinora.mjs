@@ -126,6 +126,7 @@ function toolsTest() {
     'tools/quality-status.test.mjs',
     'tools/branch-protection.test.mjs',
     'tools/compose.test.mjs',
+    'tools/specs.test.mjs',
   ]);
 }
 

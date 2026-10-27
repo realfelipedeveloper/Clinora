@@ -23,6 +23,7 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 18. docs/17-regression-tests.md
 19. specs/001-platform-foundation/spec.md
 20. specs/001-platform-foundation/tasks.md
+21. specs/README.md — índice das specs aprovadas das Releases 1–10
 
 ## Stack
 - Java 25 LTS + Spring Boot 4.1 + Maven
@@ -38,6 +39,10 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 
 ## Estado do bootstrap
 SPEC-001 aprovada. O repositorio foi iniciado pela TASK-001 com a estrutura poliglota em `apps`, `services`, `libs`, `infra` e `tools`.
+As SPEC-002 a SPEC-011 foram preparadas para revisão, mas ainda não estão
+aprovadas e não autorizam implementação.
+As SPEC-002 a SPEC-011 foram preparadas para revisão, mas ainda não estão
+aprovadas e não autorizam implementação.
 
 Os servicos `services/core-api`, `services/payment-api` e
 `services/notification-api`, `services/integration-api` e
