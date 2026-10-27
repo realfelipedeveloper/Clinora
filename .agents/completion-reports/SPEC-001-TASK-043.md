@@ -22,7 +22,8 @@ quando o gate falha, sem conceder escrita ao job que executa codigo do PR.
   workflow; testes anteriores de SHA, fork, PR, falha e API preservados.
 - `verify` completo aprovado: 26 testes de scripts, Maven/JaCoCo,
   12 testes Angular, builds web/UI/Storybook e auditorias.
-- CI remoto e status automatico: pendentes.
+- CI remoto e status automatico aprovados nos PRs #62 (feature), #63
+  (`development -> homologation`) e #64 (`homologation -> main`).
 
 ## Seguranca, privacidade, concorrencia e tempo
 - Job de teste permanece somente leitura; o job com `actions: write` nao
@@ -40,8 +41,8 @@ quando o gate falha, sem conceder escrita ao job que executa codigo do PR.
   sera validada no PR de feature e nos dois PRs de promocao.
 
 ## Risco residual
-- Confirmar status automatico nos tres tipos de PR antes de exigir o check
-  nas branches protegidas. Forks ainda nao sao elegiveis para esse status.
+- O status automatico foi confirmado nos tres tipos de PR. TASK-044 ativa
+  sua exigencia nas branches protegidas. Forks ainda nao sao elegiveis.
 
 ## Rollback
 Reverter por PR, preservando os testes e mantendo a protecao de branches
@@ -52,4 +53,4 @@ Guias de qualidade, Git Flow e testes; `active-feature.json`,
 `lessons-learned.md` e relatorio remoto da TASK-042 atualizados.
 
 ## Status final
-Implementacao e verificacao local concluidas; validacao remota pendente.
+Concluida e validada remotamente nos tres tipos de PR.
