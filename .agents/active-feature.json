@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-020",
-    "title": "PostgreSQL local isolado",
-    "branch": "feature/spec-001-task-020",
+    "id": "TASK-021",
+    "title": "Redis local efemero com ACL",
+    "branch": "feature/spec-001-task-021",
     "status": "in_progress",
     "startedAt": "2026-10-27"
   },
