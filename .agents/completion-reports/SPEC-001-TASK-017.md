@@ -36,7 +36,8 @@ do escopo da fundacao.
   ausencia de overflow e axe-core WCAG A/AA sem violacoes detectadas.
 - Capturas desktop, mobile e 320 px revisadas, com ajuste do enquadramento
   mobile e da legibilidade do texto.
-- CI remoto: pendente do PR.
+- CI Linux aprovado nos PRs #71, #72 e #73, com status obrigatorio
+  `clinora/qualidade` em todas as etapas.
 
 ## Limites
 - Axe-core nao substitui avaliacao manual de acessibilidade.
@@ -53,4 +54,5 @@ README, guia frontend, runbook local, matriz de testes, active-feature,
 lessons-learned e este relatorio atualizados.
 
 ## Status final
-Implementacao e validacao local concluidas; promocao pelo Git Flow pendente.
+Concluida e promovida ate `main` em 2026-10-27. As arvores de `development`,
+`homologation` e `main` foram conferidas como identicas.
