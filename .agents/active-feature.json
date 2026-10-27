@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-019",
-    "title": "Docker Compose local",
-    "branch": "feature/spec-001-task-019",
+    "id": "TASK-020",
+    "title": "PostgreSQL local isolado",
+    "branch": "feature/spec-001-task-020",
     "status": "in_progress",
     "startedAt": "2026-10-27"
   },

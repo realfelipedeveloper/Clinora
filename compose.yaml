@@ -2,16 +2,17 @@ name: clinora-local
 
 x-java: &java
   image: eclipse-temurin:25.0.4.1_1-jre-alpine-3.24
-  command: ["java", "-jar", "/app.jar"]
-  user: "10001:10001"
+  command: ['java', '-jar', '/app.jar']
+  user: '10001:10001'
   read_only: true
   init: true
-  tmpfs: ["/tmp"]
-  security_opt: ["no-new-privileges:true"]
+  tmpfs: ['/tmp']
+  security_opt: ['no-new-privileges:true']
   restart: unless-stopped
   networks: [clinora]
   healthcheck:
-    test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/actuator/health/readiness"]
+    test:
+      ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/actuator/health/readiness']
     interval: 10s
     timeout: 3s
     start_period: 30s
@@ -21,18 +22,56 @@ x-static: &static
   image: nginxinc/nginx-unprivileged:alpine3.24
   read_only: true
   init: true
-  tmpfs: ["/tmp"]
-  security_opt: ["no-new-privileges:true"]
+  tmpfs: ['/tmp']
+  security_opt: ['no-new-privileges:true']
   restart: unless-stopped
   networks: [clinora]
   healthcheck:
-    test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+    test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/']
     interval: 10s
     timeout: 3s
     start_period: 10s
     retries: 6
 
 services:
+  postgres:
+    image: postgres:17.11-alpine3.23
+    environment:
+      POSTGRES_USER: clinora_admin
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${CLINORA_POSTGRES_ADMIN_PASSWORD:-clinora_admin_local_only}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+      CLINORA_CORE_DB_PASSWORD: ${CLINORA_CORE_DB_PASSWORD:-clinora_core_local_only}
+      CLINORA_PAYMENTS_DB_PASSWORD: ${CLINORA_PAYMENTS_DB_PASSWORD:-clinora_payments_local_only}
+      CLINORA_NOTIFICATIONS_DB_PASSWORD: ${CLINORA_NOTIFICATIONS_DB_PASSWORD:-clinora_notifications_local_only}
+      CLINORA_INTEGRATIONS_DB_PASSWORD: ${CLINORA_INTEGRATIONS_DB_PASSWORD:-clinora_integrations_local_only}
+    ports:
+      - target: 5432
+        published: ${CLINORA_POSTGRES_PORT:-44230}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: volume
+        source: postgres-data
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./infra/docker/postgres/10-databases.sh
+        target: /docker-entrypoint-initdb.d/10-databases.sh
+        read_only: true
+        bind: { create_host_path: false }
+    networks: [clinora]
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'PGPASSWORD="$$POSTGRES_PASSWORD" psql -h 127.0.0.1 -U "$$POSTGRES_USER" -d postgres -tAc ''SELECT 1'' | grep -qx 1',
+        ]
+      interval: 10s
+      timeout: 3s
+      start_period: 30s
+      retries: 6
+
   web:
     <<: *static
     ports:
@@ -152,3 +191,6 @@ services:
 networks:
   clinora:
     name: clinora-local-network
+
+volumes:
+  postgres-data:

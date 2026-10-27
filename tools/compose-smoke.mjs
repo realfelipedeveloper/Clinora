@@ -15,6 +15,12 @@ const endpoints = [
   ['integration-api', 44223, '/actuator/health/readiness'],
   ['scheduler-worker', 44224, '/actuator/health/readiness'],
 ];
+const databases = [
+  ['clinora_core', 'clinora_core_user', 'CLINORA_CORE_DB_PASSWORD'],
+  ['clinora_payments', 'clinora_payments_user', 'CLINORA_PAYMENTS_DB_PASSWORD'],
+  ['clinora_notifications', 'clinora_notifications_user', 'CLINORA_NOTIFICATIONS_DB_PASSWORD'],
+  ['clinora_integrations', 'clinora_integrations_user', 'CLINORA_INTEGRATIONS_DB_PASSWORD'],
+];
 
 function compose(args) {
   const result = spawnSync('docker', ['compose', ...args], {
@@ -22,6 +28,14 @@ function compose(args) {
     timeout: 600_000,
   });
   assert.equal(result.status, 0, `docker compose ${args.join(' ')} falhou`);
+}
+
+function postgresQuery(database, user, passwordVariable) {
+  const command = `PGPASSWORD="$${passwordVariable}" psql -h 127.0.0.1 -U ${user} -d ${database} -tAc 'SELECT current_database()'`;
+  return spawnSync('docker', ['compose', 'exec', '-T', 'postgres', 'sh', '-c', command], {
+    encoding: 'utf8',
+    timeout: 15_000,
+  });
 }
 
 async function assertPortFree(port) {
@@ -39,6 +53,7 @@ async function assertPortFree(port) {
 }
 
 for (const [, port] of endpoints) await assertPortFree(port);
+await assertPortFree(44230);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -52,6 +67,17 @@ try {
     } else if (name !== 'web') {
       assert.equal((await response.json()).status, 'UP', name);
     }
+  }
+  for (let index = 0; index < databases.length; index++) {
+    const [database, user, passwordVariable] = databases[index];
+    const own = postgresQuery(database, user, passwordVariable);
+    assert.equal(own.status, 0, `${user}: ${own.stderr}`);
+    assert.equal(own.stdout.trim(), database);
+
+    const otherDatabase = databases[(index + 1) % databases.length][0];
+    const crossTenant = postgresQuery(otherDatabase, user, passwordVariable);
+    assert.notEqual(crossTenant.status, 0, `${user} acessou ${otherDatabase}`);
+    assert.match(crossTenant.stderr, /permission denied for database/i);
   }
   console.log('Clinora Compose smoke OK');
 } finally {
