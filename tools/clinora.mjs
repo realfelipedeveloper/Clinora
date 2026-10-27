@@ -73,6 +73,7 @@ async function doctor() {
   checkFile('mvnw');
   checkFile('angular.json');
   checkFile('pnpm-workspace.yaml');
+  checkFile('compose.yaml');
 
   checkNode();
   checkPnpm();
@@ -124,6 +125,7 @@ function toolsTest() {
     'tools/clinora.test.mjs',
     'tools/quality-status.test.mjs',
     'tools/branch-protection.test.mjs',
+    'tools/compose.test.mjs',
   ]);
 }
 
