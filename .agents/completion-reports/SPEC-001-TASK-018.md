@@ -35,7 +35,8 @@ buscavel e acessivel, sem introduzir regras de negocio.
 - Capturas desktop/mobile revisadas sem overflow ou sobreposicao.
 - `verify` completo aprovado: 30 testes de scripts, Maven/JaCoCo, testes web,
   docs e UI, builds, Storybook, 16 E2E e auditorias configuradas.
-- CI remoto: pendente do PR.
+- CI Linux aprovado nos PRs #74, #75 e #76, com status obrigatorio
+  `clinora/qualidade` em todas as etapas.
 
 ## Limites
 - Busca por titulo/area, nao pelo texto integral.
@@ -53,4 +54,5 @@ README, apps/docs/README, guia frontend, runbook local, matriz de testes,
 active-feature, lessons-learned e este relatorio atualizados.
 
 ## Status final
-Implementacao e validacao local concluidas; promocao pelo Git Flow pendente.
+Concluida e promovida ate `main` em 2026-10-27. As arvores de `development`,
+`homologation` e `main` foram conferidas como identicas.
