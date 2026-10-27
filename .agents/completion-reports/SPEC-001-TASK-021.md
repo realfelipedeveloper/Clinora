@@ -25,7 +25,8 @@ integrar regras de negocio nesta etapa.
 ## Testes
 - Testes falharam antes da implementacao por ausencia de Redis.
 - `docker compose config`, sintaxe shell e sete testes estruturais: aprovados.
-- `verify` local e smoke de ACL no CI: pendentes.
+- `verify` local, smoke de ACL no CI e status obrigatorio: aprovados nos PRs
+  #83, #85 e #86. As tres branches base ficaram com a mesma arvore.
 - Docker local inacessivel por permissao do Windows; runtime local nao validado.
 
 ## Limites
@@ -41,4 +42,4 @@ README, runbook, infra/docker/README, matriz de regressao, active-feature,
 lessons-learned e este relatorio atualizados.
 
 ## Status final
-Em validacao.
+Concluida e promovida ate `main` por PRs protegidos.

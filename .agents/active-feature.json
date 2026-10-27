@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-043-HOTFIX-01",
-    "title": "Espera limitada do publicador de qualidade",
-    "branch": "hotfix/quality-status-wait",
+    "id": "TASK-022",
+    "title": "RabbitMQ local com DLQ de teste",
+    "branch": "feature/spec-001-task-022",
     "status": "in_progress",
     "startedAt": "2026-10-27"
   },

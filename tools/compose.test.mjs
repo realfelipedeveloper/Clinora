@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
@@ -42,7 +43,7 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
   assert.equal(config.networks.clinora.name, 'clinora-local-network');
   assert.deepEqual(
     Object.keys(config.services).sort(),
-    [...ports.keys(), 'postgres', 'redis'].sort(),
+    [...ports.keys(), 'postgres', 'redis', 'rabbitmq'].sort(),
   );
   for (const [name, port] of ports) {
     const service = config.services[name];
@@ -59,6 +60,72 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
       true,
     );
   }
+});
+
+test('RabbitMQ local isola portas, usuario e topologia de teste com DLQ', () => {
+  const config = loadConfig();
+  const rabbit = config.services.rabbitmq;
+  assert.equal(rabbit.image, 'rabbitmq:4.2.9-management-alpine');
+  assert.deepEqual(
+    rabbit.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]),
+    [
+      ['127.0.0.1', 5672, 44250],
+      ['127.0.0.1', 15672, 44251],
+    ],
+  );
+  assert.equal(rabbit.security_opt.includes('no-new-privileges:true'), true);
+  assert.equal(rabbit.privileged, undefined);
+  assert.equal(rabbit.volumes[0].type, 'volume');
+  assert.equal(rabbit.volumes[1].target, '/etc/rabbitmq/rabbitmq.conf');
+  assert.equal(rabbit.volumes[2].target, '/etc/rabbitmq/definitions.json');
+  assert.equal(rabbit.volumes[1].read_only, true);
+  assert.equal(rabbit.volumes[2].read_only, true);
+  assert.match(rabbit.healthcheck.test.at(-1), /rabbitmq-diagnostics -q ping/);
+
+  const settings = readFileSync(
+    new URL('../infra/docker/rabbitmq/rabbitmq.conf', import.meta.url),
+    'utf8',
+  );
+  assert.match(settings, /definitions\.import_backend = local_filesystem/);
+  assert.match(settings, /definitions\.local\.path = \/etc\/rabbitmq\/definitions\.json/);
+  const definitions = JSON.parse(
+    readFileSync(new URL('../infra/docker/rabbitmq/definitions.json', import.meta.url), 'utf8'),
+  );
+  assert.deepEqual(definitions.vhosts.map(({ name }) => name), ['clinora_local']);
+  assert.deepEqual(definitions.users.map(({ name }) => name), ['clinora_local']);
+  assert.equal(definitions.users[0].hashing_algorithm, 'rabbit_password_hashing_sha256');
+  const passwordHash = Buffer.from(definitions.users[0].password_hash, 'base64');
+  assert.equal(passwordHash.length, 36);
+  assert.deepEqual(
+    passwordHash.subarray(4),
+    createHash('sha256')
+      .update(Buffer.concat([passwordHash.subarray(0, 4), Buffer.from('clinora_rabbit_local_only_2026')]))
+      .digest(),
+  );
+  assert.equal(definitions.permissions.length, 1);
+  assert.equal(definitions.permissions[0].vhost, 'clinora_local');
+  assert.deepEqual(definitions.exchanges.map(({ name }) => name).sort(), [
+    'clinora.smoke.dlx',
+    'clinora.smoke.events',
+  ]);
+  assert.deepEqual(definitions.queues.map(({ name }) => name).sort(), [
+    'clinora.smoke',
+    'clinora.smoke.dlq',
+  ]);
+  const main = definitions.queues.find(({ name }) => name === 'clinora.smoke');
+  assert.equal(main.arguments['x-dead-letter-exchange'], 'clinora.smoke.dlx');
+  assert.equal(main.arguments['x-dead-letter-routing-key'], 'failed');
+  assert.deepEqual(
+    definitions.bindings.map(({ source, destination, routing_key }) => [
+      source,
+      destination,
+      routing_key,
+    ]),
+    [
+      ['clinora.smoke.events', 'clinora.smoke', 'test'],
+      ['clinora.smoke.dlx', 'clinora.smoke.dlq', 'failed'],
+    ],
+  );
 });
 
 test('isola Redis efemero com ACL, memoria limitada e porta em loopback', () => {
@@ -170,9 +237,13 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
     CLINORA_WEB_PORT: '44299',
     CLINORA_POSTGRES_PORT: '44298',
     CLINORA_REDIS_PORT: '44297',
+    CLINORA_RABBIT_AMQP_PORT: '44296',
+    CLINORA_RABBIT_UI_PORT: '44295',
   });
   assert.equal(config.services.web.ports[0].published, '44299');
   assert.equal(config.services.docs.ports[0].published, '44211');
   assert.equal(config.services.postgres.ports[0].published, '44298');
   assert.equal(config.services.redis.ports[0].published, '44297');
+  assert.equal(config.services.rabbitmq.ports[0].published, '44296');
+  assert.equal(config.services.rabbitmq.ports[1].published, '44295');
 });
