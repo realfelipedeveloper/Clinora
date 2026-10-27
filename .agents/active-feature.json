@@ -3,12 +3,12 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-032",
-    "title": "Playwright e axe-core",
-    "branch": "feature/spec-001-task-032",
+    "id": "TASK-017",
+    "title": "Landing Clinora",
+    "branch": "feature/spec-001-task-017",
     "status": "completed",
-    "startedAt": "2026-10-26",
-    "completedAt": "2026-10-26"
+    "startedAt": "2026-10-27",
+    "completedAt": "2026-10-27"
   },
   "services": [
     "web",
