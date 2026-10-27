@@ -104,6 +104,40 @@ services:
       start_period: 30s
       retries: 12
 
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    user: '10001:10001'
+    read_only: true
+    init: true
+    tmpfs: ['/tmp']
+    cap_drop: ['ALL']
+    security_opt: ['no-new-privileges:true']
+    environment:
+      MP_DATABASE: /tmp/mailpit.db
+      MP_UI_AUTH: ${CLINORA_MAIL_UI_AUTH:-clinora_local:clinora_mail_local_only_2026}
+      MP_ALLOWED_HOSTS: mailpit,127.0.0.1:${CLINORA_MAIL_UI_PORT:-44261}
+      MP_MAX_MESSAGES: '100'
+      MP_MAX_AGE: 1d
+      MP_MAX_MESSAGE_SIZE: '1'
+      MP_DISABLE_VERSION_CHECK: 'true'
+      MP_BLOCK_REMOTE_CSS_AND_FONTS: 'true'
+      MP_SMTP_ALLOWED_RECIPIENTS: '@example[.]test\z'
+    ports:
+      - target: 1025
+        published: ${CLINORA_MAIL_SMTP_PORT:-44260}
+        host_ip: 127.0.0.1
+      - target: 8025
+        published: ${CLINORA_MAIL_UI_PORT:-44261}
+        host_ip: 127.0.0.1
+    networks: [clinora]
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', '/mailpit', 'readyz']
+      interval: 10s
+      timeout: 3s
+      start_period: 10s
+      retries: 6
+
   postgres:
     image: postgres:17.11-alpine3.23
     environment:
