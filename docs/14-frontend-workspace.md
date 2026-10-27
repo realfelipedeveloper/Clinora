@@ -54,6 +54,8 @@ corepack pnpm ui:test
 corepack pnpm ui:build
 corepack pnpm ui:storybook
 corepack pnpm ui:storybook:build
+corepack pnpm e2e:install
+corepack pnpm e2e:test
 ```
 
 Os alvos `web:test` e `ui:test` geram cobertura V8 e falham abaixo dos pisos
@@ -61,6 +63,12 @@ em `angular.json`. Web: 50% statements/funcoes, 90% branches e 25% linhas.
 Clinora UI: 85% statements/branches, 70% funcoes e 90% linhas. Todos os
 arquivos TS de producao entram na medicao; specs e historias ficam fora.
 Relatorios locais ficam em `coverage/web` e `coverage/clinora-ui`.
+
+Playwright testa Chromium desktop e mobile, idioma, navegacao e ausencia de
+overflow; axe-core verifica violacoes WCAG A/AA detectaveis automaticamente.
+`verify` e CI executam o smoke E2E. O CI instala Chromium e dependencias de
+sistema antes da suite. O servidor de teste usa `127.0.0.1:44210` e nao
+reutiliza processos existentes nessa porta.
 
 O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
 `@angular/cli@22.1.4` declara essa versao diretamente enquanto

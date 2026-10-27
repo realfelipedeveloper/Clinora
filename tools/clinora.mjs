@@ -63,6 +63,7 @@ async function verify() {
   toolsTest();
   await javaVerify();
   await frontendVerify();
+  runCorepackPnpm(['e2e:test']);
   securityCheck();
 }
 
