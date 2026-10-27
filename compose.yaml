@@ -34,6 +34,42 @@ x-static: &static
     retries: 6
 
 services:
+  redis:
+    image: redis:8.10.2-alpine3.23
+    command: ['sh', '/usr/local/bin/redis-start.sh']
+    user: '10001:10001'
+    read_only: true
+    init: true
+    tmpfs: ['/tmp']
+    environment:
+      CLINORA_CORE_REDIS_PASSWORD: ${CLINORA_CORE_REDIS_PASSWORD:-clinora_core_redis_local_only}
+      CLINORA_PAYMENTS_REDIS_PASSWORD: ${CLINORA_PAYMENTS_REDIS_PASSWORD:-clinora_payments_redis_local_only}
+      CLINORA_NOTIFICATIONS_REDIS_PASSWORD: ${CLINORA_NOTIFICATIONS_REDIS_PASSWORD:-clinora_notifications_redis_local_only}
+      CLINORA_INTEGRATIONS_REDIS_PASSWORD: ${CLINORA_INTEGRATIONS_REDIS_PASSWORD:-clinora_integrations_redis_local_only}
+      CLINORA_SCHEDULER_REDIS_PASSWORD: ${CLINORA_SCHEDULER_REDIS_PASSWORD:-clinora_scheduler_redis_local_only}
+    ports:
+      - target: 6379
+        published: ${CLINORA_REDIS_PORT:-44240}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: bind
+        source: ./infra/docker/redis/start.sh
+        target: /usr/local/bin/redis-start.sh
+        read_only: true
+        bind: { create_host_path: false }
+    networks: [clinora]
+    cap_drop: ['ALL']
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - REDISCLI_AUTH="$$CLINORA_CORE_REDIS_PASSWORD" redis-cli --user clinora_core ping | grep -qx PONG
+      interval: 10s
+      timeout: 3s
+      start_period: 10s
+      retries: 6
+
   postgres:
     image: postgres:17.11-alpine3.23
     environment:

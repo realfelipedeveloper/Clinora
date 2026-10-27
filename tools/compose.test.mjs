@@ -18,6 +18,7 @@ const databasePasswords = [
   'CLINORA_NOTIFICATIONS_DB_PASSWORD',
   'CLINORA_INTEGRATIONS_DB_PASSWORD',
 ];
+const redisUsers = ['core', 'payments', 'notifications', 'integrations', 'scheduler'];
 
 function loadConfig(overrides = {}) {
   const env = { ...process.env };
@@ -39,7 +40,10 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
   const config = loadConfig();
   assert.equal(config.name, 'clinora-local');
   assert.equal(config.networks.clinora.name, 'clinora-local-network');
-  assert.deepEqual(Object.keys(config.services).sort(), [...ports.keys(), 'postgres'].sort());
+  assert.deepEqual(
+    Object.keys(config.services).sort(),
+    [...ports.keys(), 'postgres', 'redis'].sort(),
+  );
   for (const [name, port] of ports) {
     const service = config.services[name];
     assert.equal(service.ports.length, 1);
@@ -54,6 +58,48 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
       service.volumes.every((volume) => volume.read_only),
       true,
     );
+  }
+});
+
+test('isola Redis efemero com ACL, memoria limitada e porta em loopback', () => {
+  const redis = loadConfig().services.redis;
+  assert.equal(redis.image, 'redis:8.10.2-alpine3.23');
+  assert.equal(redis.ports[0].host_ip, '127.0.0.1');
+  assert.equal(Number(redis.ports[0].published), 44240);
+  assert.equal(redis.ports[0].target, 6379);
+  assert.equal(redis.user, '10001:10001');
+  assert.equal(redis.read_only, true);
+  assert.equal(redis.tmpfs.includes('/tmp'), true);
+  assert.equal(redis.volumes[0].read_only, true);
+  assert.equal(redis.volumes[0].target, '/usr/local/bin/redis-start.sh');
+  assert.equal(redis.security_opt.includes('no-new-privileges:true'), true);
+  assert.deepEqual(redis.cap_drop, ['ALL']);
+  assert.equal(redis.healthcheck.test[1].includes('redis-cli --user clinora_core ping'), true);
+  assert.equal(
+    new Set(
+      redisUsers.map((name) => redis.environment[`CLINORA_${name.toUpperCase()}_REDIS_PASSWORD`]),
+    ).size,
+    5,
+  );
+  assert.equal(
+    redis.volumes.some((volume) => volume.type === 'volume'),
+    false,
+  );
+});
+
+test('ACL Redis desativa usuario anonimo e comandos globais', () => {
+  const script = readFileSync(new URL('../infra/docker/redis/start.sh', import.meta.url), 'utf8');
+  assert.match(script, /user default off/);
+  assert.match(script, /--save ['"]{2}/);
+  assert.match(script, /--appendonly no/);
+  assert.match(script, /--maxmemory-policy noeviction/);
+  assert.match(script, /\$\{#password\}.*-lt 16/);
+  assert.match(script, /\[!A-Za-z0-9\._-\]/);
+  assert.match(script, /user clinora_%s on >%s ~clinora:%s:\*/);
+  assert.doesNotMatch(script, /\+@all|\+flushall|\+flushdb/);
+  for (const name of redisUsers) {
+    assert.ok(script.includes(`add_user ${name} `));
+    assert.ok(script.includes(`CLINORA_${name.toUpperCase()}_REDIS_PASSWORD`));
   }
 });
 
@@ -120,8 +166,13 @@ test('mantem os processos Java sem root e verifica readiness real', () => {
 });
 
 test('honra override explicito de porta sem alterar os outros servicos', () => {
-  const config = loadConfig({ CLINORA_WEB_PORT: '44299', CLINORA_POSTGRES_PORT: '44298' });
+  const config = loadConfig({
+    CLINORA_WEB_PORT: '44299',
+    CLINORA_POSTGRES_PORT: '44298',
+    CLINORA_REDIS_PORT: '44297',
+  });
   assert.equal(config.services.web.ports[0].published, '44299');
   assert.equal(config.services.docs.ports[0].published, '44211');
   assert.equal(config.services.postgres.ports[0].published, '44298');
+  assert.equal(config.services.redis.ports[0].published, '44297');
 });
