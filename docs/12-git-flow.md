@@ -86,6 +86,22 @@ testes falham, sem checkout e com `actions: write` restrito a esse job.
 TASK-042 comprovou o bootstrap manual nos PRs #59 e #61; TASK-043 automatiza
 o disparo. Exigir o status nas bases somente apos validar o ciclo remoto.
 
+O ciclo automatico foi validado nos PRs #62, #63 e #64. As protecoes de
+`development`, `homologation` e `main` exigem `clinora/qualidade` com branch
+atualizada (`strict: true`), PR, historico linear, resolucao de conversas e
+enforcement para administradores. Para auditar sem expor credenciais:
+
+```powershell
+gh api repos/realfelipedeveloper/Clinora/branches/development/protection | node tools/check-branch-protection.mjs development
+gh api repos/realfelipedeveloper/Clinora/branches/homologation/protection | node tools/check-branch-protection.mjs homologation
+gh api repos/realfelipedeveloper/Clinora/branches/main/protection | node tools/check-branch-protection.mjs main
+```
+
+A protecao inicial sem status exige o endpoint de `PUT` completo; o `PATCH`
+de `required_status_checks` retorna 404. Preservar os demais campos e ler
+novamente a protecao apos qualquer alteracao. Forks ainda precisam de fluxo
+proprio antes de poderem satisfazer o status obrigatorio.
+
 O repositorio deve manter a permissao padrao do `GITHUB_TOKEN` como leitura,
 habilitar a criacao de Pull Requests por GitHub Actions e deixar a workflow de
 promocao declarar `actions: write`, `contents: write` e `pull-requests: write`

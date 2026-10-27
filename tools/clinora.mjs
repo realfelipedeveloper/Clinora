@@ -110,7 +110,12 @@ function frontendVerify() {
 }
 
 function toolsTest() {
-  run(process.execPath, ['--test', 'tools/clinora.test.mjs', 'tools/quality-status.test.mjs']);
+  run(process.execPath, [
+    '--test',
+    'tools/clinora.test.mjs',
+    'tools/quality-status.test.mjs',
+    'tools/branch-protection.test.mjs',
+  ]);
 }
 
 function securityCheck() {
