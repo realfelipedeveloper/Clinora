@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-021",
-    "title": "Redis local efemero com ACL",
-    "branch": "feature/spec-001-task-021",
+    "id": "TASK-043-HOTFIX-01",
+    "title": "Espera limitada do publicador de qualidade",
+    "branch": "hotfix/quality-status-wait",
     "status": "in_progress",
     "startedAt": "2026-10-27"
   },

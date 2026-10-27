@@ -10,6 +10,7 @@ test('workflow manual nao depende do payload workflow_run', () => {
   const workflow = readFileSync('.github/workflows/quality-status.yml', 'utf8');
   assert.match(workflow, /workflow_dispatch:/);
   assert.match(workflow, /quality_run_id:/);
+  assert.match(workflow, /timeout-minutes: 10/);
   assert.doesNotMatch(workflow, /github\.event\.workflow_run/);
 });
 
@@ -264,6 +265,31 @@ test('aguarda conclusao do run sem aprovar resultado prematuro', async () => {
   assert.equal(loaded.status, 'completed');
   assert.equal(calls, 2);
   assert.equal(waits, 1);
+});
+
+test('aguarda finalizacao tardia do run oficial sem publicar status prematuro', async () => {
+  let calls = 0;
+  let waits = 0;
+  const request = async () => ({
+    ok: true,
+    json: async () => ({
+      ...run(),
+      name: 'Qualidade Clinora',
+      path: '.github/workflows/quality.yml',
+      status: ++calls <= 25 ? 'in_progress' : 'completed',
+      conclusion: calls <= 25 ? null : 'success',
+    }),
+  });
+  const loaded = await waitForQualityRun('123', {
+    ...options,
+    request,
+    delay: async () => {
+      waits += 1;
+    },
+  });
+  assert.equal(loaded.conclusion, 'success');
+  assert.equal(calls, 26);
+  assert.equal(waits, 25);
 });
 
 test('nao espera indefinidamente por run pendente', async () => {
