@@ -28,6 +28,28 @@ const redisUsers = [
   ['integrations', 'CLINORA_INTEGRATIONS_REDIS_PASSWORD'],
   ['scheduler', 'CLINORA_SCHEDULER_REDIS_PASSWORD'],
 ];
+const rabbitAuthorization = `Basic ${Buffer.from('clinora_local:clinora_rabbit_local_only_2026').toString('base64')}`;
+
+async function rabbitRequest(path, { method = 'GET', body, authorization = rabbitAuthorization } = {}) {
+  const headers = { Accept: 'application/json' };
+  if (authorization) headers.Authorization = authorization;
+  if (body) headers['Content-Type'] = 'application/json';
+  return fetch(`http://127.0.0.1:44251/api${path}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(5_000),
+  });
+}
+
+async function rabbitMessages(queue, ackmode) {
+  const response = await rabbitRequest(`/queues/clinora_local/${queue}/get`, {
+    method: 'POST',
+    body: { count: 1, ackmode, encoding: 'auto', truncate: 1000 },
+  });
+  assert.equal(response.status, 200, `${queue}: HTTP ${response.status}`);
+  return response.json();
+}
 
 function compose(args) {
   const result = spawnSync('docker', ['compose', ...args], {
@@ -91,6 +113,8 @@ async function assertPortFree(port) {
 for (const [, port] of endpoints) await assertPortFree(port);
 await assertPortFree(44230);
 await assertPortFree(44240);
+await assertPortFree(44250);
+await assertPortFree(44251);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -144,6 +168,49 @@ try {
   }
   assertRedisPasswordRejected('short', /pelo menos 16 caracteres/);
   assertRedisPasswordRejected('invalid$password$123', /apenas letras, numeros/);
+
+  assert.equal((await rabbitRequest('/overview', { authorization: null })).status, 401);
+  assert.equal(
+    (await rabbitRequest('/overview', {
+      authorization: `Basic ${Buffer.from('guest:guest').toString('base64')}`,
+    })).status,
+    401,
+  );
+  assert.equal((await rabbitRequest('/overview')).status, 200);
+  const vhosts = await (await rabbitRequest('/vhosts')).json();
+  assert.deepEqual(vhosts.map(({ name }) => name), ['clinora_local']);
+  const users = await (await rabbitRequest('/users')).json();
+  assert.deepEqual(users.map(({ name }) => name), ['clinora_local']);
+  const mainQueue = await (await rabbitRequest('/queues/clinora_local/clinora.smoke')).json();
+  assert.equal(mainQueue.arguments['x-dead-letter-exchange'], 'clinora.smoke.dlx');
+  assert.equal(mainQueue.arguments['x-dead-letter-routing-key'], 'failed');
+  const binding = await (
+    await rabbitRequest('/bindings/clinora_local/e/clinora.smoke.dlx/q/clinora.smoke.dlq')
+  ).json();
+  assert.equal(binding.some(({ routing_key }) => routing_key === 'failed'), true);
+
+  const published = await rabbitRequest('/exchanges/clinora_local/clinora.smoke.events/publish', {
+    method: 'POST',
+    body: {
+      properties: { delivery_mode: 2 },
+      routing_key: 'test',
+      payload: 'clinora-dlq-smoke',
+      payload_encoding: 'string',
+    },
+  });
+  assert.equal(published.status, 200);
+  assert.equal((await published.json()).routed, true);
+  const rejected = await rabbitMessages('clinora.smoke', 'reject_requeue_false');
+  assert.equal(rejected.length, 1);
+  assert.equal(rejected[0].payload, 'clinora-dlq-smoke');
+  let deadLetters = [];
+  for (let attempt = 0; attempt < 10 && deadLetters.length === 0; attempt += 1) {
+    if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 500));
+    deadLetters = await rabbitMessages('clinora.smoke.dlq', 'ack_requeue_false');
+  }
+  assert.equal(deadLetters.length, 1, 'Mensagem rejeitada nao chegou a DLQ');
+  assert.equal(deadLetters[0].payload, 'clinora-dlq-smoke');
+  assert.equal(deadLetters[0].properties.headers['x-death'][0].reason, 'rejected');
   console.log('Clinora Compose smoke OK');
 } finally {
   compose(['down', '--remove-orphans']);
