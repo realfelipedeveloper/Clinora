@@ -22,6 +22,9 @@
     "web:serve": "ng serve web --host 127.0.0.1 --port 44210",
     "web:build": "ng build web",
     "web:test": "ng test web --watch=false",
+    "docs:serve": "ng serve docs --host 127.0.0.1 --port 44211",
+    "docs:build": "ng build docs",
+    "docs:test": "ng test docs --watch=false",
     "ui:build": "ng build clinora-ui",
     "ui:test": "ng test clinora-ui --watch=false",
     "ui:storybook": "ng run clinora-ui:storybook",
@@ -38,6 +41,7 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "marked": "18.0.14",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

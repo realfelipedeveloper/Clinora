@@ -17,10 +17,18 @@ export default defineConfig({
     { name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
     { name: 'chromium-mobile', use: { ...devices['Pixel 7'] } },
   ],
-  webServer: {
-    command: 'corepack pnpm web:serve',
-    url: baseURL,
-    reuseExistingServer: false,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: 'corepack pnpm web:serve',
+      url: baseURL,
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+    {
+      command: 'corepack pnpm docs:serve',
+      url: 'http://127.0.0.1:44211',
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
+  ],
 });
