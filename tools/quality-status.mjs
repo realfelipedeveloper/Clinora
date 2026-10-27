@@ -44,9 +44,9 @@ export async function loadQualityRun(runId, { repository, token, request = fetch
 
 export async function waitForQualityRun(
   runId,
-  { attempts = 20, delay = () => new Promise((resolve) => setTimeout(resolve, 3000)), ...options },
+  { attempts = 90, delay = () => new Promise((resolve) => setTimeout(resolve, 4000)), ...options },
 ) {
-  if (!Number.isInteger(attempts) || attempts < 1 || attempts > 60) {
+  if (!Number.isInteger(attempts) || attempts < 1 || attempts > 120) {
     throw new Error('Numero de tentativas invalido');
   }
   for (let attempt = 0; attempt < attempts; attempt += 1) {
