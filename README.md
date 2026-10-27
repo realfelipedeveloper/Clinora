@@ -48,3 +48,5 @@ estado local e portas reservadas, `docs/12-git-flow.md` para o fluxo de branches
 o workspace Angular e `docs/15-global-scripts.md` para os comandos globais.
 Para o `verify` local, instale Chromium com `corepack pnpm e2e:install`;
 Playwright e axe-core rodam em desktop e mobile na porta reservada 44210.
+A landing Angular da TASK-017 apresenta a visao do produto e o andamento real
+da fundacao, sem simular agenda ou acesso clinico ainda fora do escopo.
