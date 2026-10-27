@@ -56,8 +56,9 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-024: MinIO.
-2. TASK-025: Prometheus e Grafana.
+1. TASK-024: armazenamento S3 local; decisao de fornecedor pendente por
+   arquivamento do MinIO comunitario.
+2. TASK-026: verificador de portas.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As

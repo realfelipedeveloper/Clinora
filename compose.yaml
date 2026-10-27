@@ -138,6 +138,73 @@ services:
       start_period: 10s
       retries: 6
 
+  prometheus:
+    image: prom/prometheus:v3.15.1
+    read_only: true
+    init: true
+    tmpfs: ['/tmp']
+    security_opt: ['no-new-privileges:true']
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=1d
+    ports:
+      - target: 9090
+        published: ${CLINORA_PROMETHEUS_PORT:-44281}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: bind
+        source: ./infra/observability/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        read_only: true
+        bind: { create_host_path: false }
+      - type: volume
+        source: prometheus-data
+        target: /prometheus
+    networks: [clinora]
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:9090/-/ready']
+      interval: 10s
+      timeout: 3s
+      start_period: 10s
+      retries: 6
+
+  grafana:
+    image: grafana/grafana:13.3.0
+    user: '472:472'
+    init: true
+    tmpfs: ['/tmp']
+    security_opt: ['no-new-privileges:true']
+    environment:
+      GF_SECURITY_ADMIN_USER: clinora_local
+      GF_SECURITY_ADMIN_PASSWORD: ${CLINORA_GRAFANA_ADMIN_PASSWORD:-clinora_grafana_local_only_2026}
+      GF_AUTH_ANONYMOUS_ENABLED: 'false'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+    ports:
+      - target: 3000
+        published: ${CLINORA_GRAFANA_PORT:-44280}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+      - type: bind
+        source: ./infra/observability/grafana-datasource.yml
+        target: /etc/grafana/provisioning/datasources/clinora.yml
+        read_only: true
+        bind: { create_host_path: false }
+    networks: [clinora]
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:3000/api/health']
+      interval: 10s
+      timeout: 3s
+      start_period: 20s
+      retries: 6
+
   postgres:
     image: postgres:17.11-alpine3.23
     environment:
@@ -215,6 +282,7 @@ services:
   core-api:
     <<: *java
     environment:
+      SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
       CLINORA_CORE_API_PORT: 8080
     ports:
@@ -231,6 +299,7 @@ services:
   payment-api:
     <<: *java
     environment:
+      SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
       CLINORA_PAYMENT_API_PORT: 8080
     ports:
@@ -247,6 +316,7 @@ services:
   notification-api:
     <<: *java
     environment:
+      SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
       CLINORA_NOTIFICATION_API_PORT: 8080
     ports:
@@ -263,6 +333,7 @@ services:
   integration-api:
     <<: *java
     environment:
+      SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
       CLINORA_INTEGRATION_API_PORT: 8080
     ports:
@@ -279,6 +350,7 @@ services:
   scheduler-worker:
     <<: *java
     environment:
+      SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
       CLINORA_SCHEDULER_WORKER_PORT: 8080
     ports:
@@ -299,3 +371,5 @@ networks:
 volumes:
   postgres-data:
   rabbitmq-data:
+  prometheus-data:
+  grafana-data:
