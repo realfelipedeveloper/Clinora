@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-022",
-    "title": "RabbitMQ local com DLQ de teste",
-    "branch": "feature/spec-001-task-022",
+    "id": "TASK-023",
+    "title": "Mailpit local para captura de email de teste",
+    "branch": "feature/spec-001-task-023",
     "status": "in_progress",
     "startedAt": "2026-10-27"
   },
@@ -21,7 +21,7 @@
   "risks": [
     "port conflicts",
     "configuration drift",
-    "RabbitMQ topology drift",
+    "Mailpit authentication or recipient-filter drift",
     "unsafe local defaults"
   ],
   "requiredTests": [
@@ -32,6 +32,7 @@
     "postgres",
     "redis",
     "rabbitmq",
+    "mailpit",
     "accessibility",
     "e2e-smoke"
   ]
