@@ -21,7 +21,7 @@ as demais protecoes do repositorio.
 - Leitura remota apos alteracao: as tres bases passaram no verificador.
 - `verify` completo aprovado: 30 testes de scripts, Maven/JaCoCo,
   12 testes Angular, builds web/UI/Storybook e auditorias.
-- CI e merge sob status obrigatorio: pendentes.
+- CI e merges normais, sem bypass, aprovados nos PRs #65, #66 e #67.
 
 ## Seguranca, privacidade, concorrencia e tempo
 - A primeira tentativa de `PATCH` devolveu 404 sem mudanca remota. O `PUT`
@@ -32,7 +32,7 @@ as demais protecoes do repositorio.
 ## Risco residual
 - Forks nao recebem o status atual e portanto nao podem ser mesclados nesse
   fluxo. A estrategia para contribuicoes externas exige spec propria.
-- Testar o PR desta tarefa e os PRs de promocao sob a nova exigencia.
+- O PR desta tarefa e os dois PRs de promocao passaram sob a nova exigencia.
 
 ## Rollback
 Se o status parar de ser publicado, corrigir o publicador por PR. Alterar
@@ -43,4 +43,4 @@ nunca remover as demais protecoes para liberar o pipeline.
 Git Flow, gates, matriz de regressao, tasks, active-feature e lessons atualizados.
 
 ## Status final
-Configuracao remota aplicada e auditada; validacao de merge pendente.
+Concluida e validada por merges protegidos nas tres branches base.

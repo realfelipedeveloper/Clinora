@@ -45,6 +45,11 @@ jobs:
       - name: Habilitar pnpm via Corepack
         run: corepack enable
 
+      - name: Instalar navegador para testes E2E
+        run: |
+          corepack pnpm install --frozen-lockfile
+          corepack pnpm exec playwright install --with-deps chromium
+
       - name: Validar scripts, Java e frontend
         run: corepack pnpm run verify
 
