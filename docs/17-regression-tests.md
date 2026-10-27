@@ -24,6 +24,7 @@ afirmar que a suite anterior continuou verde.
 | 015 | Sete componentes UI | Dez testes Vitest cobrem formulario, estados, modal e semantica; pisos 85% statements/branches, 70% funcoes, 90% linhas | Interacao E2E e axe-core: TASK-031/032 |
 | 016 | Storybook | Build estatico e smoke test executados na TASK-016; build permanente no `verify` e CI | Smoke test de servidor em CI ainda pendente |
 | 035-044 | CI, auditoria e status de qualidade | `verify` em PR; testes unitarios de run, SHA, fork, falha, timeout e permissao isolada; prova automatica nos PRs #62-#64; verificador da protecao das tres bases; merges protegidos #65-#67 | Forks precisam de fluxo proprio |
+| Specs 002-011 | Releases 1-10 aprovadas pelo usuário, ainda inativas | Testes do índice Markdown verificam links, arquivos, roadmap, status e divergências; cada `tasks.md` deve indicar aprovação | Implementação depende do CI e merge do PR #82 e de ativação sequencial |
 
 O projeto ainda nao implementa tenant, pacientes, reservas, agenda ou
 pagamentos. Portanto nao ha testes desses dominios a declarar nesta spec.
