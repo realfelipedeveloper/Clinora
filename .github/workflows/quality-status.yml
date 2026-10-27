@@ -17,7 +17,7 @@ jobs:
   publicar:
     name: Publicar status do PR
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Baixar publicador da branch padrao
         uses: actions/checkout@v7

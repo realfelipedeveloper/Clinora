@@ -19,7 +19,9 @@ oficial e transforma o resultado em status de commit `clinora/qualidade`
 somente para PR aberto do proprio repositorio com SHA identico ao run.
 TASK-042 validou o ciclo manual nos PRs de promocao #59 e #61. A TASK-043
 dispara o publicador automaticamente apos o gate, inclusive quando ele falha;
-o publicador aguarda por tempo limitado a conclusao do run. O job com escrita
+o publicador aguarda por tempo limitado a conclusao do run (90 consultas com
+intervalo de quatro segundos, job limitado a dez minutos). Falha de API ou
+run nao oficial encerra imediatamente, sem publicar sucesso. O job com escrita
 nao faz checkout do PR. O disparo automatico foi validado nos PRs #62-#64 e
 o status agora e obrigatorio nas tres branches base. PRs de forks ainda nao
 recebem esse status e nao devem ser aceitos por esse fluxo ate haver solucao.

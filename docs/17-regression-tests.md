@@ -68,4 +68,7 @@ somente as camadas presentes na matriz. A workflow `Qualidade Clinora` executa
 publicacao confere run concluido, PR aberto, repositorio e SHA antes de
 registrar `clinora/qualidade`; o job isolado de TASK-043 solicita a publicacao
 ao fim da qualidade, inclusive se o gate falhar.
+O teste de regressao do publicador simula mais de 20 consultas pendentes antes
+da conclusao do run; a espera permanece finita e rejeita erro de API e run
+estranho sem repeticao.
 Forks ainda nao sao elegiveis para esse status.
