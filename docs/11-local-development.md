@@ -3,7 +3,7 @@
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
 O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
-`compose.yaml` executa essas apps e os cinco servicos Java depois do `verify`;
+`compose.yaml` executa essas apps, os cinco servicos Java e PostgreSQL depois do `verify`;
 veja `infra/docker/README.md`.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
@@ -17,7 +17,7 @@ navegador e dependencias de sistema automaticamente.
 
 Com Docker Desktop ativo, rode `corepack pnpm run verify`, confira as portas
 reservadas abaixo e entao `docker compose up -d --wait`. O smoke do CI valida
-os sete endpoints em containers. No Windows, o Docker Desktop pode exigir
+os endpoints em containers. No Windows, o Docker Desktop pode exigir
 permissao administrativa para iniciar `com.docker.service`.
 
 ## Portas reservadas
@@ -56,9 +56,11 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-020: PostgreSQL.
-2. TASK-021: Redis.
-3. TASK-022: RabbitMQ e DLQ.
+1. TASK-021: Redis.
+2. TASK-022: RabbitMQ e DLQ.
+3. TASK-023: Mailpit.
 
 ## Seguranca e privacidade
-Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.
+O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
+credenciais padrao em `compose.yaml` sao locais e nao servem para producao.
+Nenhum servico Java recebeu credenciais de banco nesta etapa.

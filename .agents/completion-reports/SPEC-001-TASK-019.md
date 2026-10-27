@@ -30,7 +30,8 @@ com portas reservadas e healthchecks reais.
 - Tres testes estruturais aprovados localmente.
 - `verify` completo aprovado localmente, incluindo 16 E2E e auditoria nos
   limites configurados.
-- Smoke de containers no CI Linux: pendente do PR.
+- Smoke de containers no CI Linux aprovado no PR #77, incluindo os sete
+  endpoints. O status obrigatorio `clinora/qualidade` passou.
 - Docker Desktop local abriu, mas o Windows negou iniciar o servico
   `com.docker.service`; runtime local nao foi declarado como validado.
 
@@ -47,4 +48,5 @@ README, runbook local, infra/docker/README, matriz de testes, active-feature,
 lessons-learned e este relatorio atualizados.
 
 ## Status final
-Em validacao.
+Concluida pelos PRs #77, #78 e #79, sem bypass. `development`, `homologation`
+e `main` terminaram com arvores identicas.
