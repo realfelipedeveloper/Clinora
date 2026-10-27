@@ -50,9 +50,8 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-017: landing Clinora.
-2. TASK-018: portal docs.
-3. TASK-019: Docker Compose.
+1. TASK-018: portal docs.
+2. TASK-019: Docker Compose.
 
 ## Seguranca e privacidade
 Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.
