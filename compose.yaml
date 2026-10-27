@@ -70,6 +70,40 @@ services:
       start_period: 10s
       retries: 6
 
+  rabbitmq:
+    image: rabbitmq:4.2.9-management-alpine
+    hostname: clinora-rabbit
+    ports:
+      - target: 5672
+        published: ${CLINORA_RABBIT_AMQP_PORT:-44250}
+        host_ip: 127.0.0.1
+      - target: 15672
+        published: ${CLINORA_RABBIT_UI_PORT:-44251}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: volume
+        source: rabbitmq-data
+        target: /var/lib/rabbitmq
+      - type: bind
+        source: ./infra/docker/rabbitmq/rabbitmq.conf
+        target: /etc/rabbitmq/rabbitmq.conf
+        read_only: true
+        bind: { create_host_path: false }
+      - type: bind
+        source: ./infra/docker/rabbitmq/definitions.json
+        target: /etc/rabbitmq/definitions.json
+        read_only: true
+        bind: { create_host_path: false }
+    networks: [clinora]
+    security_opt: ['no-new-privileges:true']
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'rabbitmq-diagnostics -q ping']
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 12
+
   postgres:
     image: postgres:17.11-alpine3.23
     environment:
@@ -230,3 +264,4 @@ networks:
 
 volumes:
   postgres-data:
+  rabbitmq-data:

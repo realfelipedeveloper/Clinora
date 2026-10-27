@@ -1,0 +1,77 @@
+{
+  "users": [
+    {
+      "name": "clinora_local",
+      "password_hash": "jh4vFAiUMiUHQOQ1WcgEylVR/jeqKcKsn2tFkjHURNWbeOYE",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ["administrator"]
+    }
+  ],
+  "vhosts": [{ "name": "clinora_local" }],
+  "permissions": [
+    {
+      "user": "clinora_local",
+      "vhost": "clinora_local",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "clinora.smoke.events",
+      "vhost": "clinora_local",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "clinora.smoke.dlx",
+      "vhost": "clinora_local",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "clinora.smoke",
+      "vhost": "clinora_local",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "clinora.smoke.dlx",
+        "x-dead-letter-routing-key": "failed"
+      }
+    },
+    {
+      "name": "clinora.smoke.dlq",
+      "vhost": "clinora_local",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "clinora.smoke.events",
+      "vhost": "clinora_local",
+      "destination": "clinora.smoke",
+      "destination_type": "queue",
+      "routing_key": "test",
+      "arguments": {}
+    },
+    {
+      "source": "clinora.smoke.dlx",
+      "vhost": "clinora_local",
+      "destination": "clinora.smoke.dlq",
+      "destination_type": "queue",
+      "routing_key": "failed",
+      "arguments": {}
+    }
+  ]
+}
