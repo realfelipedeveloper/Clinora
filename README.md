@@ -47,6 +47,9 @@ estado local e portas reservadas, `docs/12-git-flow.md` para o fluxo de branches
 `docs/13-java-build.md` para o build Maven, `docs/14-frontend-workspace.md` para
 o workspace Angular e `docs/15-global-scripts.md` para os comandos globais.
 Para o `verify` local, instale Chromium com `corepack pnpm e2e:install`;
-Playwright e axe-core rodam em desktop e mobile na porta reservada 44210.
+Playwright e axe-core rodam em desktop e mobile nas portas reservadas 44210 e
+44211.
 A landing Angular da TASK-017 apresenta a visao do produto e o andamento real
 da fundacao, sem simular agenda ou acesso clinico ainda fora do escopo.
+O portal Angular em `apps/docs` permite navegar e buscar os guias locais e a
+SPEC-001, sem backend. Consulte `apps/docs/README.md` para uso e seguranca.
