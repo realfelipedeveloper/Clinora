@@ -190,7 +190,7 @@ try {
   assert.equal(binding.some(({ routing_key }) => routing_key === 'failed'), true);
 
   const published = await rabbitRequest('/exchanges/clinora_local/clinora.smoke.events/publish', {
-    method: 'PUT',
+    method: 'POST',
     body: {
       properties: { delivery_mode: 2 },
       routing_key: 'test',

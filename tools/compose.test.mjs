@@ -128,6 +128,14 @@ test('RabbitMQ local isola portas, usuario e topologia de teste com DLQ', () => 
   );
 });
 
+test('smoke RabbitMQ publica por POST antes de validar a DLQ', () => {
+  const smoke = readFileSync(new URL('./compose-smoke.mjs', import.meta.url), 'utf8');
+  assert.match(
+    smoke,
+    /rabbitRequest\('\/exchanges\/clinora_local\/clinora\.smoke\.events\/publish', \{\s*method: 'POST'/,
+  );
+});
+
 test('isola Redis efemero com ACL, memoria limitada e porta em loopback', () => {
   const redis = loadConfig().services.redis;
   assert.equal(redis.image, 'redis:8.10.2-alpine3.23');

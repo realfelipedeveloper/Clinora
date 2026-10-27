@@ -37,6 +37,11 @@ nos limites documentados. Os oito testes estruturais Compose passaram.
 Depois do rebase sobre o hotfix, `tools:test` passou com 39 testes.
 Docker Desktop local continua sem permissao para iniciar o servico; smoke
 real do broker e promocao protegida ainda dependem do CI.
+O primeiro smoke no PR #90 chegou a topologia, mas recebeu HTTP 405 ao
+publicar com `PUT`. Um novo teste estrutural reproduziu a falha antes da
+correcao; a chamada passou a usar `POST`, como o cliente HTTP oficial. Os
+nove testes estruturais e 40 testes de scripts passaram depois da correcao;
+novo smoke remoto pendente.
 
 ## Documentacao e memoria
 Runbook, infra/docker/README, matriz de regressao, active-feature,
