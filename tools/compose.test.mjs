@@ -92,6 +92,13 @@ test('Mailpit local captura email efemero com UI protegida', () => {
   assert.equal(mailpit.environment.MP_SMTP_FORWARD_CONFIG, undefined);
 });
 
+test('smoke Mailpit envia Host malicioso pelo cliente HTTP de baixo nivel', () => {
+  const smoke = readFileSync(new URL('./compose-smoke.mjs', import.meta.url), 'utf8');
+  assert.match(smoke, /request as httpRequest.*from 'node:http'/);
+  assert.match(smoke, /httpRequest\(/);
+  assert.match(smoke, /headers: \{ Host: 'evil\.example'/);
+});
+
 test('RabbitMQ local isola portas, usuario e topologia de teste com DLQ', () => {
   const config = loadConfig();
   const rabbit = config.services.rabbitmq;

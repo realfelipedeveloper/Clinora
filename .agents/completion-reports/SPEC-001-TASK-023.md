@@ -19,6 +19,9 @@ habilitar envio real antes de uma spec de notificacoes ativa.
   isolamento, autenticacao, limites, filtro e override.
 - Integracao/seguranca: `tools/compose-smoke.mjs` no CI sobe o container,
   testa SMTP aceito/rejeitado, captura pela API, HTTP Basic e Host indevido.
+- Regressao do probe Host: o primeiro CI do PR #95 recebeu 200 com `fetch`
+  onde esperava 403. Um teste estrutural novo falhou antes da correcao;
+  o probe passou a enviar `Host` explicitamente via `node:http`.
 - E2E de produto nao se aplica: nenhuma API da SPEC-001 envia mensagens.
   O smoke de ponta a ponta SMTP -> API cobre a infraestrutura local.
 
@@ -29,12 +32,13 @@ nao usar dados reais. O filtro de destinatarios e barreira de teste, nao
 politica de autorizacao de producao. Nenhum outro servico recebe credenciais.
 
 ## Validacao
-O teste estrutural falhou antes da implementacao e passou 10/10 depois.
+O teste estrutural falhou antes da implementacao e passou 10/10 depois;
+o teste do probe Host falhou antes da correcao e a suite passou 11/11 depois.
 `node --check tools/compose-smoke.mjs` passou. `pnpm run verify` local passou:
 scripts, Maven, Angular, Storybook, 16 E2E Playwright/axe-core e auditoria.
 A auditoria reportou 7 vulnerabilidades (1 baixa, 4 moderadas, 2 altas),
 dentro dos limites atuais; isso nao significa ausencia de risco. Smoke Linux
-do CI pendente nesta etapa. Docker Desktop local segue sem permissao para
+do CI corrigido pendente nesta etapa. Docker Desktop local segue sem permissao para
 iniciar `com.docker.service`.
 
 ## Documentacao e memoria

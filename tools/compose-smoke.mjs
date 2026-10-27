@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { request as httpRequest } from 'node:http';
 import { createConnection, createServer } from 'node:net';
 
 if (process.env.CI !== 'true') {
@@ -31,13 +32,26 @@ const redisUsers = [
 const rabbitAuthorization = `Basic ${Buffer.from('clinora_local:clinora_rabbit_local_only_2026').toString('base64')}`;
 const mailAuthorization = `Basic ${Buffer.from('clinora_local:clinora_mail_local_only_2026').toString('base64')}`;
 
-async function mailRequest(path, { authorization = mailAuthorization, host } = {}) {
+async function mailRequest(path, { authorization = mailAuthorization } = {}) {
   const headers = {};
   if (authorization) headers.Authorization = authorization;
-  if (host) headers.Host = host;
   return fetch(`http://127.0.0.1:44261${path}`, {
     headers,
     signal: AbortSignal.timeout(5_000),
+  });
+}
+
+async function mailHostProbe() {
+  return new Promise((resolve, reject) => {
+    const request = httpRequest('http://127.0.0.1:44261/api/v1/messages', {
+      headers: { Host: 'evil.example', Authorization: mailAuthorization },
+    }, (response) => {
+      response.resume();
+      response.on('end', () => resolve(response.statusCode));
+    });
+    request.setTimeout(5_000, () => request.destroy(new Error('HTTP timeout')));
+    request.on('error', reject);
+    request.end();
   });
 }
 
@@ -276,7 +290,7 @@ try {
   assert.equal((await mailRequest('/api/v1/messages', {
     authorization: `Basic ${Buffer.from('wrong:wrong').toString('base64')}`,
   })).status, 401);
-  assert.equal((await mailRequest('/api/v1/messages', { host: 'evil.example' })).status, 403);
+  assert.equal(await mailHostProbe(), 403);
   assert.equal((await mailRequest('/api/v1/messages')).status, 200);
   await sendTestMail('real@example.com', false);
   await sendTestMail('teste@example.test', true);
