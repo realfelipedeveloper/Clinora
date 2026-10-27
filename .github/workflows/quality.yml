@@ -53,6 +53,9 @@ jobs:
       - name: Validar scripts, Java e frontend
         run: corepack pnpm run verify
 
+      - name: Validar stack local em containers
+        run: node tools/compose-smoke.mjs
+
   solicitar-status:
     name: Solicitar publicacao de status
     needs: fundacao
