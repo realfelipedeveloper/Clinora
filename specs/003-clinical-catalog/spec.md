@@ -1,6 +1,6 @@
 # SPEC-003 — Catálogo clínico e recursos
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 2.
 
 ## Objetivo

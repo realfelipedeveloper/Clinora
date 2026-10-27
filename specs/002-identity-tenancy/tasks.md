@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-002
 
-Status: DRAFT. Cada tarefa exige branch `feature/spec-002-task-XXX`, testes,
+Status: APPROVED. Cada tarefa exige branch `feature/spec-002-task-XXX`, testes,
 documentação, memória, PR e promoção protegida.
 
 1. ADR de IdP OIDC, modelo de contexto e contratos de autenticação.

@@ -1,6 +1,6 @@
 # SPEC-002 — Identidade, tenants e autorização
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 1.
 
 ## Objetivo

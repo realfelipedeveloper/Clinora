@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-008
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. Migrações, consentimentos e contratos de evento.
 2. Templates pt-BR versionados e canais locais/fake.

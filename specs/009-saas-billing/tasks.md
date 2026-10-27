@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-009
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. Catálogo de planos, vigência e políticas configuráveis.
 2. Entitlements, flags e limites atômicos tenant-aware.

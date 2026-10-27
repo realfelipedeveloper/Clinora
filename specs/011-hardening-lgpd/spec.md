@@ -1,6 +1,6 @@
 # SPEC-011 — Hardening, LGPD e preparação comercial
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 10.
 
 ## Objetivo

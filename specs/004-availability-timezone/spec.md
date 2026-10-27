@@ -1,6 +1,6 @@
 # SPEC-004 — Disponibilidade, recorrência e fuso horário
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 3.
 
 ## Objetivo

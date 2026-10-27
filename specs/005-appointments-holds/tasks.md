@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-005
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. ADR de alocação e constraint PostgreSQL; migrações e testes concorrentes.
 2. Máquina de estados e comandos tenant-aware da consulta.

@@ -8,16 +8,16 @@ const index = readFileSync(new URL('README.md', specsRoot), 'utf8');
 const roadmap = readFileSync(new URL('../docs/09-roadmap.md', import.meta.url), 'utf8');
 const entries = [
   ['001', 'platform-foundation', 'APPROVED'],
-  ['002', 'identity-tenancy', 'DRAFT'],
-  ['003', 'clinical-catalog', 'DRAFT'],
-  ['004', 'availability-timezone', 'DRAFT'],
-  ['005', 'appointments-holds', 'DRAFT'],
-  ['006', 'waiting-checkin', 'DRAFT'],
-  ['007', 'fake-payments', 'DRAFT'],
-  ['008', 'notifications', 'DRAFT'],
-  ['009', 'saas-billing', 'DRAFT'],
-  ['010', 'fake-integrations', 'DRAFT'],
-  ['011', 'hardening-lgpd', 'DRAFT'],
+  ['002', 'identity-tenancy', 'APPROVED'],
+  ['003', 'clinical-catalog', 'APPROVED'],
+  ['004', 'availability-timezone', 'APPROVED'],
+  ['005', 'appointments-holds', 'APPROVED'],
+  ['006', 'waiting-checkin', 'APPROVED'],
+  ['007', 'fake-payments', 'APPROVED'],
+  ['008', 'notifications', 'APPROVED'],
+  ['009', 'saas-billing', 'APPROVED'],
+  ['010', 'fake-integrations', 'APPROVED'],
+  ['011', 'hardening-lgpd', 'APPROVED'],
 ];
 
 function rows(markdown) {
@@ -54,27 +54,28 @@ test('indexa exatamente as releases do roadmap em arquivos existentes', () => {
   assert.deepEqual(indexIssues(index), []);
 });
 
-test('mantem somente a SPEC-001 aprovada e tarefas propostas inativas', () => {
+test('mantem specs aprovadas e somente a SPEC-001 ativa ate concluir a fundacao', () => {
+  const active = JSON.parse(readFileSync(new URL('../.agents/active-feature.json', import.meta.url)));
+  assert.equal(active.id, 'SPEC-001');
   for (const [id, directory, status] of entries) {
     const spec = readFileSync(new URL(`${id}-${directory}/spec.md`, specsRoot), 'utf8');
     const tasks = readFileSync(new URL(`${id}-${directory}/tasks.md`, specsRoot), 'utf8');
     assert.match(spec, new RegExp(`^Status: ${status}`, 'm'));
     assert.match(spec, new RegExp(`^# SPEC-${id} `, 'm'));
-    if (status === 'DRAFT') {
-      assert.match(spec, /aprovação necessária antes de implementar/);
+    if (id !== '001') {
       assert.match(spec, new RegExp(`^Release: ${Number(id) - 1}\\.`, 'm'));
-      assert.match(tasks, /^Status: DRAFT/m);
+      assert.match(tasks, /^Status: APPROVED/m);
       assert.match(spec, /## Aceite e regressão obrigatória/);
     }
   }
 });
 
-test('detecta link adulterado e promoção prematura no índice', () => {
+test('detecta link adulterado e status divergente no índice', () => {
   const brokenLink = index.replace('002-identity-tenancy/spec.md', '002-missing/spec.md');
   assert.match(indexIssues(brokenLink).join(' '), /Link da SPEC-002 incorreto/);
-  const premature = index.replace(
-    '| Identidade e tenants | DRAFT |',
+  const divergent = index.replace(
     '| Identidade e tenants | APPROVED |',
+    '| Identidade e tenants | DRAFT |',
   );
-  assert.match(indexIssues(premature).join(' '), /Status da SPEC-002 incorreto/);
+  assert.match(indexIssues(divergent).join(' '), /Status da SPEC-002 incorreto/);
 });

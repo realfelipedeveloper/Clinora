@@ -1,6 +1,6 @@
 # SPEC-008 — Notificações e consentimento
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 7.
 
 ## Objetivo

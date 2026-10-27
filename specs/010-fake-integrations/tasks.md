@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-010
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. Contratos e inbox/outbox isolados da Integration API.
 2. Adapter fake de convênio e calendário com conflitos.

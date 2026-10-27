@@ -1,6 +1,6 @@
 # SPEC-009 — SaaS, planos, flags e billing
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 8.
 
 ## Objetivo

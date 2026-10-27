@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-004
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. ADR de intervalos e política de DST; migrações.
 2. Regras semanais, exceções e bloqueios tenant-aware.

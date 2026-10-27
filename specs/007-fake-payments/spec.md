@@ -1,6 +1,6 @@
 # SPEC-007 — Payment API fake
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 6.
 
 ## Objetivo

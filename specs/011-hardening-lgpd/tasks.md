@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-011
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. Inventário de dados, retenção, direitos e auditoria LGPD.
 2. Criptografia, segredos, backup/restore e resposta a incidentes.

@@ -1,6 +1,6 @@
 # Tarefas propostas — SPEC-003
 
-Status: DRAFT. Cada tarefa terá testes e PR `feature/*` para `development`.
+Status: APPROVED. Cada tarefa terá testes e PR `feature/*` para `development`.
 
 1. Migrações e contratos tenant-aware do catálogo.
 2. Pacientes e finalidade de acesso.

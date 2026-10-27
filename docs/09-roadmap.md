@@ -1,7 +1,8 @@
 # Roadmap
 
-As specs propostas para as Releases 1–10 estão em [specs/README.md](../specs/README.md).
-Apenas a SPEC-001 está aprovada; os demais rascunhos não autorizam implementação.
+As specs aprovadas para as Releases 1–10 estão em [specs/README.md](../specs/README.md).
+A SPEC-001 permanece ativa até concluir a fundação; as demais seguem a
+sequência aprovada após CI e merge do PR #82.
 
 Release 0: fundação.
 Release 1: identidade, tenants e autorização.

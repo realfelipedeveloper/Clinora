@@ -1,6 +1,6 @@
 # SPEC-006 — Lista de espera, check-in e no-show
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 5.
 
 ## Objetivo

@@ -23,8 +23,7 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 18. docs/17-regression-tests.md
 19. specs/001-platform-foundation/spec.md
 20. specs/001-platform-foundation/tasks.md
-21. specs/README.md — índice das propostas das Releases 1–10 (DRAFT)
-21. specs/README.md — índice das propostas das Releases 1–10 (DRAFT)
+21. specs/README.md — índice das specs aprovadas das Releases 1–10
 
 ## Stack
 - Java 25 LTS + Spring Boot 4.1 + Maven

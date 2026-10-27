@@ -1,6 +1,6 @@
 # SPEC-010 — Integrações fake, calendário e teleconsulta
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 9.
 
 ## Objetivo

@@ -1,6 +1,6 @@
 # SPEC-005 — Holds e ciclo de vida da consulta
 
-Status: DRAFT — aprovação necessária antes de implementar.
+Status: APPROVED
 Release: 4.
 
 ## Objetivo
