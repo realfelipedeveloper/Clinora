@@ -105,7 +105,15 @@ function frontendCheck() {
 
 function frontendVerify() {
   frontendCheck();
-  for (const command of ['web:test', 'ui:test', 'web:build', 'ui:build', 'ui:storybook:build']) {
+  for (const command of [
+    'web:test',
+    'docs:test',
+    'ui:test',
+    'web:build',
+    'docs:build',
+    'ui:build',
+    'ui:storybook:build',
+  ]) {
     runCorepackPnpm([command]);
   }
 }
