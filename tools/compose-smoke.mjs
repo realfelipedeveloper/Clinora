@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { createServer } from 'node:net';
+import { request as httpRequest } from 'node:http';
+import { createConnection, createServer } from 'node:net';
 
 if (process.env.CI !== 'true') {
   throw new Error('O smoke de containers e exclusivo do runner isolado de CI.');
@@ -29,6 +30,78 @@ const redisUsers = [
   ['scheduler', 'CLINORA_SCHEDULER_REDIS_PASSWORD'],
 ];
 const rabbitAuthorization = `Basic ${Buffer.from('clinora_local:clinora_rabbit_local_only_2026').toString('base64')}`;
+const mailAuthorization = `Basic ${Buffer.from('clinora_local:clinora_mail_local_only_2026').toString('base64')}`;
+
+async function mailRequest(path, { authorization = mailAuthorization } = {}) {
+  const headers = {};
+  if (authorization) headers.Authorization = authorization;
+  return fetch(`http://127.0.0.1:44261${path}`, {
+    headers,
+    signal: AbortSignal.timeout(5_000),
+  });
+}
+
+async function mailHostProbe() {
+  return new Promise((resolve, reject) => {
+    const request = httpRequest('http://127.0.0.1:44261/api/v1/messages', {
+      headers: { Host: 'evil.example', Authorization: mailAuthorization },
+    }, (response) => {
+      response.resume();
+      response.on('end', () => resolve(response.statusCode));
+    });
+    request.setTimeout(5_000, () => request.destroy(new Error('HTTP timeout')));
+    request.on('error', reject);
+    request.end();
+  });
+}
+
+async function sendTestMail(recipient, accepted) {
+  const socket = createConnection({ host: '127.0.0.1', port: 44260 });
+  socket.setTimeout(5_000, () => socket.destroy(new Error('SMTP timeout')));
+  let buffer = '';
+  const lines = [];
+  let pending;
+  socket.on('data', (chunk) => {
+    buffer += chunk.toString();
+    while (buffer.includes('\n')) {
+      const index = buffer.indexOf('\n');
+      lines.push(buffer.slice(0, index).trimEnd());
+      buffer = buffer.slice(index + 1);
+    }
+    pending?.();
+  });
+  socket.on('error', () => pending?.());
+  socket.on('close', () => pending?.());
+  async function reply() {
+    let line;
+    do {
+      while (lines.length === 0) {
+        if (socket.destroyed) throw new Error('SMTP desconectou antes da resposta');
+        await new Promise((resolve) => { pending = resolve; });
+        pending = undefined;
+      }
+      line = lines.shift();
+    } while (line[3] === '-');
+    return Number(line.slice(0, 3));
+  }
+  async function command(value, expected) {
+    socket.write(`${value}\r\n`);
+    assert.equal(await reply(), expected, `SMTP rejeitou comando ${value.split(' ')[0]}`);
+  }
+  try {
+    assert.equal(await reply(), 220);
+    await command('EHLO clinora.local', 250);
+    await command('MAIL FROM:<teste@example.test>', 250);
+    await command(`RCPT TO:<${recipient}>`, accepted ? 250 : 550);
+    if (accepted) {
+      await command('DATA', 354);
+      await command('From: teste@example.test\r\nTo: teste@example.test\r\nSubject: Clinora smoke\r\n\r\nMensagem de teste.\r\n.', 250);
+    }
+    await command('QUIT', 221);
+  } finally {
+    socket.destroy();
+  }
+}
 
 async function rabbitRequest(path, { method = 'GET', body, authorization = rabbitAuthorization } = {}) {
   const headers = { Accept: 'application/json' };
@@ -115,6 +188,8 @@ await assertPortFree(44230);
 await assertPortFree(44240);
 await assertPortFree(44250);
 await assertPortFree(44251);
+await assertPortFree(44260);
+await assertPortFree(44261);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -211,6 +286,22 @@ try {
   assert.equal(deadLetters.length, 1, 'Mensagem rejeitada nao chegou a DLQ');
   assert.equal(deadLetters[0].payload, 'clinora-dlq-smoke');
   assert.equal(deadLetters[0].properties.headers['x-death'][0].reason, 'rejected');
+  assert.equal((await mailRequest('/api/v1/messages', { authorization: null })).status, 401);
+  assert.equal((await mailRequest('/api/v1/messages', {
+    authorization: `Basic ${Buffer.from('wrong:wrong').toString('base64')}`,
+  })).status, 401);
+  assert.equal(await mailHostProbe(), 403);
+  assert.equal((await mailRequest('/api/v1/messages')).status, 200);
+  await sendTestMail('real@example.com', false);
+  await sendTestMail('teste@example.test', true);
+  let captured = false;
+  for (let attempt = 0; attempt < 10 && !captured; attempt += 1) {
+    if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 500));
+    const response = await mailRequest('/api/v1/messages');
+    assert.equal(response.status, 200);
+    captured = JSON.stringify(await response.json()).includes('Clinora smoke');
+  }
+  assert.equal(captured, true, 'Email de teste nao apareceu na API Mailpit');
   console.log('Clinora Compose smoke OK');
 } finally {
   compose(['down', '--remove-orphans']);

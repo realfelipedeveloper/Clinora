@@ -1,7 +1,7 @@
 # infra/docker
 
 Stack local da SPEC-001. `compose.yaml` fica na raiz, usa o namespace
-`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis e RabbitMQ apenas em
+`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ e Mailpit apenas em
 `127.0.0.1` nas portas reservadas. O Compose consome os artefatos criados pelo
 `verify` como mounts somente leitura; nao usa `node_modules` em containers.
 
@@ -14,7 +14,7 @@ docker compose down
 ```
 
 Antes de subir a stack, confira as portas 44210, 44211, 44220-44224, 44230,
-44240, 44250 e 44251 com o
+44240, 44250, 44251, 44260 e 44261 com o
 verificador do runbook em `docs/11-local-development.md`. O comando `down`
 atua somente no projeto `clinora-local`; nao use `down -v` para diagnostico.
 
@@ -23,7 +23,8 @@ Web e docs usam NGINX sem privilegios. Os servicos Java usam JRE 25, usuario
 as paginas web e o readiness real do Actuator. Nenhum dado clinico e montado.
 O CI executa `tools/compose-smoke.mjs` em runner isolado, verifica os sete
 endpoints, as permissoes dos quatro bancos, as ACLs Redis e o roteamento da
-fila de teste para a DLQ RabbitMQ antes de remover
+fila de teste para a DLQ RabbitMQ, a captura SMTP e o acesso protegido ao
+Mailpit antes de remover
 apenas os containers desse projeto.
 
 PostgreSQL usa volume nomeado persistente, autenticacao host SCRAM e quatro
@@ -67,6 +68,17 @@ Veja as referencias oficiais de [importacao de definicoes](https://www.rabbitmq.
 [dead-letter exchanges](https://www.rabbitmq.com/docs/4.2/dlx) e
 [API HTTP](https://www.rabbitmq.com/docs/4.2/http-api-reference).
 
-Mailpit, MinIO e observabilidade entram nas TASK-023 a TASK-025, sem mudar
-as portas atuais.
+Mailpit escuta SMTP na porta 44260 e UI/API em `http://127.0.0.1:44261`,
+ambas apenas em loopback. A UI/API exige HTTP Basic com usuario
+`clinora_local` e senha local de exemplo `clinora_mail_local_only_2026`,
+substituivel por `CLINORA_MAIL_UI_AUTH`. O banco fica em `/tmp`, sem volume:
+emails desaparecem quando o container e recriado. A retencao limita a 100
+mensagens por um dia, com ate 1 MB por mensagem. Somente destinatarios
+`@example.test` sao aceitos no SMTP; nao ha relay configurado. Nao envie
+dados clinicos reais para esse servico, pois o SMTP local nao usa TLS e a
+senha padrao nao serve fora do ambiente de desenvolvimento. A allowlist de
+Host aceita o nome interno `mailpit` e a porta UI local configurada por
+`CLINORA_MAIL_UI_PORT`. Consulte a [documentacao oficial do Mailpit](https://mailpit.axllent.org/docs/configuration/runtime-options/).
+
+MinIO e observabilidade entram nas TASK-024 e TASK-025, sem mudar as portas atuais.
 
