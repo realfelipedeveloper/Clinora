@@ -3,7 +3,8 @@
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
 O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
-Ainda nao ha Docker Compose.
+`compose.yaml` executa essas apps e os cinco servicos Java depois do `verify`;
+veja `infra/docker/README.md`.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
 
@@ -13,6 +14,11 @@ Para validar a fundacao atual, use `corepack pnpm run verify`.
 Instale Chromium uma vez com `corepack pnpm e2e:install`; `verify` executa
 Playwright/axe-core e precisa das portas 44210 (web) e 44211 (docs) livres. O CI instala o
 navegador e dependencias de sistema automaticamente.
+
+Com Docker Desktop ativo, rode `corepack pnpm run verify`, confira as portas
+reservadas abaixo e entao `docker compose up -d --wait`. O smoke do CI valida
+os sete endpoints em containers. No Windows, o Docker Desktop pode exigir
+permissao administrativa para iniciar `com.docker.service`.
 
 ## Portas reservadas
 As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem atualizar spec, docs e memoria:
@@ -50,7 +56,9 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-019: Docker Compose.
+1. TASK-020: PostgreSQL.
+2. TASK-021: Redis.
+3. TASK-022: RabbitMQ e DLQ.
 
 ## Seguranca e privacidade
 Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.
