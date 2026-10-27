@@ -27,8 +27,10 @@ libs/typescript/
 ```
 
 `angular.json` usa `newProjectRoot: apps`; a aplicacao `web` foi gerada em
-`apps/web` com roteamento e Vitest. A interface inicial usa `pt-BR` e
-nao acessa APIs nem dados de saude.
+`apps/web` com roteamento e Vitest. A landing usa `pt-BR`, uma imagem local da
+recepcao e links de navegacao para as secoes Visao e Andamento. Ela informa
+que a plataforma ainda esta em desenvolvimento; nao acessa APIs nem dados de
+saude.
 
 A TASK-015 adiciona a biblioteca Angular `clinora-ui` em
 `libs/typescript/clinora-ui`, com componentes compartilhados e testes Vitest.
@@ -64,8 +66,9 @@ Clinora UI: 85% statements/branches, 70% funcoes e 90% linhas. Todos os
 arquivos TS de producao entram na medicao; specs e historias ficam fora.
 Relatorios locais ficam em `coverage/web` e `coverage/clinora-ui`.
 
-Playwright testa Chromium desktop e mobile, idioma, navegacao e ausencia de
-overflow; axe-core verifica violacoes WCAG A/AA detectaveis automaticamente.
+Playwright testa Chromium desktop e mobile, idioma, imagem carregada,
+navegacao entre secoes, viewport estreito e ausencia de overflow; axe-core
+verifica violacoes WCAG A/AA detectaveis automaticamente.
 `verify` e CI executam o smoke E2E. O CI instala Chromium e dependencias de
 sistema antes da suite. O servidor de teste usa `127.0.0.1:44210` e nao
 reutiliza processos existentes nessa porta.
@@ -77,7 +80,7 @@ O workspace registra uma excecao de peer transitivo para `listr2@10.2.2`, porque
 As configuracoes pnpm ficam em `pnpm-workspace.yaml`, conforme pnpm 11.
 
 ## Proximos projetos
-- `apps/web`: landing entra na TASK-017; Storybook da biblioteca entra na TASK-016.
+- `apps/web`: landing da TASK-017; Storybook da biblioteca na TASK-016.
 - `apps/docs`: entra na TASK-018.
 
 ## Seguranca e privacidade
