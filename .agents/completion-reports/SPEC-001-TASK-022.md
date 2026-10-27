@@ -37,7 +37,8 @@ nos limites documentados. Os oito testes estruturais Compose passaram.
 Depois do rebase sobre o hotfix, `tools:test` passou com 39 testes.
 Docker Desktop local continua sem permissao para iniciar o servico; smoke
 real do broker passou no CI Linux do PR #90 (run 40589930282). A promocao
-protegida ainda depende dos merges.
+protegida ocorreu pelos PRs #90, #91 e #92; as arvores das tres branches
+base ficaram identicas.
 O primeiro smoke no PR #90 chegou a topologia, mas recebeu HTTP 405 ao
 publicar com `PUT`. Um novo teste estrutural reproduziu a falha antes da
 correcao; a chamada passou a usar `POST`, como o cliente HTTP oficial. Os
