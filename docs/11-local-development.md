@@ -2,7 +2,7 @@
 
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
-O workspace Angular/pnpm inclui a aplicacao web e a biblioteca Clinora UI.
+O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
 Ainda nao ha Docker Compose.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
@@ -11,7 +11,7 @@ Para executar o build Java, `JAVA_HOME` deve apontar para um JDK 25.
 Para executar o workspace frontend, use Node `24.15.0` ou outra versao suportada pelo Angular 22.
 Para validar a fundacao atual, use `corepack pnpm run verify`.
 Instale Chromium uma vez com `corepack pnpm e2e:install`; `verify` executa
-Playwright/axe-core e precisa da porta web 44210 livre. O CI instala o
+Playwright/axe-core e precisa das portas 44210 (web) e 44211 (docs) livres. O CI instala o
 navegador e dependencias de sistema automaticamente.
 
 ## Portas reservadas
@@ -50,8 +50,7 @@ foreach ($port in $ports) {
 ```
 
 ## Proximos passos
-1. TASK-018: portal docs.
-2. TASK-019: Docker Compose.
+1. TASK-019: Docker Compose.
 
 ## Seguranca e privacidade
 Nao ha dados sensiveis, segredos reais, banco local ou logs de saude nesta etapa.
