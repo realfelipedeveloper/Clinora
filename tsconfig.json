@@ -33,6 +33,12 @@
     },
     {
       "path": "./libs/typescript/clinora-ui/tsconfig.spec.json"
+    },
+    {
+      "path": "./apps/docs/tsconfig.app.json"
+    },
+    {
+      "path": "./apps/docs/tsconfig.spec.json"
     }
   ]
 }

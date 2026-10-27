@@ -1,0 +1,64 @@
+<a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+<div class="docs-shell">
+  <aside class="sidebar">
+    <div class="brand-lockup">
+      <a class="brand" routerLink="/constituicao" aria-label="Clinora, início da documentação"
+        >Clinora<span aria-hidden="true">.</span></a
+      >
+      <span>Documentação</span>
+    </div>
+
+    <div class="search-field">
+      <label for="busca-documentos">Buscar documentos</label>
+      <input
+        id="busca-documentos"
+        type="search"
+        placeholder="Título ou área"
+        [value]="query()"
+        (input)="query.set($any($event.target).value); menuOpen.set(true)"
+      />
+    </div>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="navegacao-documentos"
+      (click)="menuOpen.set(!menuOpen())"
+    >
+      Documentos <span aria-hidden="true">☰</span>
+    </button>
+
+    <nav id="navegacao-documentos" aria-label="Documentos" [class.is-open]="menuOpen()">
+      @for (group of groups(); track group.name) {
+      <div class="nav-group">
+        <h2>{{ group.name }}</h2>
+        @for (document of group.entries; track document.slug) {
+        <a
+          [routerLink]="['/', document.slug]"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          (click)="menuOpen.set(false)"
+          >{{ document.title }}</a
+        >
+        }
+      </div>
+      } @empty {
+      <p class="empty-search">Nenhum documento encontrado.</p>
+      }
+    </nav>
+  </aside>
+
+  <main id="conteudo">
+    <div class="topbar">
+      <span>Base de engenharia</span
+      ><a
+        href="https://github.com/realfelipedeveloper/Clinora"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Código-fonte <span aria-hidden="true">↗</span></a
+      >
+    </div>
+    <router-outlet />
+  </main>
+</div>
