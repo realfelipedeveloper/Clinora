@@ -23,7 +23,10 @@ regras de negocio ou dados clinicos.
 
 ## Testes
 - `docker compose config`, sintaxe Bash e cinco testes estruturais: aprovados.
-- `verify` local e smoke de permissao no CI: pendentes.
+- `verify` local aprovado na repeticao, incluindo 16 E2E. O primeiro gate
+  teve falha intermitente de cobertura web em 0%; `web:test` isolado e o gate
+  completo repetido passaram sem alterar codigo, testes ou thresholds.
+- Smoke de permissao no CI: pendente.
 - Docker local inacessivel por permissao do Windows; nao alegar runtime local.
 
 ## Limites
