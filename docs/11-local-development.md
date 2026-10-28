@@ -44,21 +44,22 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 | grafana | 44280 |
 | prometheus | 44281 |
 
-## Checagem manual de portas
+## Checagem de portas
 
 ```powershell
-$ports = @(44210,44211,44212,44220,44221,44222,44223,44224,44230,44240,44250,44251,44260,44261,44270,44271,44280,44281)
-$listeners = netstat -ano -p tcp
-foreach ($port in $ports) {
-  $matches = $listeners | Select-String -Pattern ":$port\s"
-  if ($matches) { "$port IN_USE $($matches.Line.Trim())" } else { "$port FREE" }
-}
+corepack pnpm run ports:check
 ```
+
+O comando le as portas efetivas de `docker compose config`, incluindo
+overrides, e as reservas de Storybook/S3. Falha se uma porta estiver ocupada,
+duplicada ou publicada fora de `127.0.0.1`. Rode antes de iniciar a stack;
+nao encerra processos existentes. A checagem nao reserva as portas, entao
+outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
 1. TASK-024: armazenamento S3 local; decisao de fornecedor pendente por
    arquivamento do MinIO comunitario.
-2. TASK-026: verificador de portas.
+2. TASK-027: health/readiness.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
