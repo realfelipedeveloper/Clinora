@@ -10,6 +10,8 @@ Veja `docs/17-regression-tests.md` para cobertura real e lacunas retroativas.
 JaCoCo exige 80% de linhas por classe Java com logica, excluindo apenas
 `*Application` (bootstrap validado por testes HTTP). Angular mede todos os
 arquivos TS de producao e aplica os pisos registrados em `angular.json`.
+ArchUnit roda em `mvnw verify` nos cinco servicos Java e impede dependencias
+diretas entre seus pacotes; fixture negativa comprova que a regra falha.
 `security:check` bloqueia avisos altos/criticos de dependencias de producao e
 criticos no conjunto total. Dois avisos altos transitivos de ferramentas de
 desenvolvimento permanecem documentados ate haver correcao compativel.
