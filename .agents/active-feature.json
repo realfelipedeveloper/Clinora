@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-027",
-    "title": "Health e readiness sob degradacao",
-    "branch": "feature/spec-001-task-027",
+    "id": "TASK-029",
+    "title": "Testcontainers PostgreSQL efemero",
+    "branch": "feature/spec-001-task-029",
     "status": "in_progress",
     "startedAt": "2026-10-28"
   },
@@ -22,13 +22,15 @@
     "port conflicts",
     "configuration drift",
     "port exposure or collision drift",
-    "readiness falso positivo durante degradacao",
-    "exposicao de detalhes internos nos probes"
+    "dependencia de Docker no CI",
+    "acesso cruzado entre bancos de servicos",
+    "colisao de portas do host"
   ],
   "requiredTests": [
     "unit",
     "integration",
     "health",
+    "testcontainers",
     "port-conflict",
     "postgres",
     "redis",
