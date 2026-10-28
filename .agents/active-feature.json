@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-024",
-    "title": "Garage S3 local aprovado por emenda",
-    "branch": "feature/spec-001-task-024",
+    "id": "TASK-027",
+    "title": "Health e readiness sob degradacao",
+    "branch": "feature/spec-001-task-027",
     "status": "in_progress",
     "startedAt": "2026-10-28"
   },
@@ -22,8 +22,8 @@
     "port conflicts",
     "configuration drift",
     "port exposure or collision drift",
-    "S3 access or admin exposure drift",
-    "unsafe local defaults"
+    "readiness falso positivo durante degradacao",
+    "exposicao de detalhes internos nos probes"
   ],
   "requiredTests": [
     "unit",

@@ -27,15 +27,37 @@ public final class HealthProbeVerifier {
         for (String path : HEALTH_PATHS) {
             HttpResponse<String> response = get(client, port, path);
             requireStatus(response, 200, path);
-            if (!response.body().contains("\"status\":\"UP\"")
-                    || response.body().contains("components")) {
-                throw new AssertionError(path + " deve expor status UP sem componentes internos");
-            }
+            requireProbeBody(response, "UP", path);
         }
 
         requireStatus(get(client, port, "/actuator/env"), 404, "/actuator/env");
         requireStatus(get(client, port, "/actuator/prometheus"), 404,
                 "/actuator/prometheus");
+    }
+
+    public static void verifyNotReady(int port) throws IOException, InterruptedException {
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            verifyNotReady(client, port);
+        }
+    }
+
+    static void verifyNotReady(HttpClient client, int port)
+            throws IOException, InterruptedException {
+        HttpResponse<String> liveness = get(client, port, "/actuator/health/liveness");
+        requireStatus(liveness, 200, "/actuator/health/liveness");
+        requireProbeBody(liveness, "UP", "/actuator/health/liveness");
+
+        HttpResponse<String> readiness = get(client, port, "/actuator/health/readiness");
+        requireStatus(readiness, 503, "/actuator/health/readiness");
+        requireProbeBody(readiness, "OUT_OF_SERVICE", "/actuator/health/readiness");
+    }
+
+    private static void requireProbeBody(HttpResponse<String> response, String status, String path) {
+        if (!response.body().contains("\"status\":\"" + status + "\"")
+                || response.body().contains("components")) {
+            throw new AssertionError(path + " deve expor status " + status
+                    + " sem componentes internos");
+        }
     }
 
     public static void verifyPrometheus(int port) throws IOException, InterruptedException {
