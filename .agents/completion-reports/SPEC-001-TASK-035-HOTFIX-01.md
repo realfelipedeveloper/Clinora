@@ -16,7 +16,8 @@ de falha mesmo com o gate efetivo por `workflow_dispatch` aprovado.
 - Unidade/estrutura: teste de gatilhos GitHub Actions.
 - Integracao: `corepack pnpm run verify` local aprovado (54 testes de scripts,
   Java, Angular, 16 E2E e auditoria de producao sem vulnerabilidades
-  conhecidas); CI remoto nos PRs protegidos ainda pendente.
+  conhecidas); CI Linux, smoke Compose e status obrigatorio aprovados nos
+  PRs #116-#118.
 - E2E: o fluxo de PR e status no GitHub e validado remotamente; nao ha E2E
   de navegador para esta mudanca de CI.
 - Seguranca: nenhuma permissao foi ampliada; workflows de PR nao usam
@@ -30,4 +31,6 @@ continua vinculado ao SHA atual do PR, impedindo aprovar resultado antigo.
 Runbooks de qualidade/Git Flow e `.agents/lessons-learned.md` atualizados.
 
 ## Status
-Verificacao local aprovada; pendente CI remoto e promocao pelo Git Flow.
+Concluida e promovida pelo Git Flow ate `main` em 2026-10-28. Nos SHAs
+novos das promocoes #117 e #118 houve apenas `workflow_dispatch`, sem
+`pull_request` vazio; as tres bases terminaram com arvore identica.
