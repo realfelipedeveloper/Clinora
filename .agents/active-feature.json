@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-030",
-    "title": "ArchUnit entre servicos Java",
-    "branch": "feature/spec-001-task-030",
+    "id": "TASK-033",
+    "title": "Pact e WireMock para contratos tecnicos",
+    "branch": "feature/spec-001-task-033",
     "status": "in_progress",
     "startedAt": "2026-10-28"
   },
@@ -22,9 +22,9 @@
     "port conflicts",
     "configuration drift",
     "port exposure or collision drift",
-    "dependencias diretas entre servicos",
-    "regra de arquitetura sem teste negativo",
-    "acesso a dados de outro servico"
+    "contrato tecnico divergente",
+    "readiness incorreta",
+    "dependencias de teste em runtime"
   ],
   "requiredTests": [
     "unit",
@@ -32,6 +32,8 @@
     "health",
     "testcontainers",
     "archunit",
+    "pact",
+    "wiremock",
     "port-conflict",
     "postgres",
     "redis",
