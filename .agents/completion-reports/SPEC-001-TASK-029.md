@@ -30,8 +30,10 @@ passaram localmente, incluindo 53 testes de ferramentas, Maven,
 Angular/Storybook, 16 E2E e auditoria. Esta registrou 8 alertas em
 dependencias de desenvolvimento e nenhum em producao. O relatorio Surefire
 marca os tres testes de container explicitamente skipped sem Docker acessivel;
-nao ha alegacao de cobertura local dessa camada. Execucao real Linux e
-promocao protegida pendentes nesta etapa.
+nao ha alegacao de cobertura local dessa camada. O CI Linux do PR #110,
+run 40630980744, executou `PostgresContainerTest`: 3 testes, 0 falhas,
+0 erros, 0 skipped; `verify` e smoke Compose tambem passaram. Promocao
+protegida pendente.
 
 ## Documentacao e memoria
 Guia Java, matriz de regressao, active-feature e lessons-learned atualizados.
