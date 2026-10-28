@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { request as httpRequest } from 'node:http';
 import { createConnection, createServer } from 'node:net';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
 
 if (process.env.CI !== 'true') {
   throw new Error('O smoke de containers e exclusivo do runner isolado de CI.');
@@ -32,6 +38,58 @@ const redisUsers = [
 const rabbitAuthorization = `Basic ${Buffer.from('clinora_local:clinora_rabbit_local_only_2026').toString('base64')}`;
 const mailAuthorization = `Basic ${Buffer.from('clinora_local:clinora_mail_local_only_2026').toString('base64')}`;
 const grafanaAuthorization = `Basic ${Buffer.from('clinora_local:clinora_grafana_local_only_2026').toString('base64')}`;
+const garageAdminToken = 'clinora_garage_admin_local_only_2026';
+const garageBucket = 'clinora-smoke';
+const garageObject = 'clinora-smoke.txt';
+
+function garageClient(credentials) {
+  return new S3Client({
+    endpoint: 'http://127.0.0.1:44270',
+    region: 'garage',
+    forcePathStyle: true,
+    credentials,
+    maxAttempts: 1,
+  });
+}
+
+async function garageAdminRequest(token) {
+  return fetch('http://127.0.0.1:44271/v2/GetClusterStatus', {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    signal: AbortSignal.timeout(5_000),
+  });
+}
+
+async function assertGarageS3() {
+  const client = garageClient({
+    accessKeyId: 'GK0123456789abcdef0123456789abcdef',
+    secretAccessKey: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+  });
+  const wrongClient = garageClient({ accessKeyId: 'GK00000000000000000000000000000000', secretAccessKey: '0'.repeat(64) });
+  try {
+    const anonymous = await fetch(`http://127.0.0.1:44270/${garageBucket}/${garageObject}`, {
+      signal: AbortSignal.timeout(5_000),
+    });
+    assert.equal(anonymous.status, 403, 'S3 aceitou leitura anonima');
+    await assert.rejects(
+      wrongClient.send(new PutObjectCommand({ Bucket: garageBucket, Key: garageObject, Body: 'nao autorizado' })),
+      (error) => error.$metadata?.httpStatusCode === 403,
+      'S3 aceitou credenciais incorretas',
+    );
+    const body = 'Clinora S3 smoke';
+    await client.send(new PutObjectCommand({ Bucket: garageBucket, Key: garageObject, Body: body }));
+    const stored = await client.send(new GetObjectCommand({ Bucket: garageBucket, Key: garageObject }));
+    assert.equal(await stored.Body.transformToString(), body);
+    await client.send(new DeleteObjectCommand({ Bucket: garageBucket, Key: garageObject }));
+    await assert.rejects(
+      client.send(new GetObjectCommand({ Bucket: garageBucket, Key: garageObject })),
+      (error) => error.$metadata?.httpStatusCode === 404,
+      'Objeto S3 permaneceu apos exclusao',
+    );
+  } finally {
+    client.destroy();
+    wrongClient.destroy();
+  }
+}
 
 async function mailRequest(path, { authorization = mailAuthorization } = {}) {
   const headers = {};
@@ -193,6 +251,8 @@ await assertPortFree(44260);
 await assertPortFree(44261);
 await assertPortFree(44280);
 await assertPortFree(44281);
+await assertPortFree(44270);
+await assertPortFree(44271);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -305,6 +365,10 @@ try {
     captured = JSON.stringify(await response.json()).includes('Clinora smoke');
   }
   assert.equal(captured, true, 'Email de teste nao apareceu na API Mailpit');
+  assert.equal((await garageAdminRequest()).status, 401, 'Administracao Garage aceita acesso anonimo');
+  assert.equal((await garageAdminRequest('token_invalido')).status, 401, 'Administracao Garage aceitou token incorreto');
+  assert.equal((await garageAdminRequest(garageAdminToken)).status, 200);
+  await assertGarageS3();
   const prometheusReady = await fetch('http://127.0.0.1:44281/-/ready', {
     signal: AbortSignal.timeout(5_000),
   });

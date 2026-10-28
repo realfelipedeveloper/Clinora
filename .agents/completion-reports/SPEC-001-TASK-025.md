@@ -38,4 +38,4 @@ por permissao do servico Windows.
 
 ## Documentacao e memoria
 Runbook, guia de observabilidade, infra, matriz de regressao, active-feature
-e lessons-learned atualizados. Promocao protegida pendente.
+e lessons-learned atualizados. Promovida por PRs protegidos #98, #99 e #100.

@@ -3,7 +3,7 @@
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
 O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
-`compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL, Redis, RabbitMQ e Mailpit depois do `verify`;
+`compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Prometheus e Grafana depois do `verify`;
 veja `infra/docker/README.md`.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
@@ -39,8 +39,8 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 | rabbitmq ui | 44251 |
 | mail smtp | 44260 |
 | mail ui | 44261 |
-| minio | 44270 |
-| minio console | 44271 |
+| garage s3 | 44270 |
+| garage admin | 44271 |
 | grafana | 44280 |
 | prometheus | 44281 |
 
@@ -51,15 +51,13 @@ corepack pnpm run ports:check
 ```
 
 O comando le as portas efetivas de `docker compose config`, incluindo
-overrides, e as reservas de Storybook/S3. Falha se uma porta estiver ocupada,
+overrides, e a reserva de Storybook. Falha se uma porta estiver ocupada,
 duplicada ou publicada fora de `127.0.0.1`. Rode antes de iniciar a stack;
 nao encerra processos existentes. A checagem nao reserva as portas, entao
 outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
-1. TASK-024: Garage local aprovado como armazenamento S3; implementacao em
-   andamento.
-2. TASK-027: health/readiness.
+1. TASK-027: health/readiness.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
@@ -72,3 +70,6 @@ consulte `infra/docker/README.md`. Nao envie eventos clinicos reais para ela.
 Mailpit captura somente emails de teste para `@example.test`, sem relay,
 com armazenamento efemero, UI autenticada e sem TLS SMTP. Nao envie dados
 clinicos reais. Credenciais, portas e limites constam em `infra/docker/README.md`.
+Garage single-node serve apenas ao desenvolvimento, sem redundancia. Seu bucket
+`clinora-smoke` e as credenciais padrao sao publicos no repositorio, portanto
+nao devem armazenar dados reais ou ser expostos fora de loopback.

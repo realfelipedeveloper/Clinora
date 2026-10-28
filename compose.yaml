@@ -138,6 +138,43 @@ services:
       start_period: 10s
       retries: 6
 
+  garage:
+    image: dxflrs/garage:v2.5.0
+    command: ['/garage', 'server', '--single-node', '--default-bucket']
+    read_only: true
+    init: true
+    tmpfs: ['/tmp']
+    cap_drop: ['ALL']
+    security_opt: ['no-new-privileges:true']
+    environment:
+      GARAGE_DEFAULT_ACCESS_KEY: GK0123456789abcdef0123456789abcdef
+      GARAGE_DEFAULT_SECRET_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      GARAGE_DEFAULT_BUCKET: clinora-smoke
+    ports:
+      - target: 3900
+        published: ${CLINORA_GARAGE_S3_PORT:-44270}
+        host_ip: 127.0.0.1
+      - target: 3903
+        published: ${CLINORA_GARAGE_ADMIN_PORT:-44271}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: volume
+        source: garage-data
+        target: /data
+      - type: bind
+        source: ./infra/docker/garage/garage.toml
+        target: /etc/garage.toml
+        read_only: true
+        bind: { create_host_path: false }
+    networks: [clinora]
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', '/garage', 'status']
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 12
+
   prometheus:
     image: prom/prometheus:v3.15.1
     read_only: true
@@ -371,5 +408,6 @@ networks:
 volumes:
   postgres-data:
   rabbitmq-data:
+  garage-data:
   prometheus-data:
   grafana-data:
