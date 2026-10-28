@@ -4,7 +4,8 @@
 `corepack pnpm run verify` executa `doctor`, testes do guard Git, `mvnw verify`,
 instalacao pnpm congelada, verificacao de peers, testes Vitest da web e UI,
 builds web/UI, build estatico do Storybook, Playwright/axe-core e auditoria pnpm. A workflow `Qualidade Clinora`
-executa o mesmo comando em PRs para `development`, `homologation` e `main`.
+executa o mesmo comando em PRs para `development` e por `workflow_dispatch`
+nas branches tecnicas de promocao para `homologation` e `main`.
 Veja `docs/17-regression-tests.md` para cobertura real e lacunas retroativas.
 
 JaCoCo exige 80% de linhas por classe Java com logica, excluindo apenas
@@ -27,6 +28,12 @@ run nao oficial encerra imediatamente, sem publicar sucesso. O job com escrita
 nao faz checkout do PR. O disparo automatico foi validado nos PRs #62-#64 e
 o status agora e obrigatorio nas tres branches base. PRs de forks ainda nao
 recebem esse status e nao devem ser aceitos por esse fluxo ate haver solucao.
+O gatilho `pull_request` fica restrito a `development`: PRs de promocao
+criados com `GITHUB_TOKEN` produziam runs de `pull_request` com conclusao
+`failure` e zero jobs, apesar do run por `workflow_dispatch` passar. O
+publicador continua exigindo sucesso do run oficial no SHA do PR. PRs
+manuais diretos para `homologation` ou `main` nao sao o fluxo padrao e
+precisam de validacao manual por `workflow_dispatch` para satisfazer o gate.
 
 Os itens abaixo sao o contrato de qualidade do projeto, nao uma declaracao
 de que todos os gates ja foram implementados na SPEC-001.
