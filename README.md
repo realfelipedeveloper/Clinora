@@ -31,7 +31,7 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 - PostgreSQL + Spring Data JPA + Hibernate + Flyway
 - Redis
 - RabbitMQ
-- MinIO
+- Garage local (S3)
 - Docker Compose
 - OpenTelemetry, Prometheus e Grafana
 - JUnit 5, Mockito, AssertJ, Testcontainers, REST Assured, ArchUnit, Pact, WireMock, PIT
