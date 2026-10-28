@@ -28,7 +28,9 @@ e `pnpm run verify` passaram localmente; JaCoCo marcou 9/9 linhas da regra.
 Os sete testes ArchUnit (dois de fixture, cinco dos modulos) passaram sem
 skips. O gate completo incluiu 53 testes de ferramentas, Angular/Storybook,
 16 E2E e auditoria: 8 alertas em dependencias de desenvolvimento dentro do
-limite atual e nenhum em producao. CI Linux e promocao protegida pendentes.
+limite atual e nenhum em producao. O CI Linux do PR #113, run 40632651037,
+passou `verify` e smoke Compose, incluindo ArchUnit e Testcontainers.
+Promocao protegida pendente.
 
 ## Documentacao e memoria
 Guia Java, qualidade, matriz de regressao, active-feature e lessons-learned
