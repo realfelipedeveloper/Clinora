@@ -29,7 +29,9 @@ tres Testcontainers skipped apenas no host Windows sem Docker; o CI Linux
 deve executa-los. `corepack pnpm run verify` passou localmente (54 testes
 de ferramentas, Java, Angular/Storybook, 16 E2E, nenhuma vulnerabilidade
 conhecida em producao; 8 avisos de ferramentas de desenvolvimento dentro
-do gate atual). CI Linux e smoke Compose remoto pendentes.
+do gate atual). CI Linux do PR #119 (run 40700718432) aprovou Pact 1/1,
+WireMock 2/2, Testcontainers 3/3 sem skips e smoke Compose. PRs protegidos
+#119-#121 promoveram a mudanca ate `main`; arvores das tres bases iguais.
 
 ## Concorrencia, tempo, ameacas e privacidade
 Nenhuma reserva, tenant ou instante global alterado. HTTP local em porta
@@ -40,4 +42,4 @@ Matriz de regressao, runbook local, active-feature e lessons-learned
 atualizados; relatorios anteriores de ArchUnit e CI fechados com os PRs.
 
 ## Status
-Gate local aprovado; pendente CI remoto e promocao protegida ate `main`.
+Concluida e promovida ate `main` em 2026-10-28.

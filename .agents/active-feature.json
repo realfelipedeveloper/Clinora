@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-033",
-    "title": "Pact e WireMock para contratos tecnicos",
-    "branch": "feature/spec-001-task-033",
+    "id": "TASK-031",
+    "title": "Vitest e Angular Testing Library",
+    "branch": "feature/spec-001-task-031",
     "status": "in_progress",
     "startedAt": "2026-10-28"
   },
@@ -22,8 +22,8 @@
     "port conflicts",
     "configuration drift",
     "port exposure or collision drift",
-    "contrato tecnico divergente",
-    "readiness incorreta",
+    "regressao de interacao do formulario",
+    "rotulos inacessiveis",
     "dependencias de teste em runtime"
   ],
   "requiredTests": [
@@ -32,6 +32,7 @@
     "health",
     "testcontainers",
     "archunit",
+    "angular-testing-library",
     "pact",
     "wiremock",
     "port-conflict",
