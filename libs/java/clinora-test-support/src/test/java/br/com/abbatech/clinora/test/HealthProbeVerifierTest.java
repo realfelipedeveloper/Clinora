@@ -43,6 +43,51 @@ class HealthProbeVerifierTest {
     }
 
     @Test
+    void distingueProcessoVivoDeServicoNaoPronto() throws Exception {
+        List<String> requests = new ArrayList<>();
+        HttpClient client = client(Map.of(
+                "/actuator/health/readiness", reply(503, "{\"status\":\"OUT_OF_SERVICE\"}")), requests);
+
+        HealthProbeVerifier.verifyNotReady(client, 44220);
+
+        assertThat(requests).containsExactly(
+                "http://127.0.0.1:44220/actuator/health/liveness",
+                "http://127.0.0.1:44220/actuator/health/readiness");
+    }
+
+    @Test
+    void rejeitaReadinessQueAceitaTrafegoDuranteDegradacao() throws Exception {
+        HttpClient client = client(Map.of(), new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("/actuator/health/readiness retornou HTTP 200");
+    }
+
+    @Test
+    void rejeitaLivenessIndisponivelDuranteDegradacao() throws Exception {
+        HttpClient client = client(Map.of(
+                "/actuator/health/liveness", reply(503, "{\"status\":\"DOWN\"}")),
+                new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("/actuator/health/liveness retornou HTTP 503");
+    }
+
+    @Test
+    void rejeitaDetalhesInternosDuranteDegradacao() throws Exception {
+        HttpClient client = client(Map.of(
+                "/actuator/health/readiness",
+                reply(503, "{\"status\":\"OUT_OF_SERVICE\",\"components\":{}}")),
+                new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("sem componentes internos");
+    }
+
+    @Test
     void rejeitaDetalhesInternosNaSaude() throws Exception {
         HttpClient client = client(Map.of("/actuator/health",
                 reply(200, "{\"status\":\"UP\",\"components\":{\"db\":{}}}")), new ArrayList<>());
