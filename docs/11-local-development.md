@@ -57,7 +57,7 @@ nao encerra processos existentes. A checagem nao reserva as portas, entao
 outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
-1. TASK-030: ArchUnit e regras de arquitetura Java.
+1. TASK-033: Pact/WireMock para contratos entre servicos futuros.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
