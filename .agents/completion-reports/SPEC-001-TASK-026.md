@@ -32,8 +32,9 @@ Testes de porta 4/4 e comando real aprovados. `pnpm run verify` local passou
 scripts, Maven, Angular, Storybook, 16 E2E e auditoria; a auditoria reportou
 7 vulnerabilidades dentro dos limites atuais. O teste adicional da CLI entrou
 depois do inicio do gate; `pnpm run tools:test` foi repetido e passou 50/50.
-Smoke de CI pendente nesta etapa.
+Smoke Linux e gate de qualidade passaram no PR #101, run 40624924364.
 
 ## Documentacao e memoria
 Runbook, catalogo de scripts, matriz de regressao, active-feature e
-lessons-learned atualizados. Promocao protegida pendente.
+lessons-learned atualizados. Promovida por PRs protegidos #101, #102 e #103;
+as tres bases terminaram com a mesma arvore.

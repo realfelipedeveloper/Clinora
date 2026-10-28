@@ -30,7 +30,7 @@ TASK-020 PostgreSQL
 TASK-021 Redis
 TASK-022 RabbitMQ e DLQ
 TASK-023 Mailpit
-TASK-024 MinIO
+TASK-024 Garage local compativel com S3 (emenda aprovada em 2026-10-28)
 TASK-025 Prometheus e Grafana
 TASK-026 verificador de portas
 TASK-027 health/readiness
