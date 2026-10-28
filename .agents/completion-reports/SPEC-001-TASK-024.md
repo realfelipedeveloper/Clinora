@@ -33,11 +33,14 @@ local passou Maven, Angular, Storybook, 16 E2E e auditoria. A auditoria
 registrou 8 alertas em dependencias de desenvolvimento (2 low, 4 moderate,
 2 high) dentro do gate atual e nenhum em producao; nao significa risco zero.
 `ports:check` confirmou 18 portas livres, incluindo as duas do Garage.
-Smoke real Linux pendente nesta etapa. Docker Desktop local requer permissao
-indisponivel neste host.
+Smoke real Linux passou no segundo run do PR #104, 40627426659: stack
+saudavel, API administrativa protegida e PUT/GET/DELETE S3 com SDK, incluindo
+acessos indevidos negados. Docker Desktop local requer permissao indisponivel
+neste host.
 O primeiro smoke no PR #104 (run 40626895137) reproduziu a divergencia de
 contrato: Garage negou administracao anonima com HTTP 403, nao 401. O teste
-de regressao agora exige 403 para ausencia ou erro de token; novo CI pendente.
+de regressao agora exige 403 para ausencia ou erro de token; o segundo run
+confirmou o comportamento real.
 
 ## Documentacao e memoria
 SPEC-001, tasks, runbook, matriz de regressao, active-feature e lessons-learned
