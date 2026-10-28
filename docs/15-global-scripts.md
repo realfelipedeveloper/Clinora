@@ -14,6 +14,7 @@ corepack pnpm run frontend:verify
 corepack pnpm run tools:test
 corepack pnpm run security:check
 corepack pnpm run git:remote
+corepack pnpm run ports:check
 ```
 
 ## Taskfile
@@ -30,6 +31,7 @@ task frontend:verify
 task tools:test
 task security:check
 task git:remote
+task ports:check
 ```
 
 O Taskfile chama os scripts pnpm equivalentes. Assim, quem nao tem `task` instalado pode
@@ -47,10 +49,11 @@ usar `corepack pnpm run ...` sem perder cobertura.
 - `security:check`: auditoria pnpm, bloqueando alertas altos em producao e
   criticos em todas as dependencias.
 - `git:remote`: bloqueia qualquer remoto diferente de `realfelipedeveloper/Clinora`.
+- `ports:check`: valida as portas efetivas do Compose e reservas locais por
+  bind em loopback; retorna falha sem derrubar listeners.
 
 ## Limites
-O verificador completo de portas pertence a TASK-026. `doctor` e
-`frontend:check` nao iniciam servicos; `verify` executa testes Spring Boot em
+`doctor` e `frontend:check` nao iniciam servicos; `verify` executa testes Spring Boot em
 portas aleatorias, sem ocupar as portas reservadas do host.
 
 ## Seguranca e privacidade
