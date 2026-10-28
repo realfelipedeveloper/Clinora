@@ -75,6 +75,12 @@ A automacao nao faz merge, nao aprova PR e nao faz checkout do codigo do PR de o
   publicada na branch padrao, evitando depender da aprovacao manual exigida
   pelo GitHub para workflows acionados por PR criado com `GITHUB_TOKEN`.
 
+O gatilho automatico `pull_request` de qualidade escuta apenas
+`development`. Nas promocoes, o disparo explicito acima executa o mesmo
+gate e evita runs falsamente falhos, sem jobs, em `homologation` e `main`.
+PR manual fora da cadeia precisa disparar a qualidade na branch tecnica e
+aguardar `clinora/qualidade` no SHA atual antes do merge.
+
 O run por `workflow_dispatch` nao satisfaz, sozinho, um status check exigido
 num PR. A workflow `.github/workflows/quality-status.yml` publica
 `clinora/qualidade` para o SHA testado apenas se ele ainda for a ponta de um
