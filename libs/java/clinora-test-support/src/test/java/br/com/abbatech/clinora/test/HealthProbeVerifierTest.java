@@ -6,9 +6,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +56,32 @@ class HealthProbeVerifierTest {
         assertThat(requests).containsExactly(
                 "http://127.0.0.1:44220/actuator/health/liveness",
                 "http://127.0.0.1:44220/actuator/health/readiness");
+    }
+
+    @Test
+    void verificaReadinessDegradadoPorHttpRealEmPortaEfemera() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/actuator/health/liveness", exchange -> {
+            byte[] body = "{\"status\":\"UP\"}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            try (var output = exchange.getResponseBody()) {
+                output.write(body);
+            }
+        });
+        server.createContext("/actuator/health/readiness", exchange -> {
+            byte[] body = "{\"status\":\"OUT_OF_SERVICE\"}"
+                    .getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(503, body.length);
+            try (var output = exchange.getResponseBody()) {
+                output.write(body);
+            }
+        });
+        server.start();
+        try {
+            HealthProbeVerifier.verifyNotReady(server.getAddress().getPort());
+        } finally {
+            server.stop(0);
+        }
     }
 
     @Test
