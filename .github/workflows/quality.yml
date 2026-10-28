@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - development
-      - homologation
-      - main
   workflow_dispatch:
 
 permissions:
