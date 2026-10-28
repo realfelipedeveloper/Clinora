@@ -30,9 +30,11 @@ afirmar que a suite anterior continuou verde.
 | 027 | Health/readiness degradado | Quatro testes unitarios do verificador, um HTTP real em porta efemera e cinco testes Spring Boot alteram `ReadinessState` para exigir readiness 503 sem perder liveness 200; smoke CI ja valida readiness UP nos containers; `clean verify` do modulo comprovou 85,7% de linhas sem reduzir piso | Nenhuma dependencia de negocio e conectada aos servicos nesta spec; TASK-029 cobriu PostgreSQL efemero isolado |
 | 029 | PostgreSQL com Testcontainers | Tres testes JUnit no CI sobem PostgreSQL 17 efemero em porta mapeada: conexao correta, senha incorreta e bancos de servicos com acesso proprio permitido/cross-service negado; run 40630980744 confirmou 3/3 sem skips | Host Windows sem Docker acessivel marca esses testes skipped; CI Linux e o gate obrigatorio comprovam o runtime |
 | 030 | ArchUnit entre servicos Java | Dois testes do verificador exercitam fixture valida e violacao deliberada `core -> payment`; cinco testes de modulo importam somente classes de producao e proíbem dependencias diretas entre pacotes de servicos; JaCoCo do verificador 9/9 linhas | Nao substitui isolamento de banco, autorizacao nem contratos HTTP; estes tem gates proprios |
+| 033 | Pact e WireMock para contratos tecnicos | Um teste Pact V4 gera contrato de readiness em porta efemera; dois testes WireMock exercitam `HealthProbeVerifier` sobre HTTP real com resposta saudavel e readiness degradado | Fixture tecnica nao substitui contratos de APIs de negocio; criar contratos consumidor/provedor por operacao nas specs futuras |
 | 015 | Sete componentes UI | Dez testes Vitest cobrem formulario, estados, modal e semantica; pisos 85% statements/branches, 70% funcoes, 90% linhas | Interacao E2E e axe-core: TASK-031/032 |
 | 016 | Storybook | Build estatico e smoke test executados na TASK-016; build permanente no `verify` e CI | Smoke test de servidor em CI ainda pendente |
 | 035-044 | CI, auditoria e status de qualidade | `verify` em PR; testes unitarios de run, SHA, fork, falha, timeout e permissao isolada; prova automatica nos PRs #62-#64; verificador da protecao das tres bases; merges protegidos #65-#67 | Forks precisam de fluxo proprio |
+| 035 hotfix | Falsos runs falhos na promocao | Teste de gatilho falhou antes da correcao; `pull_request` somente em `development`, `workflow_dispatch` mantido nas promocoes #117-#118 com status obrigatorio verde e sem runs vazios | PR manual direto para `homologation`/`main` precisa de dispatch explicito |
 | Specs 002-011 | Releases 1-10 aprovadas pelo usuário, ainda inativas | Testes do índice Markdown verificam links, arquivos, roadmap, status e divergências; cada `tasks.md` deve indicar aprovação | Implementação depende do CI e merge do PR #82 e de ativação sequencial |
 
 O projeto ainda nao implementa tenant, pacientes, reservas, agenda ou
@@ -76,7 +78,8 @@ O Playwright inicia a web na porta reservada 44210 e falha se ela ja estiver
 ocupada; nao reutiliza servidor desconhecido. Testes E2E mais amplos e gates
 de seguranca da plataforma ainda precisam de tarefas futuras; `verify` cobre
 somente as camadas presentes na matriz. A workflow `Qualidade Clinora` executa
-`corepack pnpm run verify` em PRs para as tres branches base. A workflow de
+`corepack pnpm run verify` em PRs para `development` e por dispatch nas
+promocoes para as demais bases. A workflow de
 publicacao confere run concluido, PR aberto, repositorio e SHA antes de
 registrar `clinora/qualidade`; o job isolado de TASK-043 solicita a publicacao
 ao fim da qualidade, inclusive se o gate falhar.
