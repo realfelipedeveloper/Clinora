@@ -35,6 +35,9 @@ registrou 8 alertas em dependencias de desenvolvimento (2 low, 4 moderate,
 `ports:check` confirmou 18 portas livres, incluindo as duas do Garage.
 Smoke real Linux pendente nesta etapa. Docker Desktop local requer permissao
 indisponivel neste host.
+O primeiro smoke no PR #104 (run 40626895137) reproduziu a divergencia de
+contrato: Garage negou administracao anonima com HTTP 403, nao 401. O teste
+de regressao agora exige 403 para ausencia ou erro de token; novo CI pendente.
 
 ## Documentacao e memoria
 SPEC-001, tasks, runbook, matriz de regressao, active-feature e lessons-learned

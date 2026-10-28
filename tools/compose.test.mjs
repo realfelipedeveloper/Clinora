@@ -150,9 +150,9 @@ test('Garage local isola API S3 e administracao com bucket exclusivo de teste', 
 
 test('smoke Garage exige autenticacao e exercita objeto S3 com SDK', () => {
   const smoke = readFileSync(new URL('./compose-smoke.mjs', import.meta.url), 'utf8');
-  assert.match(smoke, /garageAdminRequest\(\)/);
-  assert.match(smoke, /garageAdminRequest\('token_invalido'\)/);
-  assert.match(smoke, /garageAdminRequest\(garageAdminToken\)/);
+  assert.match(smoke, /garageAdminRequest\(\)\)\.status, 403/);
+  assert.match(smoke, /garageAdminRequest\('token_invalido'\)\)\.status, 403/);
+  assert.match(smoke, /garageAdminRequest\(garageAdminToken\)\)\.status, 200/);
   assert.match(smoke, /wrongClient\.send\(new PutObjectCommand/);
   assert.match(smoke, /client\.send\(new PutObjectCommand/);
   assert.match(smoke, /client\.send\(new GetObjectCommand/);

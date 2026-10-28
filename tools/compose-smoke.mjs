@@ -365,8 +365,8 @@ try {
     captured = JSON.stringify(await response.json()).includes('Clinora smoke');
   }
   assert.equal(captured, true, 'Email de teste nao apareceu na API Mailpit');
-  assert.equal((await garageAdminRequest()).status, 401, 'Administracao Garage aceita acesso anonimo');
-  assert.equal((await garageAdminRequest('token_invalido')).status, 401, 'Administracao Garage aceitou token incorreto');
+  assert.equal((await garageAdminRequest()).status, 403, 'Administracao Garage aceita acesso anonimo');
+  assert.equal((await garageAdminRequest('token_invalido')).status, 403, 'Administracao Garage aceitou token incorreto');
   assert.equal((await garageAdminRequest(garageAdminToken)).status, 200);
   await assertGarageS3();
   const prometheusReady = await fetch('http://127.0.0.1:44281/-/ready', {
