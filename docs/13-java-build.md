@@ -41,6 +41,11 @@ Os modulos `services/core-api`, `services/payment-api`,
 `services/scheduler-worker` foram adicionados nas TASK-006 a TASK-010. Eles
 usam Spring Boot Web MVC e Actuator, com testes HTTP de health, liveness e
 readiness em portas aleatorias.
+Testcontainers 2.0.5 valida PostgreSQL 17 em porta efemera no CI Linux:
+conexao correta, senha incorreta e isolamento entre bancos de servicos. Os
+testes ficam no modulo `clinora-test-support` e exigem `CI=true` e Docker;
+fora do CI sao marcados como skipped, sem fingir cobertura local. Nenhum
+servico Java de negocio recebe driver ou credencial de banco nesta spec.
 O Surefire `3.5.5` e gerenciado pelo parent POM.
 Todos os servicos tambem incluem o registry Prometheus do Micrometer, mas o
 endpoint de scrape so e exposto no perfil `observability`.
