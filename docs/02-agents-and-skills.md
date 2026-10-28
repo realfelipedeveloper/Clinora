@@ -25,4 +25,4 @@
 Concorrência, timezone/recorrência, lista de espera, recursos, Spring Security, JPA performance, Flyway, multi-tenancy, privacidade, API security, testes unitários, integração, E2E, contratos, performance, RabbitMQ, Redis, pagamentos, feature flags, notificações, e-mail, SMS/WhatsApp, acessibilidade, Angular, UX de calendário, Design System, branding, supply chain, observabilidade e regressão.
 
 ## Skills
-Java 25, Spring Boot 4.1, Spring Modulith, Spring Security, JPA/Hibernate, Flyway, Spring AMQP, Maven, Angular 22, Signals, RxJS, Reactive Forms, Angular CDK, Tailwind, Storybook, PostgreSQL, Redis, RabbitMQ, MinIO, DDD, Clean Architecture, SOLID, Ports and Adapters, outbox, saga, idempotência, OAuth/OIDC, WebAuthn, TOTP, RBAC/ABAC, LGPD e OWASP ASVS.
+Java 25, Spring Boot 4.1, Spring Modulith, Spring Security, JPA/Hibernate, Flyway, Spring AMQP, Maven, Angular 22, Signals, RxJS, Reactive Forms, Angular CDK, Tailwind, Storybook, PostgreSQL, Redis, RabbitMQ, Garage local (S3), DDD, Clean Architecture, SOLID, Ports and Adapters, outbox, saga, idempotência, OAuth/OIDC, WebAuthn, TOTP, RBAC/ABAC, LGPD e OWASP ASVS.

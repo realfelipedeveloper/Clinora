@@ -6,7 +6,7 @@ Status: APPROVED
 Criar a fundação executável sem implementar regras de negócio da agenda.
 
 ## Escopo
-Maven multi-module, Angular workspace, Java 25, Spring Boot 4.1, Angular 22, Tailwind, PostgreSQL, Redis, RabbitMQ, MinIO, Mailpit, Docker Compose, health checks, observabilidade, CI, docs, Design System e memória persistente.
+Maven multi-module, Angular workspace, Java 25, Spring Boot 4.1, Angular 22, Tailwind, PostgreSQL, Redis, RabbitMQ, Garage local (S3), Mailpit, Docker Compose, health checks, observabilidade, CI, docs, Design System e memória persistente.
 
 ## Apps e serviços
 apps/web, apps/docs, services/core-api, services/payment-api, services/notification-api, services/integration-api e services/scheduler-worker.
@@ -26,8 +26,8 @@ CLINORA_RABBIT_AMQP_PORT=44250
 CLINORA_RABBIT_UI_PORT=44251
 CLINORA_MAIL_SMTP_PORT=44260
 CLINORA_MAIL_UI_PORT=44261
-CLINORA_MINIO_PORT=44270
-CLINORA_MINIO_CONSOLE_PORT=44271
+CLINORA_GARAGE_S3_PORT=44270
+CLINORA_GARAGE_ADMIN_PORT=44271
 CLINORA_GRAFANA_PORT=44280
 CLINORA_PROMETHEUS_PORT=44281
 
@@ -41,6 +41,8 @@ CLINORA_PROMETHEUS_PORT=44281
 - Pipeline Java e Angular.
 - Testcontainers.
 - Topologia RabbitMQ com queue e DLQ de teste.
+- Garage single-node com bucket e chave S3 de teste, API S3 e administracao
+  publicadas apenas em loopback. Nenhum dado clinico real ou uso de producao.
 - Verificador de portas.
 - Memória persistente.
 
@@ -49,3 +51,11 @@ CLINORA_PROMETHEUS_PORT=44281
 
 ## Fora de escopo
 Autenticação, pacientes, profissionais, agenda, pagamentos reais, notificações reais, integrações reais e cloud.
+
+## Emenda aprovada em 2026-10-28
+O usuario aprovou Garage como substituto local S3 da TASK-024 porque o MinIO
+comunitario foi arquivado e AIStor requer licenca. A escolha nao altera o
+contrato S3 previsto para funcionalidades futuras; single-node nao oferece
+redundancia e nao serve para dados clinicos reais ou producao. A API
+administrativa deve exigir token; nenhum servico de negocio recebe chave
+S3 nesta etapa.

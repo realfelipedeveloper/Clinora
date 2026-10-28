@@ -83,5 +83,6 @@ Host aceita o nome interno `mailpit` e a porta UI local configurada por
 
 Prometheus e Grafana ficam nas portas 44281 e 44280 em loopback; consulte
 `infra/observability/README.md` para perfis, datasource, credenciais e limites.
-A TASK-024 de armazenamento S3 aguarda decisao sobre o MinIO arquivado.
+A TASK-024 usara Garage single-node para S3 local, conforme emenda aprovada
+da SPEC-001. O servico ainda nao esta no Compose nesta etapa.
 

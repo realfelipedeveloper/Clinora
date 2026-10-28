@@ -57,8 +57,8 @@ nao encerra processos existentes. A checagem nao reserva as portas, entao
 outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
-1. TASK-024: armazenamento S3 local; decisao de fornecedor pendente por
-   arquivamento do MinIO comunitario.
+1. TASK-024: Garage local aprovado como armazenamento S3; implementacao em
+   andamento.
 2. TASK-027: health/readiness.
 
 ## Seguranca e privacidade
