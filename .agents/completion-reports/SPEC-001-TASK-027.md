@@ -34,7 +34,9 @@ auditoria. Esta registrou 8 alertas em dependencias de desenvolvimento
 CI do PR #107 falhou no JaCoCo limpo: 78% das linhas da classe, abaixo do
 piso de 80%. Sem afrouxar o gate, o teste HTTP efemero cobriu a sobrecarga
 publica; `mvnw -pl libs/java/clinora-test-support -am clean verify` passou
-com 36/42 linhas (85,7%). Novo CI e promocao protegida pendentes.
+com 36/42 linhas (85,7%). O segundo CI do PR #107, run 40629399588,
+passou `verify` e smoke Linux, incluindo os cinco readiness saudaveis em
+containers. Promocao protegida pendente.
 
 ## Documentacao e memoria
 Guia de observabilidade, matriz de regressao, active-feature e
