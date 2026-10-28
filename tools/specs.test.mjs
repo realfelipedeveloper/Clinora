@@ -6,6 +6,18 @@ import { marked } from 'marked';
 const specsRoot = new URL('../specs/', import.meta.url);
 const index = readFileSync(new URL('README.md', specsRoot), 'utf8');
 const roadmap = readFileSync(new URL('../docs/09-roadmap.md', import.meta.url), 'utf8');
+
+test('emenda aprovada da SPEC-001 usa Garage local em vez de MinIO arquivado', () => {
+  const spec = readFileSync(new URL('./001-platform-foundation/spec.md', specsRoot), 'utf8');
+  const tasks = readFileSync(new URL('./001-platform-foundation/tasks.md', specsRoot), 'utf8');
+  assert.match(spec, /Garage/);
+  assert.match(spec, /CLINORA_GARAGE_S3_PORT=44270/);
+  assert.match(spec, /CLINORA_GARAGE_ADMIN_PORT=44271/);
+  assert.match(tasks, /TASK-024 Garage/);
+  assert.doesNotMatch(spec.split('## Escopo')[1].split('## Apps')[0], /MinIO/);
+  assert.doesNotMatch(spec, /CLINORA_MINIO/);
+  assert.doesNotMatch(tasks, /MinIO/);
+});
 const entries = [
   ['001', 'platform-foundation', 'APPROVED'],
   ['002', 'identity-tenancy', 'APPROVED'],

@@ -13,8 +13,6 @@ if (compose.status !== 0) {
   try {
     const ports = portsFromCompose(JSON.parse(compose.stdout), {
       storybook: 44212,
-      's3-api-reservada': 44270,
-      's3-console-reservada': 44271,
     });
     const results = await checkPorts(ports);
     for (const { service, port, available, code } of results) {

@@ -1,7 +1,7 @@
 # infra/docker
 
 Stack local da SPEC-001. `compose.yaml` fica na raiz, usa o namespace
-`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Prometheus e Grafana apenas em
+`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Prometheus e Grafana apenas em
 `127.0.0.1` nas portas reservadas. O Compose consome os artefatos criados pelo
 `verify` como mounts somente leitura; nao usa `node_modules` em containers.
 
@@ -14,7 +14,7 @@ docker compose down
 ```
 
 Antes de subir a stack, confira as portas 44210, 44211, 44220-44224, 44230,
-44240, 44250, 44251, 44260, 44261, 44280 e 44281 com o
+44240, 44250, 44251, 44270, 44271, 44280 e 44281 com o
 verificador `corepack pnpm run ports:check` antes de subir a stack; veja
 `docs/11-local-development.md`. O comando `down`
 atua somente no projeto `clinora-local`; nao use `down -v` para diagnostico.
@@ -26,7 +26,8 @@ O CI executa `tools/compose-smoke.mjs` em runner isolado, verifica os sete
 endpoints, as permissoes dos quatro bancos, as ACLs Redis e o roteamento da
 fila de teste para a DLQ RabbitMQ, a captura SMTP e o acesso protegido ao
 Mailpit, os cinco targets Prometheus e a API protegida do Grafana antes de remover
-apenas os containers desse projeto.
+apenas os containers desse projeto. O smoke tambem grava, le e exclui objeto
+ficticio via SDK S3 no Garage e rejeita acesso S3 e administrativo nao autorizado.
 
 PostgreSQL usa volume nomeado persistente, autenticacao host SCRAM e quatro
 bancos logicos. Cada banco tem papel proprio, sem `CONNECT` publico:
@@ -83,5 +84,13 @@ Host aceita o nome interno `mailpit` e a porta UI local configurada por
 
 Prometheus e Grafana ficam nas portas 44281 e 44280 em loopback; consulte
 `infra/observability/README.md` para perfis, datasource, credenciais e limites.
-A TASK-024 de armazenamento S3 aguarda decisao sobre o MinIO arquivado.
+Garage 2.5.0 usa um unico no sem redundancia, bucket `clinora-smoke` e volume
+`garage-data`. A API S3 fica em `http://127.0.0.1:44270`; a API administrativa
+em `http://127.0.0.1:44271` exige Bearer token. As credenciais e tokens no
+Compose/TOML sao exemplos locais versionados, nunca secretos de producao.
+Nao armazene dados de saude reais, nao exponha essas portas fora de loopback
+e nao use esta configuracao em producao. O volume persiste objetos ate remocao
+explicita; `docker compose down` nao remove o volume. Nenhum servico Java recebe
+credenciais Garage nesta task. Consulte o [quick start oficial](https://garagehq.deuxfleurs.fr/documentation/quick-start/)
+e a [API administrativa](https://garagehq.deuxfleurs.fr/documentation/reference-manual/admin-api/).
 
