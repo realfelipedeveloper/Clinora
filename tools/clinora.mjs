@@ -23,6 +23,7 @@ const commands = {
   'tools:test': toolsTest,
   'security:check': securityCheck,
   'git:remote': gitRemote,
+  'ports:check': portsCheck,
 };
 
 async function main() {
@@ -55,6 +56,7 @@ Commands:
   tools:test      Run tests for repository scripts.
   security:check  Reject high production and critical dependency advisories.
   git:remote      Validate that origin points to realfelipedeveloper/Clinora.
+  ports:check     Check reserved local ports without stopping listeners.
 `);
 }
 
@@ -126,6 +128,7 @@ function toolsTest() {
     'tools/quality-status.test.mjs',
     'tools/branch-protection.test.mjs',
     'tools/compose.test.mjs',
+    'tools/ports.test.mjs',
     'tools/specs.test.mjs',
   ]);
 }
@@ -146,6 +149,10 @@ function gitRemote() {
   }
 
   console.log(`Git remote OK: ${fetchUrl}`);
+}
+
+function portsCheck() {
+  run(process.execPath, ['tools/check-ports.mjs']);
 }
 
 function checkNode() {
