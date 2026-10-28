@@ -31,6 +31,7 @@ const redisUsers = [
 ];
 const rabbitAuthorization = `Basic ${Buffer.from('clinora_local:clinora_rabbit_local_only_2026').toString('base64')}`;
 const mailAuthorization = `Basic ${Buffer.from('clinora_local:clinora_mail_local_only_2026').toString('base64')}`;
+const grafanaAuthorization = `Basic ${Buffer.from('clinora_local:clinora_grafana_local_only_2026').toString('base64')}`;
 
 async function mailRequest(path, { authorization = mailAuthorization } = {}) {
   const headers = {};
@@ -190,6 +191,8 @@ await assertPortFree(44250);
 await assertPortFree(44251);
 await assertPortFree(44260);
 await assertPortFree(44261);
+await assertPortFree(44280);
+await assertPortFree(44281);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -302,6 +305,37 @@ try {
     captured = JSON.stringify(await response.json()).includes('Clinora smoke');
   }
   assert.equal(captured, true, 'Email de teste nao apareceu na API Mailpit');
+  const prometheusReady = await fetch('http://127.0.0.1:44281/-/ready', {
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(prometheusReady.status, 200);
+  let healthyTargets = 0;
+  for (let attempt = 0; attempt < 30 && healthyTargets !== 5; attempt += 1) {
+    if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, 1_000));
+    const response = await fetch('http://127.0.0.1:44281/api/v1/targets', {
+      signal: AbortSignal.timeout(5_000),
+    });
+    assert.equal(response.status, 200);
+    const targets = (await response.json()).data.activeTargets;
+    healthyTargets = targets.filter(({ labels, health }) => labels.job === 'clinora-java' && health === 'up').length;
+  }
+  assert.equal(healthyTargets, 5, 'Prometheus nao coletou os cinco servicos Java');
+  const grafanaHealth = await fetch('http://127.0.0.1:44280/api/health', {
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(grafanaHealth.status, 200);
+  const datasourceUrl = 'http://127.0.0.1:44280/api/datasources/uid/clinora-prometheus';
+  const anonymousDatasource = await fetch(datasourceUrl, {
+    redirect: 'manual',
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(anonymousDatasource.status, 401);
+  const authorizedDatasource = await fetch(datasourceUrl, {
+    headers: { Authorization: grafanaAuthorization },
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(authorizedDatasource.status, 200);
+  assert.equal((await authorizedDatasource.json()).url, 'http://prometheus:9090');
   console.log('Clinora Compose smoke OK');
 } finally {
   compose(['down', '--remove-orphans']);
