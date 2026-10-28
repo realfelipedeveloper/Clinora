@@ -33,7 +33,8 @@ marca os tres testes de container explicitamente skipped sem Docker acessivel;
 nao ha alegacao de cobertura local dessa camada. O CI Linux do PR #110,
 run 40630980744, executou `PostgresContainerTest`: 3 testes, 0 falhas,
 0 erros, 0 skipped; `verify` e smoke Compose tambem passaram. Promocao
-protegida pendente.
+protegida concluida por PRs #110, #111 e #112; as tres bases terminaram
+com a mesma arvore.
 
 ## Documentacao e memoria
 Guia Java, matriz de regressao, active-feature e lessons-learned atualizados.
