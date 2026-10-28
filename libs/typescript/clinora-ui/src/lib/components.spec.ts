@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { fireEvent, render, screen } from '@testing-library/angular';
 import { UiAlert } from './ui-alert';
 import { UiButton } from './ui-button';
 import { UiCard } from './ui-card';
@@ -26,6 +27,18 @@ class FormHost {
 }
 
 describe('Clinora UI', () => {
+  it('updates the form through accessible controls', async () => {
+    const view = await render(FormHost);
+    const name = screen.getByRole('textbox', { name: 'Nome' });
+    const choice = screen.getByRole('combobox', { name: 'Opção' });
+
+    fireEvent.input(name, { target: { value: 'Bia' } });
+    fireEvent.change(choice, { target: { value: 'a' } });
+
+    expect(view.fixture.componentInstance.name.value).toBe('Bia');
+    expect(view.fixture.componentInstance.choice.value).toBe('a');
+  });
+
   it('works through Angular reactive forms', () => {
     const fixture = TestBed.createComponent(FormHost);
     fixture.detectChanges();
