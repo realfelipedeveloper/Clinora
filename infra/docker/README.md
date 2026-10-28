@@ -15,7 +15,8 @@ docker compose down
 
 Antes de subir a stack, confira as portas 44210, 44211, 44220-44224, 44230,
 44240, 44250, 44251, 44260, 44261, 44280 e 44281 com o
-verificador do runbook em `docs/11-local-development.md`. O comando `down`
+verificador `corepack pnpm run ports:check` antes de subir a stack; veja
+`docs/11-local-development.md`. O comando `down`
 atua somente no projeto `clinora-local`; nao use `down -v` para diagnostico.
 
 Web e docs usam NGINX sem privilegios. Os servicos Java usam JRE 25, usuario
