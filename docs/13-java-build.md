@@ -46,6 +46,11 @@ conexao correta, senha incorreta e isolamento entre bancos de servicos. Os
 testes ficam no modulo `clinora-test-support` e exigem `CI=true` e Docker;
 fora do CI sao marcados como skipped, sem fingir cobertura local. Nenhum
 servico Java de negocio recebe driver ou credencial de banco nesta spec.
+ArchUnit 1.5.1 verifica em cada modulo que classes de producao nao importam
+diretamente pacotes dos outros quatro servicos. A regra compartilhada vive em
+`clinora-test-support`, dependencia apenas de teste dos servicos; uma fixture
+`core -> payment` prova que o gate detecta violacao. Integracoes futuras
+devem usar contratos explicitos, nao classes internas de outro servico.
 O Surefire `3.5.5` e gerenciado pelo parent POM.
 Todos os servicos tambem incluem o registry Prometheus do Micrometer, mas o
 endpoint de scrape so e exposto no perfil `observability`.

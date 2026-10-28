@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-029",
-    "title": "Testcontainers PostgreSQL efemero",
-    "branch": "feature/spec-001-task-029",
+    "id": "TASK-030",
+    "title": "ArchUnit entre servicos Java",
+    "branch": "feature/spec-001-task-030",
     "status": "in_progress",
     "startedAt": "2026-10-28"
   },
@@ -22,15 +22,16 @@
     "port conflicts",
     "configuration drift",
     "port exposure or collision drift",
-    "dependencia de Docker no CI",
-    "acesso cruzado entre bancos de servicos",
-    "colisao de portas do host"
+    "dependencias diretas entre servicos",
+    "regra de arquitetura sem teste negativo",
+    "acesso a dados de outro servico"
   ],
   "requiredTests": [
     "unit",
     "integration",
     "health",
     "testcontainers",
+    "archunit",
     "port-conflict",
     "postgres",
     "redis",
