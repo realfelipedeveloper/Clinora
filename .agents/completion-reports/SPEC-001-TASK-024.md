@@ -44,4 +44,5 @@ confirmou o comportamento real.
 
 ## Documentacao e memoria
 SPEC-001, tasks, runbook, matriz de regressao, active-feature e lessons-learned
-atualizados. Promocao protegida pendente.
+atualizados. Promovida por PRs protegidos #104, #105 e #106; as tres bases
+terminaram com a mesma arvore.

@@ -6,9 +6,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,77 @@ class HealthProbeVerifierTest {
         assertThatThrownBy(() -> HealthProbeVerifier.verify(client, 44220))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("/actuator/health retornou HTTP 503");
+    }
+
+    @Test
+    void distingueProcessoVivoDeServicoNaoPronto() throws Exception {
+        List<String> requests = new ArrayList<>();
+        HttpClient client = client(Map.of(
+                "/actuator/health/readiness", reply(503, "{\"status\":\"OUT_OF_SERVICE\"}")), requests);
+
+        HealthProbeVerifier.verifyNotReady(client, 44220);
+
+        assertThat(requests).containsExactly(
+                "http://127.0.0.1:44220/actuator/health/liveness",
+                "http://127.0.0.1:44220/actuator/health/readiness");
+    }
+
+    @Test
+    void verificaReadinessDegradadoPorHttpRealEmPortaEfemera() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/actuator/health/liveness", exchange -> {
+            byte[] body = "{\"status\":\"UP\"}".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            try (var output = exchange.getResponseBody()) {
+                output.write(body);
+            }
+        });
+        server.createContext("/actuator/health/readiness", exchange -> {
+            byte[] body = "{\"status\":\"OUT_OF_SERVICE\"}"
+                    .getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(503, body.length);
+            try (var output = exchange.getResponseBody()) {
+                output.write(body);
+            }
+        });
+        server.start();
+        try {
+            HealthProbeVerifier.verifyNotReady(server.getAddress().getPort());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void rejeitaReadinessQueAceitaTrafegoDuranteDegradacao() throws Exception {
+        HttpClient client = client(Map.of(), new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("/actuator/health/readiness retornou HTTP 200");
+    }
+
+    @Test
+    void rejeitaLivenessIndisponivelDuranteDegradacao() throws Exception {
+        HttpClient client = client(Map.of(
+                "/actuator/health/liveness", reply(503, "{\"status\":\"DOWN\"}")),
+                new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("/actuator/health/liveness retornou HTTP 503");
+    }
+
+    @Test
+    void rejeitaDetalhesInternosDuranteDegradacao() throws Exception {
+        HttpClient client = client(Map.of(
+                "/actuator/health/readiness",
+                reply(503, "{\"status\":\"OUT_OF_SERVICE\",\"components\":{}}")),
+                new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("sem componentes internos");
     }
 
     @Test

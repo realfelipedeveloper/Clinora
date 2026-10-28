@@ -2,6 +2,10 @@
 
 Os cinco servicos Java expoem health, liveness e readiness pelo Actuator.
 O perfil padrao expoe apenas health e escuta em `127.0.0.1`.
+Os testes HTTP em porta aleatoria simulam `REFUSING_TRAFFIC` em cada servico:
+readiness deve responder HTTP 503 com `OUT_OF_SERVICE`, enquanto liveness
+continua HTTP 200 com `UP`. Ambos ocultam componentes internos. O estado e
+restaurado no fim de cada teste; o Compose consulta readiness, nao apenas PID.
 
 O perfil `observability` habilita `/actuator/prometheus` para scrape. Exemplo
 de execucao a partir da raiz, apos validar a porta do servico:
