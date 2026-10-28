@@ -45,3 +45,8 @@ tasks:
     desc: Ensure origin points only to realfelipedeveloper/Clinora.
     cmds:
       - corepack pnpm run git:remote
+
+  ports:check:
+    desc: Check effective Compose and reserved ports in loopback.
+    cmds:
+      - corepack pnpm run ports:check
