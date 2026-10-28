@@ -59,6 +59,8 @@
     "@storybook/addon-docs": "10.6.3",
     "@storybook/angular": "10.6.3",
     "@tailwindcss/postcss": "^4.3.3",
+    "@testing-library/angular": "19.4.2",
+    "@testing-library/dom": "10.4.1",
     "@vitest/coverage-v8": "4.1.12",
     "jsdom": "^28.0.0",
     "ng-packagr": "^22.1.0",

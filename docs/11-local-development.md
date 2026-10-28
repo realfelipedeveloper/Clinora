@@ -57,8 +57,7 @@ nao encerra processos existentes. A checagem nao reserva as portas, entao
 outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
-1. TASK-031: ampliar testes Angular conforme as interfaces evoluirem.
-2. TASK-034: PIT para testes de mutacao Java.
+1. TASK-034: PIT para testes de mutacao Java.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
