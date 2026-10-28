@@ -3,9 +3,9 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-023",
-    "title": "Mailpit local para captura de email de teste",
-    "branch": "feature/spec-001-task-023",
+    "id": "TASK-025",
+    "title": "Prometheus e Grafana locais",
+    "branch": "feature/spec-001-task-025",
     "status": "in_progress",
     "startedAt": "2026-10-27"
   },
@@ -21,7 +21,7 @@
   "risks": [
     "port conflicts",
     "configuration drift",
-    "Mailpit authentication or recipient-filter drift",
+    "metrics exposure or scrape drift",
     "unsafe local defaults"
   ],
   "requiredTests": [
@@ -33,6 +33,7 @@
     "redis",
     "rabbitmq",
     "mailpit",
+    "observability",
     "accessibility",
     "e2e-smoke"
   ]

@@ -1,7 +1,7 @@
 # infra/docker
 
 Stack local da SPEC-001. `compose.yaml` fica na raiz, usa o namespace
-`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ e Mailpit apenas em
+`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Prometheus e Grafana apenas em
 `127.0.0.1` nas portas reservadas. O Compose consome os artefatos criados pelo
 `verify` como mounts somente leitura; nao usa `node_modules` em containers.
 
@@ -14,7 +14,7 @@ docker compose down
 ```
 
 Antes de subir a stack, confira as portas 44210, 44211, 44220-44224, 44230,
-44240, 44250, 44251, 44260 e 44261 com o
+44240, 44250, 44251, 44260, 44261, 44280 e 44281 com o
 verificador do runbook em `docs/11-local-development.md`. O comando `down`
 atua somente no projeto `clinora-local`; nao use `down -v` para diagnostico.
 
@@ -24,7 +24,7 @@ as paginas web e o readiness real do Actuator. Nenhum dado clinico e montado.
 O CI executa `tools/compose-smoke.mjs` em runner isolado, verifica os sete
 endpoints, as permissoes dos quatro bancos, as ACLs Redis e o roteamento da
 fila de teste para a DLQ RabbitMQ, a captura SMTP e o acesso protegido ao
-Mailpit antes de remover
+Mailpit, os cinco targets Prometheus e a API protegida do Grafana antes de remover
 apenas os containers desse projeto.
 
 PostgreSQL usa volume nomeado persistente, autenticacao host SCRAM e quatro
@@ -80,5 +80,7 @@ senha padrao nao serve fora do ambiente de desenvolvimento. A allowlist de
 Host aceita o nome interno `mailpit` e a porta UI local configurada por
 `CLINORA_MAIL_UI_PORT`. Consulte a [documentacao oficial do Mailpit](https://mailpit.axllent.org/docs/configuration/runtime-options/).
 
-MinIO e observabilidade entram nas TASK-024 e TASK-025, sem mudar as portas atuais.
+Prometheus e Grafana ficam nas portas 44281 e 44280 em loopback; consulte
+`infra/observability/README.md` para perfis, datasource, credenciais e limites.
+A TASK-024 de armazenamento S3 aguarda decisao sobre o MinIO arquivado.
 

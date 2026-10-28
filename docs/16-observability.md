@@ -11,6 +11,12 @@ de execucao a partir da raiz, apos validar a porta do servico:
 java -jar services/core-api/target/core-api-0.0.1-SNAPSHOT.jar --spring.profiles.active=observability
 ```
 
+No Compose da TASK-025, o perfil e ativado nos cinco containers Java.
+Prometheus coleta as metricas em `http://127.0.0.1:44281`; Grafana usa esse
+Prometheus como datasource em `http://127.0.0.1:44280`. Os enderecos sao
+publicados apenas em loopback. Credenciais locais, portas e limites constam
+em `infra/observability/README.md`.
+
 O endpoint `/actuator/env` nao e exposto em nenhum perfil. As metricas usam
 apenas o nome da aplicacao como tag comum; identificadores de pacientes,
 tenants, consultas e outros dados sensiveis nao devem virar tags.
