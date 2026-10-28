@@ -14,6 +14,19 @@ test('workflow manual nao depende do payload workflow_run', () => {
   assert.doesNotMatch(workflow, /github\.event\.workflow_run/);
 });
 
+test('promocoes nao criam runs pull_request sem jobs', () => {
+  const workflow = readFileSync('.github/workflows/quality.yml', 'utf8');
+  const triggers = workflow.split('\non:\n')[1]?.split('\npermissions:\n')[0];
+  assert.ok(triggers, 'Gatilhos da qualidade ausentes');
+  assert.match(triggers, /pull_request:\s*\n\s+branches:\s*\n\s+- development/);
+  assert.doesNotMatch(triggers, /\n\s+- (?:homologation|main)\b/);
+  assert.match(triggers, /\n  workflow_dispatch:/);
+
+  const promotion = readFileSync('.github/workflows/git-flow-promotion.yml', 'utf8');
+  assert.match(promotion, /gh workflow run quality\.yml/);
+  assert.match(promotion, /--ref "\$\{\{ steps\.fluxo\.outputs\.branch_promocao \}\}"/);
+});
+
 test('qualidade dispara publicador isolado mesmo quando o gate falha', () => {
   const workflow = readFileSync('.github/workflows/quality.yml', 'utf8');
   assert.match(workflow, /permissions:\s*\n  contents: read/);
