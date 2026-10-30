@@ -57,7 +57,8 @@ nao encerra processos existentes. A checagem nao reserva as portas, entao
 outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
-1. TASK-034: PIT para testes de mutacao Java.
+1. Concluir a promocao da SPEC-001 ate `main`.
+2. Ativar a SPEC-002 para identidade e isolamento entre tenants.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
