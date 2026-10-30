@@ -85,6 +85,17 @@ Os relatorios JaCoCo ficam em `target/site/jacoco` de cada modulo. O modulo
 `clinora-test-support` parte de 30/36 linhas cobertas; novas classes de
 producao entram automaticamente na regra, exceto bootstrap.
 
+## Testes de mutacao
+
+`corepack pnpm java:mutation` executa PIT 1.30.1 com o plugin JUnit 5 1.2.2
+no modulo `clinora-test-support`. O perfil `mutation` cobre os verificadores
+de health e arquitetura, exige ao menos 90% dos mutantes eliminados e gera
+HTML e XML em `libs/java/clinora-test-support/target/pit-reports`.
+O comando tambem integra `corepack pnpm verify` e, portanto, o CI dos PRs.
+Quando as specs seguintes adicionarem logica Java de dominio, ampliar o
+escopo de mutacao para os modulos correspondentes antes de declarar a
+cobertura do dominio completa.
+
 ## Decisoes de seguranca
 - Sem binario Maven Wrapper versionado.
 - Sem secrets em configuracao Maven.

@@ -3,11 +3,11 @@
   "title": "Fundação da Plataforma Clinora",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-031",
-    "title": "Vitest e Angular Testing Library",
-    "branch": "feature/spec-001-task-031",
+    "id": "TASK-034",
+    "title": "PIT e testes de mutacao Java",
+    "branch": "feature/spec-001-task-034",
     "status": "in_progress",
-    "startedAt": "2026-10-28"
+    "startedAt": "2026-10-30"
   },
   "services": [
     "web",
@@ -22,9 +22,9 @@
     "port conflicts",
     "configuration drift",
     "port exposure or collision drift",
-    "regressao de interacao do formulario",
-    "rotulos inacessiveis",
-    "dependencias de teste em runtime"
+    "mutantes sobreviventes em verificadores compartilhados",
+    "tempo adicional do gate de qualidade",
+    "logica de dominio fora do escopo da fundacao"
   ],
   "requiredTests": [
     "unit",
@@ -32,6 +32,7 @@
     "health",
     "testcontainers",
     "archunit",
+    "mutation",
     "angular-testing-library",
     "pact",
     "wiremock",
