@@ -147,6 +147,7 @@ function toolsTest() {
     'tools/compose.test.mjs',
     'tools/ports.test.mjs',
     'tools/specs.test.mjs',
+    'tools/foundation.test.mjs',
   ]);
 }
 

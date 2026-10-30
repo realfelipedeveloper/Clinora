@@ -36,6 +36,7 @@ afirmar que a suite anterior continuou verde.
 | 016 | Storybook | Build estatico e smoke test executados na TASK-016; build permanente no `verify` e CI | Smoke test de servidor em CI ainda pendente |
 | 035-044 | CI, auditoria e status de qualidade | `verify` em PR; testes unitarios de run, SHA, fork, falha, timeout e permissao isolada; prova automatica nos PRs #62-#64; verificador da protecao das tres bases; merges protegidos #65-#67 | Forks precisam de fluxo proprio |
 | 035 hotfix | Falsos runs falhos na promocao | Teste de gatilho falhou antes da correcao; `pull_request` somente em `development`, `workflow_dispatch` mantido nas promocoes #117-#118 com status obrigatorio verde e sem runs vazios | PR manual direto para `homologation`/`main` precisa de dispatch explicito |
+| 037-041 | ADR, memoria, estado ativo, relatorio e runbook | Testes estruturados exigem secoes de ADR e relatorio, arquivos de memoria nao vazios, spec ativa aprovada e branch da tarefa coerente; catalogo de 18 portas igual ao da SPEC-001, sem colisao; runbook conserva comandos de checagem e subida | O teste de portas documentadas nao substitui o smoke real do Compose; SPEC-002 deve atualizar os contratos ao ativar novas portas |
 | Specs 002-011 | Releases 1-10 aprovadas pelo usuário, ainda inativas | Testes do índice Markdown verificam links, arquivos, roadmap, status e divergências; cada `tasks.md` deve indicar aprovação | Implementação depende do CI e merge do PR #82 e de ativação sequencial |
 
 O projeto ainda nao implementa tenant, pacientes, reservas, agenda ou
