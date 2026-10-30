@@ -18,6 +18,7 @@ const commands = {
   doctor,
   verify,
   'java:verify': javaVerify,
+  'java:mutation': javaMutation,
   'frontend:check': frontendCheck,
   'frontend:verify': frontendVerify,
   'tools:test': toolsTest,
@@ -51,6 +52,7 @@ Commands:
   doctor          Validate local toolchain and repository wiring.
   verify          Run all foundation tests, builds and checks.
   java:verify     Run Maven verify through the wrapper.
+  java:mutation   Run PIT mutation tests for Java foundation logic.
   frontend:check  Run pnpm frozen install, peer check and Angular workspace checks.
   frontend:verify Run Angular tests and builds, including Storybook.
   tools:test      Run tests for repository scripts.
@@ -64,6 +66,7 @@ async function verify() {
   await doctor();
   toolsTest();
   await javaVerify();
+  javaMutation();
   await frontendVerify();
   runCorepackPnpm(['e2e:test']);
   securityCheck();
@@ -87,10 +90,24 @@ async function doctor() {
 }
 
 function javaVerify() {
+  runMaven(['verify']);
+}
+
+function javaMutation() {
+  runMaven([
+    '-pl',
+    'libs/java/clinora-test-support',
+    '-Pmutation',
+    'test-compile',
+    'org.pitest:pitest-maven:mutationCoverage',
+  ]);
+}
+
+function runMaven(mavenArgs) {
   const javaHome = resolveJavaHome();
   const command = process.platform === 'win32' ? 'cmd.exe' : './mvnw';
   const args =
-    process.platform === 'win32' ? ['/d', '/s', '/c', '.\\mvnw.cmd', 'verify'] : ['verify'];
+    process.platform === 'win32' ? ['/d', '/s', '/c', '.\\mvnw.cmd', ...mavenArgs] : mavenArgs;
   run(command, args, {
     env: {
       ...process.env,

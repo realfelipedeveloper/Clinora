@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.sun.net.httpserver.HttpServer;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -46,6 +47,19 @@ class HealthProbeVerifierTest {
     }
 
     @Test
+    void rejeitaSaudeIndisponivelPorHttpReal() throws Exception {
+        HttpServer server = startServer(Map.of(
+                "/actuator/health", reply(503, "{\"status\":\"DOWN\"}")));
+        try {
+            assertThatThrownBy(() -> HealthProbeVerifier.verify(server.getAddress().getPort()))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("/actuator/health retornou HTTP 503");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
     void distingueProcessoVivoDeServicoNaoPronto() throws Exception {
         List<String> requests = new ArrayList<>();
         HttpClient client = client(Map.of(
@@ -60,25 +74,25 @@ class HealthProbeVerifierTest {
 
     @Test
     void verificaReadinessDegradadoPorHttpRealEmPortaEfemera() throws Exception {
-        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-        server.createContext("/actuator/health/liveness", exchange -> {
-            byte[] body = "{\"status\":\"UP\"}".getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, body.length);
-            try (var output = exchange.getResponseBody()) {
-                output.write(body);
-            }
-        });
-        server.createContext("/actuator/health/readiness", exchange -> {
-            byte[] body = "{\"status\":\"OUT_OF_SERVICE\"}"
-                    .getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(503, body.length);
-            try (var output = exchange.getResponseBody()) {
-                output.write(body);
-            }
-        });
-        server.start();
+        HttpServer server = startServer(Map.of(
+                "/actuator/health/liveness", reply(200, "{\"status\":\"UP\"}"),
+                "/actuator/health/readiness", reply(503, "{\"status\":\"OUT_OF_SERVICE\"}")));
         try {
             HealthProbeVerifier.verifyNotReady(server.getAddress().getPort());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void rejeitaLivenessComCorpoIndisponivelPorHttpReal() throws Exception {
+        HttpServer server = startServer(Map.of(
+                "/actuator/health/liveness", reply(200, "{\"status\":\"DOWN\"}"),
+                "/actuator/health/readiness", reply(503, "{\"status\":\"OUT_OF_SERVICE\"}")));
+        try {
+            assertThatThrownBy(() -> HealthProbeVerifier.verifyNotReady(server.getAddress().getPort()))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("status UP");
         } finally {
             server.stop(0);
         }
@@ -156,6 +170,30 @@ class HealthProbeVerifierTest {
     }
 
     @Test
+    void rejeitaMetricasIndisponiveisNoPerfilDeObservabilidade() throws Exception {
+        HttpClient client = client(Map.of(
+                "/actuator/prometheus", reply(503, "jvm_memory_used_bytes 1")),
+                new ArrayList<>());
+
+        assertThatThrownBy(() -> HealthProbeVerifier.verifyPrometheus(client, 44220))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("/actuator/prometheus retornou HTTP 503");
+    }
+
+    @Test
+    void rejeitaMetricasSemJvmPorHttpReal() throws Exception {
+        HttpServer server = startServer(Map.of(
+                "/actuator/prometheus", reply(200, "http_requests_total 1")));
+        try {
+            assertThatThrownBy(() -> HealthProbeVerifier.verifyPrometheus(server.getAddress().getPort()))
+                    .isInstanceOf(AssertionError.class)
+                    .hasMessageContaining("metricas JVM");
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
     void observaMetricasSemExporAmbiente() throws Exception {
         List<String> requests = new ArrayList<>();
         HttpClient client = client(Map.of("/actuator/prometheus", reply(200, "jvm_memory_used_bytes 1")),
@@ -181,6 +219,19 @@ class HealthProbeVerifierTest {
 
     private static Reply reply(int status, String body) {
         return new Reply(status, body);
+    }
+
+    private static HttpServer startServer(Map<String, Reply> replies) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        replies.forEach((path, reply) -> server.createContext(path, exchange -> {
+            byte[] body = reply.body().getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(reply.status(), body.length);
+            try (var output = exchange.getResponseBody()) {
+                output.write(body);
+            }
+        }));
+        server.start();
+        return server;
     }
 
     @SuppressWarnings("unchecked")
