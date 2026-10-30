@@ -1,11 +1,11 @@
 {
-  "id": "SPEC-001",
-  "title": "Fundação da Plataforma Clinora",
+  "id": "SPEC-002",
+  "title": "Identidade, tenants e autorização",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-037-041",
-    "title": "Fechamento da memoria e do runbook",
-    "branch": "feature/spec-001-task-037-041",
+    "id": "TASK-001",
+    "title": "ADR de IdP OIDC, contexto e contratos de autenticação",
+    "branch": "feature/spec-002-task-001",
     "status": "in_progress",
     "startedAt": "2026-10-30"
   },
@@ -19,32 +19,19 @@
     "scheduler-worker"
   ],
   "risks": [
-    "port conflicts",
-    "configuration drift",
-    "port exposure or collision drift",
-    "divergencia entre spec e catalogo de portas",
-    "spec ativa fixada em teste apos sua conclusao",
-    "regressao nos templates de ADR e relatorio"
+    "JWT com emissor ou audiência não confiável",
+    "XSS com exfiltração de token em memória",
+    "tenant selecionado sem vínculo ativo",
+    "MFA afirmado pelo cliente sem validação no servidor"
   ],
   "requiredTests": [
     "unit",
     "integration",
-    "health",
-    "testcontainers",
-    "archunit",
-    "mutation",
-    "foundation-docs",
-    "angular-testing-library",
-    "pact",
-    "wiremock",
-    "port-conflict",
-    "postgres",
-    "redis",
-    "rabbitmq",
-    "mailpit",
-    "observability",
-    "garage",
-    "accessibility",
-    "e2e-smoke"
+    "contract",
+    "identity-unit",
+    "tenant-integration",
+    "identity-e2e",
+    "identity-security",
+    "identity-mutation"
   ]
 }
