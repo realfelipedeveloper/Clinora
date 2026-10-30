@@ -38,11 +38,9 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 - Vitest, Angular Testing Library, Storybook, Playwright e axe-core
 
 ## Estado do bootstrap
-SPEC-001 aprovada. O repositorio foi iniciado pela TASK-001 com a estrutura poliglota em `apps`, `services`, `libs`, `infra` e `tools`.
-As SPEC-002 a SPEC-011 foram preparadas para revisão, mas ainda não estão
-aprovadas e não autorizam implementação.
-As SPEC-002 a SPEC-011 foram preparadas para revisão, mas ainda não estão
-aprovadas e não autorizam implementação.
+SPEC-001 aprovada e ativa. O repositorio foi iniciado pela TASK-001 com a estrutura poliglota em `apps`, `services`, `libs`, `infra` e `tools`.
+As SPEC-002 a SPEC-011 foram aprovadas pelo usuario apos o CI e merge do PR
+#82 e podem ser ativadas sequencialmente apos a conclusao da fundacao.
 
 Os servicos `services/core-api`, `services/payment-api` e
 `services/notification-api`, `services/integration-api` e
