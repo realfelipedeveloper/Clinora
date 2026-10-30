@@ -148,6 +148,7 @@ function toolsTest() {
     'tools/ports.test.mjs',
     'tools/specs.test.mjs',
     'tools/foundation.test.mjs',
+    'tools/identity-contracts.test.mjs',
   ]);
 }
 
