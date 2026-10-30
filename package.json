@@ -13,6 +13,7 @@
     "doctor": "node tools/clinora.mjs doctor",
     "verify": "node tools/clinora.mjs verify",
     "java:verify": "node tools/clinora.mjs java:verify",
+    "java:mutation": "node tools/clinora.mjs java:mutation",
     "frontend:check": "node tools/clinora.mjs frontend:check",
     "frontend:verify": "node tools/clinora.mjs frontend:verify",
     "tools:test": "node tools/clinora.mjs tools:test",
