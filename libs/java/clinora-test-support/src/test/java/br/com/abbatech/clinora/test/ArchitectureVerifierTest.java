@@ -20,6 +20,16 @@ class ArchitectureVerifierTest {
     }
 
     @Test
+    void aceitaDependenciaDentroDoMesmoServico() {
+        var classes = new ClassFileImporter().importClasses(
+                CoreArchitectureFixtures.WithinService.class,
+                CoreArchitectureFixtures.Independent.class);
+
+        assertThatCode(() -> ArchitectureVerifier.verifyServiceBoundary(classes, "core"))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
     void rejeitaDependenciaDiretaEntreServicos() {
         var classes = new ClassFileImporter().importClasses(
                 CoreArchitectureFixtures.Coupled.class, PaymentType.class);

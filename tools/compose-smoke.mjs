@@ -42,6 +42,61 @@ const garageAdminToken = 'clinora_garage_admin_local_only_2026';
 const garageBucket = 'clinora-smoke';
 const garageObject = 'clinora-smoke.txt';
 
+async function assertOidc() {
+  const discoveryUrl = 'http://127.0.0.1:44282/realms/clinora/.well-known/openid-configuration';
+  let discovery;
+  for (let attempt = 0; attempt < 60; attempt += 1) {
+    try {
+      const response = await fetch(discoveryUrl, { signal: AbortSignal.timeout(3_000) });
+      if (response.status === 200) {
+        discovery = await response.json();
+        break;
+      }
+    } catch {
+      // The IdP can still be importing its realm after Compose starts.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2_000));
+  }
+  assert.ok(discovery, 'Keycloak nao publicou o discovery OIDC em 120 segundos');
+  assert.equal(discovery.issuer, 'http://127.0.0.1:44282/realms/clinora');
+  assert.match(discovery.authorization_endpoint, /\/protocol\/openid-connect\/auth$/);
+  const jwks = await fetch(discovery.jwks_uri, { signal: AbortSignal.timeout(5_000) });
+  assert.equal(jwks.status, 200);
+  assert.ok((await jwks.json()).keys.length > 0, 'IdP sem chave de assinatura');
+
+  const tokenResponse = await fetch(discovery.token_endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: 'clinora-smoke',
+      client_secret: 'clinora_smoke_local_only_2026',
+    }),
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(tokenResponse.status, 200, 'IdP nao emitiu token de smoke');
+  const { access_token: accessToken } = await tokenResponse.json();
+  assert.ok(accessToken, 'IdP retornou resposta sem access token');
+
+  const identity = 'http://127.0.0.1:44220/api/v1/identity/session';
+  const anonymous = await fetch(identity, { signal: AbortSignal.timeout(5_000) });
+  assert.equal(anonymous.status, 401, 'core-api aceitou identidade sem token');
+  const forged = await fetch(identity, {
+    headers: { Authorization: 'Bearer token.invalido.assinatura' },
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(forged.status, 401, 'core-api aceitou token adulterado');
+  const authenticated = await fetch(identity, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(5_000),
+  });
+  assert.equal(authenticated.status, 200, 'core-api rejeitou token real do IdP');
+  assert.equal(authenticated.headers.get('cache-control'), 'no-store');
+  const session = await authenticated.json();
+  assert.equal(session.issuer, discovery.issuer);
+  assert.ok(session.subject, 'Sessao autenticada sem subject');
+}
+
 function garageClient(credentials) {
   return new S3Client({
     endpoint: 'http://127.0.0.1:44270',
@@ -253,6 +308,7 @@ await assertPortFree(44280);
 await assertPortFree(44281);
 await assertPortFree(44270);
 await assertPortFree(44271);
+await assertPortFree(44282);
 
 try {
   compose(['up', '-d', '--wait', '--wait-timeout', '180']);
@@ -267,6 +323,7 @@ try {
       assert.equal((await response.json()).status, 'UP', name);
     }
   }
+  await assertOidc();
   for (let index = 0; index < databases.length; index++) {
     const [database, user, passwordVariable] = databases[index];
     const own = postgresQuery(database, user, passwordVariable);
