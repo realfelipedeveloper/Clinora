@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("observability")
+@ActiveProfiles({"observability", "no-db"})
 @SpringBootTest(
         classes = CoreApiApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
