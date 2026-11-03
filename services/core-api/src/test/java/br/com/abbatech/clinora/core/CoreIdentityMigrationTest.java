@@ -14,6 +14,8 @@ import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
@@ -40,13 +42,13 @@ class CoreIdentityMigrationTest {
     }
 
     @Test
-    void migraEsquemaUmaVezEConservaAsSeisTabelasDeIdentidade() throws Exception {
+    void migraEsquemaUmaVezEConservaAsTabelasDeIdentidade() throws Exception {
         assertEquals(0, flyway.migrate().migrationsExecuted);
         assertThat(queryLong("SELECT count(*) FROM information_schema.tables "
                 + "WHERE table_schema = 'public' AND table_name IN "
                 + "('tenant', 'external_identity', 'membership', 'tenant_unit', "
-                + "'unit_assignment', 'professional_assignment')"))
-                .isEqualTo(6L);
+                + "'unit_assignment', 'professional_assignment', 'identity_audit_event')"))
+                .isEqualTo(7L);
     }
 
     @Test
@@ -116,9 +118,53 @@ class CoreIdentityMigrationTest {
                 .isEqualTo(revokedAt);
     }
 
+    @Test
+    void consultaSomenteVinculosEUnidadesAtivosEAuditaSemToken() throws Exception {
+        String issuer = "https://idp.example.test/context";
+        String subject = UUID.randomUUID().toString();
+        UUID person = identity(issuer, subject);
+        UUID tenantA = tenant("context-a-" + UUID.randomUUID());
+        UUID tenantB = tenant("context-b-" + UUID.randomUUID());
+        UUID membershipA = membership(tenantA, person, "RECEPTION", "ACTIVE");
+        UUID membershipB = membership(tenantB, person, "ADMIN", "ACTIVE");
+        UUID activeUnit = unit(tenantA, "ativa");
+        UUID inactiveUnit = unit(tenantA, "inativa");
+        execute("UPDATE tenant_unit SET status = 'INACTIVE' WHERE id = ?", inactiveUnit);
+        execute("INSERT INTO unit_assignment (tenant_id, membership_id, unit_id) VALUES (?, ?, ?)",
+                tenantA, membershipA, activeUnit);
+        execute("INSERT INTO unit_assignment (tenant_id, membership_id, unit_id) VALUES (?, ?, ?)",
+                tenantA, membershipA, inactiveUnit);
+
+        var dataSource = new DriverManagerDataSource(postgres.getJdbcUrl(),
+                postgres.getUsername(), postgres.getPassword());
+        var repository = new IdentityContextRepository(new JdbcTemplate(dataSource));
+        var contexts = repository.activeContexts(issuer, subject);
+        assertThat(contexts).hasSize(2);
+        assertThat(contexts.stream().filter(context -> context.tenantId().equals(tenantA))
+                .findFirst().orElseThrow().unitIds()).containsExactly(activeUnit);
+
+        Instant revokedAt = Instant.parse("2026-11-03T12:00:00Z");
+        execute("UPDATE membership SET status = 'REVOKED', revoked_at = ? WHERE id = ?",
+                Timestamp.from(revokedAt), membershipB);
+        assertThat(repository.activeContexts(issuer, subject)).hasSize(1);
+        execute("UPDATE tenant SET status = 'INACTIVE' WHERE id = ?", tenantA);
+        assertThat(repository.activeContexts(issuer, subject)).isEmpty();
+
+        repository.audit(issuer, subject, null, "SELECT_CONTEXT", "DENIED", revokedAt);
+        assertThat(queryLong("SELECT count(*) FROM identity_audit_event WHERE actor_issuer = ? "
+                + "AND actor_subject = ? AND tenant_id IS NULL AND action = 'SELECT_CONTEXT' "
+                + "AND result = 'DENIED' AND occurred_at = ?",
+                issuer, subject, Timestamp.from(revokedAt))).isEqualTo(1L);
+        assertThat(queryLong("SELECT count(*) FROM information_schema.columns "
+                + "WHERE table_name = 'identity_audit_event' "
+                + "AND column_name IN ('token', 'password', 'clinical_data')"))
+                .isZero();
+    }
+
     private static UUID tenant(String slug) throws SQLException {
         UUID id = UUID.randomUUID();
-        execute("INSERT INTO tenant (id, slug, status) VALUES (?, ?, 'ACTIVE')", id, slug);
+        execute("INSERT INTO tenant (id, slug, display_name, status) "
+                + "VALUES (?, ?, ?, 'ACTIVE')", id, slug, slug);
         return id;
     }
 
