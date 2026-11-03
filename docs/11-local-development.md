@@ -65,7 +65,10 @@ outro processo ainda pode ocupa-las antes do `docker compose up`.
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
 credenciais padrao em `compose.yaml` sao locais e nao servem para producao.
-Nenhum servico Java recebeu credenciais de banco nesta etapa.
+Na SPEC-002, somente o `core-api` recebe as credenciais de `clinora_core` e
+executa a migração Flyway no startup. `CLINORA_CORE_DB_URL`,
+`CLINORA_CORE_DB_USERNAME` e `CLINORA_CORE_DB_PASSWORD` são obrigatórias fora
+do Compose. Os demais serviços Java não recebem credenciais de banco.
 Redis usa ACLs por servico e chaves separadas, sem persistencia. Nao guarde
 nele a unica copia de qualquer reserva, token critico ou dado clinico.
 RabbitMQ local usa somente a topologia de teste e senha de desenvolvimento;
