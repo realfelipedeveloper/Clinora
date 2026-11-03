@@ -344,6 +344,9 @@ services:
 
   core-api:
     <<: *java
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
@@ -351,6 +354,9 @@ services:
       CLINORA_OIDC_ISSUER_URI: http://127.0.0.1:${CLINORA_IDP_PORT:-44282}/realms/clinora
       CLINORA_OIDC_JWK_SET_URI: http://keycloak:8080/realms/clinora/protocol/openid-connect/certs
       CLINORA_WEB_ORIGIN: http://127.0.0.1:${CLINORA_WEB_PORT:-44210}
+      CLINORA_CORE_DB_URL: jdbc:postgresql://postgres:5432/clinora_core
+      CLINORA_CORE_DB_USERNAME: clinora_core_user
+      CLINORA_CORE_DB_PASSWORD: ${CLINORA_CORE_DB_PASSWORD:-clinora_core_local_only}
     ports:
       - target: 8080
         published: ${CLINORA_CORE_API_PORT:-44220}
