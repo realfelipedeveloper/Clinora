@@ -43,7 +43,17 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
   assert.equal(config.networks.clinora.name, 'clinora-local-network');
   assert.deepEqual(
     Object.keys(config.services).sort(),
-    [...ports.keys(), 'postgres', 'redis', 'rabbitmq', 'mailpit', 'prometheus', 'grafana', 'garage'].sort(),
+    [
+      ...ports.keys(),
+      'postgres',
+      'redis',
+      'rabbitmq',
+      'mailpit',
+      'prometheus',
+      'grafana',
+      'garage',
+      'keycloak',
+    ].sort(),
   );
   for (const [name, port] of ports) {
     const service = config.services[name];
@@ -60,6 +70,58 @@ test('isola os sete servicos e publica somente portas reservadas em loopback', (
       true,
     );
   }
+});
+
+test('Keycloak local usa realm PKCE, escopo e audiencia sem expor o IdP fora do loopback', () => {
+  const config = loadConfig();
+  const idp = config.services.keycloak;
+  const core = config.services['core-api'];
+  const realm = JSON.parse(
+    readFileSync(new URL('../infra/docker/keycloak/clinora-realm.json', import.meta.url), 'utf8'),
+  );
+  const web = realm.clients.find((client) => client.clientId === 'clinora-web');
+  const smoke = realm.clients.find((client) => client.clientId === 'clinora-smoke');
+  assert.equal(idp.image, 'quay.io/keycloak/keycloak:26.8.1');
+  assert.deepEqual(idp.command, ['start-dev', '--import-realm']);
+  assert.equal(idp.ports[0].host_ip, '127.0.0.1');
+  assert.equal(Number(idp.ports[0].published), 44282);
+  assert.equal(idp.ports[0].target, 8080);
+  assert.equal(idp.volumes[0].read_only, true);
+  assert.equal(idp.volumes[0].target, '/opt/keycloak/data/import/clinora-realm.json');
+  assert.equal(idp.security_opt.includes('no-new-privileges:true'), true);
+  assert.equal(idp.cap_drop.includes('ALL'), true);
+  assert.equal(idp.environment.KC_HOSTNAME, 'http://127.0.0.1:44282');
+  assert.equal(idp.environment.KC_HOSTNAME_BACKCHANNEL_DYNAMIC, 'true');
+  assert.equal(core.environment.CLINORA_OIDC_ISSUER_URI, 'http://127.0.0.1:44282/realms/clinora');
+  assert.equal(
+    core.environment.CLINORA_OIDC_JWK_SET_URI,
+    'http://keycloak:8080/realms/clinora/protocol/openid-connect/certs',
+  );
+  assert.equal(realm.realm, 'clinora');
+  assert.equal(realm.enabled, true);
+  assert.equal(web.publicClient, true);
+  assert.equal(web.standardFlowEnabled, true);
+  assert.equal(web.implicitFlowEnabled, false);
+  assert.equal(web.directAccessGrantsEnabled, false);
+  assert.equal(web.attributes['pkce.code.challenge.method'], 'S256');
+  assert.deepEqual(web.defaultClientScopes, ['clinora']);
+  assert.deepEqual(web.webOrigins, ['http://127.0.0.1:44210']);
+  assert.equal(web.protocolMappers[0].config['included.custom.audience'], 'clinora-core');
+  assert.equal(smoke.publicClient, false);
+  assert.equal(smoke.serviceAccountsEnabled, true);
+  assert.equal(smoke.standardFlowEnabled, false);
+  assert.deepEqual(smoke.defaultClientScopes, ['clinora']);
+  assert.equal(smoke.protocolMappers[0].config['included.custom.audience'], 'clinora-core');
+  assert.match(smoke.secret, /local_only/);
+});
+
+test('smoke OIDC usa token real do Keycloak e rejeita token adulterado', () => {
+  const smoke = readFileSync(new URL('./compose-smoke.mjs', import.meta.url), 'utf8');
+  assert.match(smoke, /discovery\.token_endpoint/);
+  assert.match(smoke, /grant_type: 'client_credentials'/);
+  assert.match(smoke, /Authorization: `Bearer \$\{accessToken\}`/);
+  assert.match(smoke, /authenticated\.status, 200/);
+  assert.match(smoke, /forged\.status, 401/);
 });
 
 test('Mailpit local captura email efemero com UI protegida', () => {
@@ -97,27 +159,62 @@ test('Prometheus e Grafana locais isolam portas, metricas e autenticacao', () =>
   const prometheus = config.services.prometheus;
   const grafana = config.services.grafana;
   assert.equal(prometheus.image, 'prom/prometheus:v3.15.1');
-  assert.deepEqual(prometheus.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]), [['127.0.0.1', 9090, 44281]]);
+  assert.deepEqual(
+    prometheus.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]),
+    [['127.0.0.1', 9090, 44281]],
+  );
   assert.equal(prometheus.read_only, true);
   assert.equal(prometheus.security_opt.includes('no-new-privileges:true'), true);
-  assert.equal(prometheus.volumes.some(({ target, read_only }) => target === '/etc/prometheus/prometheus.yml' && read_only), true);
+  assert.equal(
+    prometheus.volumes.some(
+      ({ target, read_only }) => target === '/etc/prometheus/prometheus.yml' && read_only,
+    ),
+    true,
+  );
   assert.equal(grafana.image, 'grafana/grafana:13.3.0');
-  assert.deepEqual(grafana.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]), [['127.0.0.1', 3000, 44280]]);
+  assert.deepEqual(
+    grafana.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]),
+    [['127.0.0.1', 3000, 44280]],
+  );
   assert.equal(grafana.security_opt.includes('no-new-privileges:true'), true);
   assert.equal(grafana.environment.GF_SECURITY_ADMIN_USER, 'clinora_local');
   assert.equal(grafana.environment.GF_SECURITY_ADMIN_PASSWORD, 'clinora_grafana_local_only_2026');
   assert.equal(grafana.environment.GF_AUTH_ANONYMOUS_ENABLED, 'false');
   assert.equal(grafana.environment.GF_USERS_ALLOW_SIGN_UP, 'false');
-  assert.equal(grafana.volumes.some(({ target, read_only }) => target === '/etc/grafana/provisioning/datasources/clinora.yml' && read_only), true);
-  for (const name of ['core-api', 'payment-api', 'notification-api', 'integration-api', 'scheduler-worker']) {
+  assert.equal(
+    grafana.volumes.some(
+      ({ target, read_only }) =>
+        target === '/etc/grafana/provisioning/datasources/clinora.yml' && read_only,
+    ),
+    true,
+  );
+  for (const name of [
+    'core-api',
+    'payment-api',
+    'notification-api',
+    'integration-api',
+    'scheduler-worker',
+  ]) {
     assert.equal(config.services[name].environment.SPRING_PROFILES_ACTIVE, 'observability');
   }
-  const scrape = readFileSync(new URL('../infra/observability/prometheus.yml', import.meta.url), 'utf8');
-  for (const name of ['core-api', 'payment-api', 'notification-api', 'integration-api', 'scheduler-worker']) {
+  const scrape = readFileSync(
+    new URL('../infra/observability/prometheus.yml', import.meta.url),
+    'utf8',
+  );
+  for (const name of [
+    'core-api',
+    'payment-api',
+    'notification-api',
+    'integration-api',
+    'scheduler-worker',
+  ]) {
     assert.ok(scrape.includes(`${name}:8080`));
   }
   assert.match(scrape, /\/actuator\/prometheus/);
-  const datasource = readFileSync(new URL('../infra/observability/grafana-datasource.yml', import.meta.url), 'utf8');
+  const datasource = readFileSync(
+    new URL('../infra/observability/grafana-datasource.yml', import.meta.url),
+    'utf8',
+  );
   assert.match(datasource, /http:\/\/prometheus:9090/);
 });
 
@@ -126,23 +223,44 @@ test('Garage local isola API S3 e administracao com bucket exclusivo de teste', 
   const garage = config.services.garage;
   assert.equal(garage.image, 'dxflrs/garage:v2.5.0');
   assert.deepEqual(garage.command, ['/garage', 'server', '--single-node', '--default-bucket']);
-  assert.deepEqual(garage.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]), [
-    ['127.0.0.1', 3900, 44270],
-    ['127.0.0.1', 3903, 44271],
-  ]);
+  assert.deepEqual(
+    garage.ports.map(({ host_ip, target, published }) => [host_ip, target, Number(published)]),
+    [
+      ['127.0.0.1', 3900, 44270],
+      ['127.0.0.1', 3903, 44271],
+    ],
+  );
   assert.equal(garage.read_only, true);
   assert.deepEqual(garage.cap_drop, ['ALL']);
   assert.equal(garage.security_opt.includes('no-new-privileges:true'), true);
-  assert.equal(garage.volumes.some(({ type, target }) => type === 'volume' && target === '/data'), true);
-  assert.equal(garage.volumes.some(({ read_only, target }) => read_only && target === '/etc/garage.toml'), true);
+  assert.equal(
+    garage.volumes.some(({ type, target }) => type === 'volume' && target === '/data'),
+    true,
+  );
+  assert.equal(
+    garage.volumes.some(({ read_only, target }) => read_only && target === '/etc/garage.toml'),
+    true,
+  );
   assert.equal(garage.environment.GARAGE_DEFAULT_BUCKET, 'clinora-smoke');
   assert.match(garage.environment.GARAGE_DEFAULT_ACCESS_KEY, /^GK[0-9a-f]{32}$/);
   assert.match(garage.environment.GARAGE_DEFAULT_SECRET_KEY, /^[0-9a-f]{64}$/);
   assert.equal(garage.healthcheck.test.join(' '), 'CMD /garage status');
-  for (const name of ['core-api', 'payment-api', 'notification-api', 'integration-api', 'scheduler-worker']) {
-    assert.equal(Object.keys(config.services[name].environment).some((key) => key.startsWith('GARAGE_')), false);
+  for (const name of [
+    'core-api',
+    'payment-api',
+    'notification-api',
+    'integration-api',
+    'scheduler-worker',
+  ]) {
+    assert.equal(
+      Object.keys(config.services[name].environment).some((key) => key.startsWith('GARAGE_')),
+      false,
+    );
   }
-  const settings = readFileSync(new URL('../infra/docker/garage/garage.toml', import.meta.url), 'utf8');
+  const settings = readFileSync(
+    new URL('../infra/docker/garage/garage.toml', import.meta.url),
+    'utf8',
+  );
   assert.match(settings, /replication_factor = 1/);
   assert.match(settings, /admin_token = "clinora_garage_admin_local_only_2026"/);
   assert.match(settings, /metrics_token = /);
@@ -195,15 +313,23 @@ test('RabbitMQ local isola portas, usuario e topologia de teste com DLQ', () => 
   const definitions = JSON.parse(
     readFileSync(new URL('../infra/docker/rabbitmq/definitions.json', import.meta.url), 'utf8'),
   );
-  assert.deepEqual(definitions.vhosts.map(({ name }) => name), ['clinora_local']);
-  assert.deepEqual(definitions.users.map(({ name }) => name), ['clinora_local']);
+  assert.deepEqual(
+    definitions.vhosts.map(({ name }) => name),
+    ['clinora_local'],
+  );
+  assert.deepEqual(
+    definitions.users.map(({ name }) => name),
+    ['clinora_local'],
+  );
   assert.equal(definitions.users[0].hashing_algorithm, 'rabbit_password_hashing_sha256');
   const passwordHash = Buffer.from(definitions.users[0].password_hash, 'base64');
   assert.equal(passwordHash.length, 36);
   assert.deepEqual(
     passwordHash.subarray(4),
     createHash('sha256')
-      .update(Buffer.concat([passwordHash.subarray(0, 4), Buffer.from('clinora_rabbit_local_only_2026')]))
+      .update(
+        Buffer.concat([passwordHash.subarray(0, 4), Buffer.from('clinora_rabbit_local_only_2026')]),
+      )
       .digest(),
   );
   assert.equal(definitions.permissions.length, 1);
@@ -359,6 +485,7 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
     CLINORA_GRAFANA_ADMIN_PASSWORD: 'other_password_local_only',
     CLINORA_GARAGE_S3_PORT: '44290',
     CLINORA_GARAGE_ADMIN_PORT: '44289',
+    CLINORA_IDP_PORT: '44288',
   });
   assert.equal(config.services.web.ports[0].published, '44299');
   assert.equal(config.services.docs.ports[0].published, '44211');
@@ -368,11 +495,23 @@ test('honra override explicito de porta sem alterar os outros servicos', () => {
   assert.equal(config.services.rabbitmq.ports[1].published, '44295');
   assert.equal(config.services.mailpit.ports[0].published, '44294');
   assert.equal(config.services.mailpit.ports[1].published, '44293');
-  assert.equal(config.services.mailpit.environment.MP_UI_AUTH, 'other_local:other_password_local_only');
+  assert.equal(
+    config.services.mailpit.environment.MP_UI_AUTH,
+    'other_local:other_password_local_only',
+  );
   assert.equal(config.services.mailpit.environment.MP_ALLOWED_HOSTS, 'mailpit,127.0.0.1:44293');
   assert.equal(config.services.grafana.ports[0].published, '44292');
   assert.equal(config.services.prometheus.ports[0].published, '44291');
-  assert.equal(config.services.grafana.environment.GF_SECURITY_ADMIN_PASSWORD, 'other_password_local_only');
+  assert.equal(
+    config.services.grafana.environment.GF_SECURITY_ADMIN_PASSWORD,
+    'other_password_local_only',
+  );
   assert.equal(config.services.garage.ports[0].published, '44290');
   assert.equal(config.services.garage.ports[1].published, '44289');
+  assert.equal(config.services.keycloak.ports[0].published, '44288');
+  assert.equal(config.services.keycloak.environment.KC_HOSTNAME, 'http://127.0.0.1:44288');
+  assert.equal(
+    config.services['core-api'].environment.CLINORA_OIDC_ISSUER_URI,
+    'http://127.0.0.1:44288/realms/clinora',
+  );
 });

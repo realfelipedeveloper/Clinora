@@ -2,8 +2,9 @@
 
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
+O `core-api` da SPEC-002 valida JWT OIDC e expoe `/api/v1/identity/session`.
 O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
-`compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Prometheus e Grafana depois do `verify`;
+`compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Keycloak, Prometheus e Grafana depois do `verify`;
 veja `infra/docker/README.md`.
 Por padrao os servicos Java escutam em `127.0.0.1`. O perfil `observability`
 habilita Prometheus; veja `docs/16-observability.md`.
@@ -43,6 +44,7 @@ As portas abaixo sao reservadas para ambiente local e nao devem ser trocadas sem
 | garage admin | 44271 |
 | grafana | 44280 |
 | prometheus | 44281 |
+| idp keycloak | 44282 |
 
 ## Checagem de portas
 
@@ -57,8 +59,8 @@ nao encerra processos existentes. A checagem nao reserva as portas, entao
 outro processo ainda pode ocupa-las antes do `docker compose up`.
 
 ## Proximos passos
-1. Integrar o IdP local da SPEC-002 e validar JWT no `core-api`.
-2. Adicionar vínculos tenant-aware e as políticas de autorização com testes de isolamento.
+1. Adicionar vínculos tenant-aware e as políticas de autorização com testes de isolamento.
+2. Implementar login, MFA e seleção de contexto no web após as políticas do servidor.
 
 ## Seguranca e privacidade
 O PostgreSQL e somente para desenvolvimento, sem dados clinicos reais. As
@@ -74,3 +76,6 @@ clinicos reais. Credenciais, portas e limites constam em `infra/docker/README.md
 Garage single-node serve apenas ao desenvolvimento, sem redundancia. Seu bucket
 `clinora-smoke` e as credenciais padrao sao publicos no repositorio, portanto
 nao devem armazenar dados reais ou ser expostos fora de loopback.
+Keycloak `start-dev` usa credencial administrativa e realm sintético locais;
+nenhum dos dois deve ser reutilizado em produção. O IdP responde em
+`http://127.0.0.1:44282/realms/clinora` e não contém usuários reais.

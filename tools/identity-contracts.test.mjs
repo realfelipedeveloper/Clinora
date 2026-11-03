@@ -12,6 +12,7 @@ test('contrato de identidade exige bearer e não aceita papel fornecido pelo cli
   assert.deepEqual(Object.keys(contract.paths).sort(), [
     '/api/v1/identity/context',
     '/api/v1/identity/contexts',
+    '/api/v1/identity/session',
   ]);
   for (const path of Object.values(contract.paths)) {
     assert.deepEqual(Object.keys(path), ['get']);
@@ -19,8 +20,16 @@ test('contrato de identidade exige bearer e não aceita papel fornecido pelo cli
     assert.equal(path.get.requestBody, undefined);
     assert.equal(path.get.responses['200'].headers['Cache-Control'].schema.const, 'no-store');
     assert.ok(path.get.responses['401']);
-    assert.ok(path.get.responses['503']);
   }
+  assert.ok(contract.paths['/api/v1/identity/context'].get.responses['503']);
+  assert.ok(contract.paths['/api/v1/identity/contexts'].get.responses['503']);
+  const session = contract.components.schemas.IdentitySession;
+  assert.deepEqual(contract.paths['/api/v1/identity/session'].get.responses['403'], {
+    $ref: '#/components/responses/InsufficientScope',
+  });
+  assert.deepEqual(session.required, ['issuer', 'subject']);
+  assert.deepEqual(Object.keys(session.properties).sort(), ['issuer', 'subject']);
+  assert.equal(session.additionalProperties, false);
   assert.deepEqual(contract.paths['/api/v1/identity/context'].get.parameters, [
     { $ref: '#/components/parameters/TenantSelection' },
   ]);

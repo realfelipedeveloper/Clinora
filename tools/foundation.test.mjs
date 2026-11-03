@@ -62,17 +62,20 @@ test('memoria persistente e modelo de relatorio permanecem disponiveis', () => {
   assert.deepEqual(missingSections(read('templates/completion-report.md'), required), []);
 });
 
-test('catalogo de portas acompanha a SPEC-001 sem colisao', () => {
+test('catalogo de portas acompanha as specs ativas sem colisao', () => {
   const runbook = read('docs/11-local-development.md');
-  const spec = read('specs/001-platform-foundation/spec.md');
+  const specs = [
+    read('specs/001-platform-foundation/spec.md'),
+    read('specs/002-identity-tenancy/spec.md'),
+  ];
   const table = marked
     .lexer(runbook)
     .find((token) => token.type === 'table' && token.header[0].text === 'Servico');
   assert.ok(table, 'catalogo de portas ausente');
 
   const listed = table.rows.map((row) => Number(row[1].text));
-  const specified = [...spec.matchAll(/^CLINORA_[A-Z0-9_]+_PORT=(\d+)$/gm)].map((match) =>
-    Number(match[1]),
+  const specified = specs.flatMap((spec) =>
+    [...spec.matchAll(/^CLINORA_[A-Z0-9_]+_PORT=(\d+)$/gm)].map((match) => Number(match[1])),
   );
   assert.equal(new Set(listed).size, listed.length, 'portas duplicadas no runbook');
   assert.deepEqual(
