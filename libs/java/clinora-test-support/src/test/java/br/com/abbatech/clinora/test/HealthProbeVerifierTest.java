@@ -150,6 +150,21 @@ class HealthProbeVerifierTest {
     }
 
     @Test
+    void aceitaAmbienteProtegidoPorAutenticacaoNoPerfilPadrao() throws Exception {
+        HttpClient client = client(Map.of("/actuator/env", reply(401, "")), new ArrayList<>());
+
+        HealthProbeVerifier.verify(client, 44220);
+    }
+
+    @Test
+    void aceitaMetricasProtegidasPorAutenticacaoNoPerfilPadrao() throws Exception {
+        HttpClient client = client(Map.of("/actuator/prometheus", reply(401, "")),
+                new ArrayList<>());
+
+        HealthProbeVerifier.verify(client, 44220);
+    }
+
+    @Test
     void rejeitaMetricasExpostasNoPerfilPadrao() throws Exception {
         HttpClient client = client(Map.of("/actuator/prometheus", reply(200, "jvm_memory_used_bytes")),
                 new ArrayList<>());
@@ -204,6 +219,15 @@ class HealthProbeVerifierTest {
         assertThat(requests).containsExactly(
                 "http://127.0.0.1:44220/actuator/prometheus",
                 "http://127.0.0.1:44220/actuator/env");
+    }
+
+    @Test
+    void aceitaAmbienteProtegidoPorAutenticacaoComObservabilidade() throws Exception {
+        HttpClient client = client(Map.of(
+                "/actuator/prometheus", reply(200, "jvm_memory_used_bytes 1"),
+                "/actuator/env", reply(401, "")), new ArrayList<>());
+
+        HealthProbeVerifier.verifyPrometheus(client, 44220);
     }
 
     @Test

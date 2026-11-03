@@ -30,9 +30,8 @@ public final class HealthProbeVerifier {
             requireProbeBody(response, "UP", path);
         }
 
-        requireStatus(get(client, port, "/actuator/env"), 404, "/actuator/env");
-        requireStatus(get(client, port, "/actuator/prometheus"), 404,
-                "/actuator/prometheus");
+        requireNotExposed(get(client, port, "/actuator/env"), "/actuator/env");
+        requireNotExposed(get(client, port, "/actuator/prometheus"), "/actuator/prometheus");
     }
 
     public static void verifyNotReady(int port) throws IOException, InterruptedException {
@@ -73,7 +72,7 @@ public final class HealthProbeVerifier {
         if (!response.body().contains("jvm_")) {
             throw new AssertionError("/actuator/prometheus deve expor metricas JVM");
         }
-        requireStatus(get(client, port, "/actuator/env"), 404, "/actuator/env");
+        requireNotExposed(get(client, port, "/actuator/env"), "/actuator/env");
     }
 
     private static HttpResponse<String> get(HttpClient client, int port, String path)
@@ -89,6 +88,13 @@ public final class HealthProbeVerifier {
         if (response.statusCode() != expected) {
             throw new AssertionError(path + " retornou HTTP " + response.statusCode()
                     + ", esperado " + expected);
+        }
+    }
+
+    private static void requireNotExposed(HttpResponse<?> response, String path) {
+        if (response.statusCode() != 401 && response.statusCode() != 404) {
+            throw new AssertionError(path + " retornou HTTP " + response.statusCode()
+                    + ", esperado 401 ou 404");
         }
     }
 }
