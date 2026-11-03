@@ -246,8 +246,8 @@ function compose(args) {
   assert.equal(result.status, 0, `docker compose ${args.join(' ')} falhou`);
 }
 
-function postgresQuery(database, user, passwordVariable) {
-  const command = `PGPASSWORD="$${passwordVariable}" psql -h 127.0.0.1 -U ${user} -d ${database} -tAc 'SELECT current_database()'`;
+function postgresQuery(database, user, passwordVariable, sql = 'SELECT current_database()') {
+  const command = `PGPASSWORD="$${passwordVariable}" psql -h 127.0.0.1 -U ${user} -d ${database} -tAc '${sql}'`;
   return spawnSync('docker', ['compose', 'exec', '-T', 'postgres', 'sh', '-c', command], {
     encoding: 'utf8',
     timeout: 15_000,
@@ -335,6 +335,13 @@ try {
     assert.notEqual(crossTenant.status, 0, `${user} acessou ${otherDatabase}`);
     assert.match(crossTenant.stderr, /permission denied for database/i);
   }
+  const migrated = postgresQuery('clinora_core', 'clinora_core_user',
+    'CLINORA_CORE_DB_PASSWORD', 'SELECT count(*) FROM flyway_schema_history WHERE success');
+  assert.equal(migrated.status, 0, `Flyway nao aplicou a migracao: ${migrated.stderr}`);
+  assert.equal(migrated.stdout.trim(), '1', 'Historico Flyway inesperado no banco core');
+  const tenantTable = postgresQuery('clinora_core', 'clinora_core_user',
+    'CLINORA_CORE_DB_PASSWORD', 'SELECT count(*) FROM tenant');
+  assert.equal(tenantTable.status, 0, `Tabela tenant ausente: ${tenantTable.stderr}`);
   const anonymous = spawnSync('docker', ['compose', 'exec', '-T', 'redis', 'redis-cli', 'ping'], {
     encoding: 'utf8',
     timeout: 15_000,

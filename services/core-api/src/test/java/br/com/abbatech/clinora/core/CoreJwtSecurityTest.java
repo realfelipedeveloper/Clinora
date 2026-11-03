@@ -33,7 +33,9 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("no-db")
 @SpringBootTest(
         classes = CoreApiApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,

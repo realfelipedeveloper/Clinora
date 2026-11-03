@@ -4,6 +4,14 @@ Dados de saúde são sensíveis. Aplicar minimização, finalidade, necessidade,
 
 ## Autenticação e autorização
 Spring Security, OAuth 2.1/OIDC, access token curto, refresh opaco rotativo, WebAuthn, TOTP, RBAC + ABAC e step-up para operações críticas.
+O banco `clinora_core` conserva apenas o par de identidade externa
+`(issuer, subject)` e vínculos tenant-aware, nunca senha ou refresh token.
+Revogação usa `revoked_at` como instante UTC e versão de vínculo; a política
+de autorização deve consultar o estado servidor antes de acessar dados.
+O banco `clinora_core` conserva apenas o par de identidade externa
+`(issuer, subject)` e vínculos tenant-aware, nunca senha ou refresh token.
+Revogação usa `revoked_at` como instante UTC e versão de vínculo; a política
+de autorização deve consultar o estado servidor antes de acessar dados.
 
 ## Auditoria
 Registrar identidade, tenant, finalidade, ação, recurso, horário e resultado. Não registrar conteúdo clínico completo.
