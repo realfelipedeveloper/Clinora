@@ -1,0 +1,61 @@
+<div class="portal-shell">
+  <header class="portal-header">
+    <a class="portal-brand" href="/" aria-label="Clinora, página inicial">Clinora<span>.</span></a>
+    <span class="portal-label">Acesso seguro</span>
+    @if (phase() === 'contexts' || phase() === 'selected') {
+      <button type="button" class="quiet-command" (click)="logout()" [disabled]="busy()">Sair</button>
+    }
+  </header>
+
+  <main class="portal-main">
+    @if (phase() === 'loading') {
+      <div class="portal-content" role="status">
+        <p class="section-label">Identidade</p>
+        <h1>Validando sua sessão</h1>
+      </div>
+    } @else if (phase() === 'signed-out' || phase() === 'error') {
+      <div class="portal-content">
+        <p class="section-label">Identidade</p>
+        <h1>Entre na Clinora</h1>
+        <p class="portal-lead">Acesse suas clínicas com sua conta. Suas permissões são conferidas a cada acesso.</p>
+        @if (notice()) { <p class="portal-notice" role="alert">{{ notice() }}</p> }
+        <button type="button" class="primary-command" (click)="login()" [disabled]="busy()">Entrar com sua conta</button>
+      </div>
+    } @else if (phase() === 'contexts') {
+      <div class="portal-content wide">
+        <p class="section-label">{{ person() }}</p>
+        <h1>Selecione uma clínica</h1>
+        @if (notice()) { <p class="portal-notice" role="alert">{{ notice() }}</p> }
+        @if (contexts().length === 0) {
+          <p class="portal-lead">Sua conta não possui vínculo ativo com uma clínica.</p>
+          <button type="button" class="secondary-command" (click)="reload()" [disabled]="busy()">Atualizar</button>
+        } @else {
+          <div class="context-list" role="list">
+            @for (context of contexts(); track context.tenantId) {
+              <div class="context-row" role="listitem">
+                <div>
+                  <strong>{{ context.tenantName }}</strong>
+                  <span>{{ roleName[context.role] }} · {{ context.unitIds.length }} {{ context.unitIds.length === 1 ? 'unidade' : 'unidades' }}</span>
+                </div>
+                <button type="button" class="secondary-command" (click)="select(context)" [disabled]="busy()">Selecionar</button>
+              </div>
+            }
+          </div>
+          <button type="button" class="text-command" (click)="stepUp()" [disabled]="busy()">Confirmar verificação adicional</button>
+        }
+      </div>
+    } @else if (phase() === 'selected') {
+      <div class="portal-content wide">
+        <p class="section-label">Contexto validado</p>
+        <h1>{{ selected()?.tenantName }}</h1>
+        @if (notice()) { <p class="portal-notice" role="alert">{{ notice() }}</p> }
+        <p class="portal-lead">Acesso autorizado para {{ person() }}.</p>
+        <div class="context-summary">
+          <span>Perfil</span><strong>{{ selected() ? roleName[selected()!.role] : '' }}</strong>
+          <span>Unidades</span><strong>{{ selected()?.unitIds?.length }}</strong>
+        </div>
+        <button type="button" class="secondary-command" (click)="back()">Trocar clínica</button>
+      </div>
+    }
+  </main>
+</div>

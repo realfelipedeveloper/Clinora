@@ -1,3 +1,6 @@
+@if (portal) {
+  <router-outlet />
+} @else {
 <div class="site-shell">
   <header class="site-header">
     <a class="brand" href="/" aria-label="Clinora, página inicial"
@@ -6,6 +9,7 @@
     <nav aria-label="Navegação principal">
       <a href="#visao">Visão</a>
       <a href="#andamento">Andamento</a>
+      <a href="/app">Acessar</a>
     </nav>
     <a
       class="header-link"
@@ -102,10 +106,10 @@
         >
       </div>
     </section>
-    <router-outlet />
   </main>
   <footer class="site-footer">
     <a class="brand" href="/">Clinora<span aria-hidden="true">.</span></a>
     <p>Feito para uma forma mais clara de cuidar.</p>
   </footer>
 </div>
+}

@@ -40,8 +40,9 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 
 ## Estado do projeto
 A fundacao da SPEC-001 foi promovida pelo Git Flow. A SPEC-002 esta ativa:
-o contrato de identidade foi definido, e o IdP local e a validacao JWT do
-`core-api` estao em implementacao. As SPEC-002 a SPEC-011 foram aprovadas
+o contrato de identidade, o IdP local, a validacao JWT e a consulta de vinculos
+ativos por tenant ja estao implementados no `core-api`. O fluxo web de acesso,
+MFA e selecao de tenant esta em validacao. As SPEC-002 a SPEC-011 foram aprovadas
 apos o CI e merge do PR #82; as releases seguintes ainda nao foram implementadas.
 
 Os servicos `services/core-api`, `services/payment-api` e
@@ -55,9 +56,10 @@ o workspace Angular e `docs/15-global-scripts.md` para os comandos globais.
 Para o `verify` local, instale Chromium com `corepack pnpm e2e:install`;
 Playwright e axe-core rodam em desktop e mobile nas portas reservadas 44210 e
 44211.
-A landing Angular da TASK-017 apresenta a visao do produto e o andamento real
-da fundacao, sem simular agenda ou acesso clinico ainda fora do escopo.
+A pagina Angular da TASK-017 apresenta a visao do produto e o andamento real
+da fundacao; `/app` oferece acesso OIDC e selecao de clinica, sem simular agenda
+ou acesso clinico ainda fora do escopo.
 O portal Angular em `apps/docs` permite navegar e buscar os guias locais e a
-SPEC-001, sem backend proprio. O `core-api` ja expoe a sessao OIDC autenticada,
-mas ainda nao possui consultas de tenant ou dados clinicos. Consulte
+SPEC-001, sem backend proprio. O `core-api` expoe sessao OIDC autenticada e
+contextos de tenant ativos; dados clinicos ainda nao fazem parte da SPEC-002. Consulte
 `apps/docs/README.md` para uso e seguranca.

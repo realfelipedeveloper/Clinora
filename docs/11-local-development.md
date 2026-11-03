@@ -2,7 +2,8 @@
 
 ## Estado atual
 Os cinco servicos Java da SPEC-001 estao executaveis com endpoints de saude.
-O `core-api` da SPEC-002 valida JWT OIDC e expoe `/api/v1/identity/session`.
+O `core-api` da SPEC-002 valida JWT OIDC e expoe `/api/v1/identity/session`,
+`/api/v1/identity/contexts` e `/api/v1/identity/context`.
 O workspace Angular/pnpm inclui web, portal docs e a biblioteca Clinora UI.
 `compose.yaml` executa essas apps, os cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Keycloak, Prometheus e Grafana depois do `verify`;
 veja `infra/docker/README.md`.
@@ -82,3 +83,23 @@ nao devem armazenar dados reais ou ser expostos fora de loopback.
 Keycloak `start-dev` usa credencial administrativa e realm sintético locais;
 nenhum dos dois deve ser reutilizado em produção. O IdP responde em
 `http://127.0.0.1:44282/realms/clinora` e não contém usuários reais.
+
+## Acesso web local
+A area `/app` usa Authorization Code + PKCE S256. Os enderecos publicos do
+IdP e do `core-api` ficam em `apps/web/public/clinora-config.js`, carregado
+antes do bundle Angular. Esse arquivo pode ser substituido no deploy; nao
+coloque senhas, tokens nem segredos nele. Fora de `127.0.0.1`, use HTTPS.
+
+Para experimentar um contexto real no ambiente local, crie uma pessoa de teste
+na administracao do realm `clinora`, defina uma senha efemera e copie seu UUID
+de usuario (o `sub` do token). No banco `clinora_core`, crie um `tenant` ativo,
+uma `external_identity` com o emissor acima e aquele `sub`, e um `membership`
+ativo para o mesmo tenant. Use um papel nao administrativo primeiro, por
+exemplo `RECEPTION`; `OWNER` e `ADMIN` exigem LoA 2 com OTP configurado na
+conta do Keycloak. A selecao em `/app` sempre reconsulta esses vinculos, entao
+revogacao ou desativacao do tenant bloqueia o acesso imediatamente.
+
+O realm local importa um fluxo separado com senha no LoA 1 e OTP obrigatorio
+no LoA 2. O botao de verificacao adicional solicita `acr_values=2`; o backend
+nao aceita esse pedido como prova por si so, exigindo o `acr` do token emitido
+pelo IdP. Nao use contas ou dados reais nessa stack local.
