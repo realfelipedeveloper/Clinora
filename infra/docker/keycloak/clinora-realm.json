@@ -2,6 +2,53 @@
   "realm": "clinora",
   "enabled": true,
   "sslRequired": "none",
+  "browserFlow": "clinora-browser",
+  "authenticationFlows": [
+    {
+      "alias": "clinora-browser",
+      "providerId": "basic-flow",
+      "topLevel": true,
+      "builtIn": false,
+      "authenticationExecutions": [
+        { "authenticator": "auth-cookie", "requirement": "ALTERNATIVE", "priority": 10 },
+        { "authenticatorFlow": true, "flowAlias": "clinora-form", "requirement": "ALTERNATIVE", "priority": 20 }
+      ]
+    },
+    {
+      "alias": "clinora-form",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        { "authenticatorFlow": true, "flowAlias": "clinora-loa-1", "requirement": "CONDITIONAL", "priority": 10 },
+        { "authenticatorFlow": true, "flowAlias": "clinora-loa-2", "requirement": "CONDITIONAL", "priority": 20 }
+      ]
+    },
+    {
+      "alias": "clinora-loa-1",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        { "authenticator": "conditional-level-of-authentication", "authenticatorConfig": "clinora-condition-loa-1", "requirement": "REQUIRED", "priority": 10 },
+        { "authenticator": "auth-username-password-form", "requirement": "REQUIRED", "priority": 20 }
+      ]
+    },
+    {
+      "alias": "clinora-loa-2",
+      "providerId": "basic-flow",
+      "topLevel": false,
+      "builtIn": false,
+      "authenticationExecutions": [
+        { "authenticator": "conditional-level-of-authentication", "authenticatorConfig": "clinora-condition-loa-2", "requirement": "REQUIRED", "priority": 10 },
+        { "authenticator": "auth-otp-form", "requirement": "REQUIRED", "priority": 20 }
+      ]
+    }
+  ],
+  "authenticatorConfig": [
+    { "alias": "clinora-condition-loa-1", "config": { "loa-condition-level": "1", "loa-max-age": "36000" } },
+    { "alias": "clinora-condition-loa-2", "config": { "loa-condition-level": "2", "loa-max-age": "0" } }
+  ],
   "clientScopes": [
     {
       "name": "clinora",

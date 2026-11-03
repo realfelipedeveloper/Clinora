@@ -64,3 +64,27 @@ test('ADR documenta revogação imediata, MFA e confiança exclusiva no servidor
   assert.match(adr, /`acr`.*`auth_time`/);
   assert.match(adr, /X-Clinora-Tenant/);
 });
+
+test('realm OIDC exige OTP para LoA 2 e preserva PKCE no cliente web', () => {
+  const realm = JSON.parse(read('infra/docker/keycloak/clinora-realm.json'));
+  assert.equal(realm.browserFlow, 'clinora-browser');
+  const flows = new Map(realm.authenticationFlows.map((flow) => [flow.alias, flow]));
+  const browser = flows.get(realm.browserFlow);
+  assert.equal(browser.authenticationExecutions[1].flowAlias, 'clinora-form');
+  const form = flows.get('clinora-form');
+  assert.deepEqual(form.authenticationExecutions.map((item) => item.flowAlias), [
+    'clinora-loa-1', 'clinora-loa-2',
+  ]);
+  const second = flows.get('clinora-loa-2');
+  assert.deepEqual(second.authenticationExecutions.map((item) => item.authenticator), [
+    'conditional-level-of-authentication', 'auth-otp-form',
+  ]);
+  assert.ok(second.authenticationExecutions.every((item) => item.requirement === 'REQUIRED'));
+  assert.deepEqual(realm.authenticatorConfig.find((item) => item.alias === 'clinora-condition-loa-2').config,
+    { 'loa-condition-level': '2', 'loa-max-age': '0' });
+  const web = realm.clients.find((client) => client.clientId === 'clinora-web');
+  assert.equal(web.attributes['pkce.code.challenge.method'], 'S256');
+  assert.equal(web.publicClient, true);
+  assert.equal(web.implicitFlowEnabled, false);
+  assert.equal(web.directAccessGrantsEnabled, false);
+});
