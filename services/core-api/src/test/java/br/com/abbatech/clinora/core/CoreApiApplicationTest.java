@@ -9,7 +9,9 @@ import org.springframework.boot.availability.AvailabilityChangeEvent;
 import org.springframework.boot.availability.ReadinessState;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("no-db")
 @SpringBootTest(
         classes = CoreApiApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,

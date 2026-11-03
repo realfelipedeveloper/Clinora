@@ -57,7 +57,9 @@ As variaveis `CLINORA_POSTGRES_ADMIN_PASSWORD` e
 as senhas de desenvolvimento. Os valores padrao do Compose sao apenas para
 maquina local, nunca para producao ou dados reais. O script de inicializacao
 roda somente em volume vazio; mudar variaveis depois nao rotaciona as senhas
-existentes. Nenhuma API recebe credenciais de banco na TASK-020.
+existentes. Na SPEC-002, apenas o `core-api` recebe as credenciais de
+`clinora_core`; o Compose aguarda o PostgreSQL saudável antes do startup, e
+Flyway aplica a migração V1. As outras APIs não recebem credenciais de banco.
 
 Redis e efemero, sem snapshot/AOF, com limite de 128 MB e politica `noeviction`.
 O usuario anonimo fica desativado; `clinora_core`, `clinora_payments`,
