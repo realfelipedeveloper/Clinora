@@ -3,11 +3,11 @@
   "title": "Identidade, tenants e autorização",
   "status": "approved",
   "currentTask": {
-    "id": "TASK-001",
-    "title": "ADR de IdP OIDC, contexto e contratos de autenticação",
-    "branch": "feature/spec-002-task-001",
+    "id": "TASK-002",
+    "title": "IdP local e validação de JWT no core-api",
+    "branch": "feature/spec-002-task-002",
     "status": "in_progress",
-    "startedAt": "2026-10-30"
+    "startedAt": "2026-11-03"
   },
   "services": [
     "web",

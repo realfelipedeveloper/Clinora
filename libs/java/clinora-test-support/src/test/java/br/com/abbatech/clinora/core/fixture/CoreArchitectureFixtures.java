@@ -10,6 +10,10 @@ public final class CoreArchitectureFixtures {
     public static final class Independent {
     }
 
+    public static final class WithinService {
+        private Independent ownType;
+    }
+
     public static final class Coupled {
         private PaymentType payment;
     }

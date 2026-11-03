@@ -11,6 +11,10 @@ aceitar `tenantId` fornecido pelo cliente como fonte de verdade.
 - IdP OIDC local configurável para desenvolvimento; Spring Security valida
   assinatura, emissor, audiência, expiração e escopos. Senhas, MFA e refresh
   tokens pertencem ao IdP, não ao banco da Clinora.
+- O IdP local reserva a porta abaixo em `127.0.0.1`; ela não é exposta fora da
+  máquina de desenvolvimento:
+
+CLINORA_IDP_PORT=44282
 - Tenant, vínculo de usuário, papel e atribuição de unidade/profissional no
   `core-api`; identidade externa é mapeada por `(issuer, subject)`.
 - Papéis iniciais: proprietário, administrador, recepção, profissional e

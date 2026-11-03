@@ -32,20 +32,22 @@ Plataforma SaaS multi-tenant para agendamento de consultas, gestão de disponibi
 - Redis
 - RabbitMQ
 - Garage local (S3)
+- Keycloak local (OIDC)
 - Docker Compose
 - OpenTelemetry, Prometheus e Grafana
 - JUnit 5, Mockito, AssertJ, Testcontainers, REST Assured, ArchUnit, Pact, WireMock, PIT
 - Vitest, Angular Testing Library, Storybook, Playwright e axe-core
 
-## Estado do bootstrap
-SPEC-001 aprovada e ativa. O repositorio foi iniciado pela TASK-001 com a estrutura poliglota em `apps`, `services`, `libs`, `infra` e `tools`.
-As SPEC-002 a SPEC-011 foram aprovadas pelo usuario apos o CI e merge do PR
-#82 e podem ser ativadas sequencialmente apos a conclusao da fundacao.
+## Estado do projeto
+A fundacao da SPEC-001 foi promovida pelo Git Flow. A SPEC-002 esta ativa:
+o contrato de identidade foi definido, e o IdP local e a validacao JWT do
+`core-api` estao em implementacao. As SPEC-002 a SPEC-011 foram aprovadas
+apos o CI e merge do PR #82; as releases seguintes ainda nao foram implementadas.
 
 Os servicos `services/core-api`, `services/payment-api` e
 `services/notification-api`, `services/integration-api` e
 `services/scheduler-worker` estao executaveis, com endpoints de saude.
-O Compose local orquestra web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Prometheus e Grafana. Consulte
+O Compose local orquestra web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Keycloak, Prometheus e Grafana. Consulte
 `docs/11-local-development.md` para o estado local e portas reservadas,
 `docs/12-git-flow.md` para o fluxo de branches,
 `docs/13-java-build.md` para o build Maven, `docs/14-frontend-workspace.md` para
@@ -56,4 +58,6 @@ Playwright e axe-core rodam em desktop e mobile nas portas reservadas 44210 e
 A landing Angular da TASK-017 apresenta a visao do produto e o andamento real
 da fundacao, sem simular agenda ou acesso clinico ainda fora do escopo.
 O portal Angular em `apps/docs` permite navegar e buscar os guias locais e a
-SPEC-001, sem backend. Consulte `apps/docs/README.md` para uso e seguranca.
+SPEC-001, sem backend proprio. O `core-api` ja expoe a sessao OIDC autenticada,
+mas ainda nao possui consultas de tenant ou dados clinicos. Consulte
+`apps/docs/README.md` para uso e seguranca.
