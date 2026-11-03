@@ -1,7 +1,7 @@
 # infra/docker
 
-Stack local da SPEC-001. `compose.yaml` fica na raiz, usa o namespace
-`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Prometheus e Grafana apenas em
+Stack local da SPEC-001 e identidade da SPEC-002. `compose.yaml` fica na raiz, usa o namespace
+`clinora-local` e expoe web, docs, cinco servicos Java, PostgreSQL, Redis, RabbitMQ, Mailpit, Garage, Keycloak, Prometheus e Grafana apenas em
 `127.0.0.1` nas portas reservadas. O Compose consome os artefatos criados pelo
 `verify` como mounts somente leitura; nao usa `node_modules` em containers.
 
@@ -14,7 +14,7 @@ docker compose down
 ```
 
 Antes de subir a stack, confira as portas 44210, 44211, 44220-44224, 44230,
-44240, 44250, 44251, 44270, 44271, 44280 e 44281 com o
+44240, 44250, 44251, 44260, 44261, 44270, 44271, 44280, 44281 e 44282 com o
 verificador `corepack pnpm run ports:check` antes de subir a stack; veja
 `docs/11-local-development.md`. O comando `down`
 atua somente no projeto `clinora-local`; nao use `down -v` para diagnostico.
@@ -28,6 +28,19 @@ fila de teste para a DLQ RabbitMQ, a captura SMTP e o acesso protegido ao
 Mailpit, os cinco targets Prometheus e a API protegida do Grafana antes de remover
 apenas os containers desse projeto. O smoke tambem grava, le e exclui objeto
 ficticio via SDK S3 no Garage e rejeita acesso S3 e administrativo nao autorizado.
+Na SPEC-002, verifica o discovery OIDC, um JWT real de cliente sintetico e a
+rejeicao de identidade anonima ou token adulterado no `core-api`.
+
+Keycloak 26.8.1 usa `start-dev` e importa o realm local de
+`infra/docker/keycloak/clinora-realm.json`. A porta 44282 e publicada apenas
+em loopback. `clinora-web` usa Authorization Code + PKCE S256; `clinora-smoke`
+e um cliente tecnico exclusivo do teste local, com segredo de exemplo
+versionado. `CLINORA_IDP_ADMIN_PASSWORD` substitui a credencial administrativa
+local. Nem o segredo de smoke nem a credencial padrao servem para producao.
+O `core-api` usa a URL publica como emissor e busca JWKS pela rede interna;
+o backchannel dinamico fica habilitado somente neste IdP local. A audiencia
+`clinora-core` e o escopo `clinora` sao obrigatorios. A stack local
+nao inclui contas de pacientes nem dados de saude reais.
 
 PostgreSQL usa volume nomeado persistente, autenticacao host SCRAM e quatro
 bancos logicos. Cada banco tem papel proprio, sem `CONNECT` publico:

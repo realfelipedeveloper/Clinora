@@ -34,6 +34,32 @@ x-static: &static
     retries: 6
 
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.1
+    command: ['start-dev', '--import-realm']
+    init: true
+    cap_drop: ['ALL']
+    security_opt: ['no-new-privileges:true']
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: clinora_local
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${CLINORA_IDP_ADMIN_PASSWORD:-clinora_idp_local_only_2026}
+      KC_HEALTH_ENABLED: 'true'
+      KC_HTTP_ENABLED: 'true'
+      KC_HOSTNAME: http://127.0.0.1:${CLINORA_IDP_PORT:-44282}
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: 'true'
+    ports:
+      - target: 8080
+        published: ${CLINORA_IDP_PORT:-44282}
+        host_ip: 127.0.0.1
+    volumes:
+      - type: bind
+        source: ./infra/docker/keycloak/clinora-realm.json
+        target: /opt/keycloak/data/import/clinora-realm.json
+        read_only: true
+        bind: { create_host_path: false }
+    networks: [clinora]
+    restart: unless-stopped
+
   redis:
     image: redis:8.10.2-alpine3.23
     command: ['sh', '/usr/local/bin/redis-start.sh']
@@ -322,6 +348,9 @@ services:
       SPRING_PROFILES_ACTIVE: observability
       CLINORA_BIND_ADDRESS: 0.0.0.0
       CLINORA_CORE_API_PORT: 8080
+      CLINORA_OIDC_ISSUER_URI: http://127.0.0.1:${CLINORA_IDP_PORT:-44282}/realms/clinora
+      CLINORA_OIDC_JWK_SET_URI: http://keycloak:8080/realms/clinora/protocol/openid-connect/certs
+      CLINORA_WEB_ORIGIN: http://127.0.0.1:${CLINORA_WEB_PORT:-44210}
     ports:
       - target: 8080
         published: ${CLINORA_CORE_API_PORT:-44220}
