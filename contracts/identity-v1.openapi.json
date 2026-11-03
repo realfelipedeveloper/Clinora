@@ -1,0 +1,123 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Clinora Identidade",
+    "version": "1.0.0",
+    "description": "Contrato de leitura do contexto; login, MFA e logout pertencem ao IdP OIDC."
+  },
+  "paths": {
+    "/api/v1/identity/contexts": {
+      "get": {
+        "operationId": "listActiveContexts",
+        "summary": "Lista os contextos ativos da identidade autenticada",
+        "security": [{ "OidcBearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Vínculos ativos, sem dados clínicos",
+            "headers": { "Cache-Control": { "schema": { "type": "string", "const": "no-store" } } },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TenantContext" }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/api/v1/identity/context": {
+      "get": {
+        "operationId": "getValidatedContext",
+        "summary": "Resolve um tenant selecionado contra o vínculo ativo",
+        "security": [{ "OidcBearer": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/TenantSelection" }],
+        "responses": {
+          "200": {
+            "description": "Contexto validado no servidor",
+            "headers": { "Cache-Control": { "schema": { "type": "string", "const": "no-store" } } },
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TenantContext" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadSelection" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "OidcBearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "parameters": {
+      "TenantSelection": {
+        "name": "X-Clinora-Tenant",
+        "in": "header",
+        "required": true,
+        "description": "UUID escolhido pelo cliente e sempre autorizado no servidor",
+        "schema": { "type": "string", "format": "uuid" }
+      }
+    },
+    "schemas": {
+      "TenantContext": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tenantId", "tenantName", "role", "unitIds"],
+        "properties": {
+          "tenantId": { "type": "string", "format": "uuid" },
+          "tenantName": { "type": "string", "minLength": 1 },
+          "role": {
+            "type": "string",
+            "enum": ["OWNER", "ADMIN", "RECEPTION", "PROFESSIONAL", "PATIENT"]
+          },
+          "unitIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "required": ["type", "title", "status"],
+        "properties": {
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "type": "integer" }
+        }
+      }
+    },
+    "responses": {
+      "BadSelection": {
+        "description": "Seleção ausente ou malformada",
+        "content": {
+          "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } }
+        }
+      },
+      "Unauthorized": {
+        "description": "Token ausente ou inválido",
+        "content": {
+          "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } }
+        }
+      },
+      "Forbidden": {
+        "description": "Tenant inexistente, inativo ou sem vínculo ativo; mesma resposta para os três casos",
+        "content": {
+          "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } }
+        }
+      },
+      "Unavailable": {
+        "description": "Não foi possível validar o vínculo; falha fechada",
+        "content": {
+          "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } }
+        }
+      }
+    }
+  }
+}
