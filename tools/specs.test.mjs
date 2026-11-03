@@ -66,9 +66,26 @@ test('indexa exatamente as releases do roadmap em arquivos existentes', () => {
   assert.deepEqual(indexIssues(index), []);
 });
 
-test('mantem specs aprovadas e somente a SPEC-001 ativa ate concluir a fundacao', () => {
-  const active = JSON.parse(readFileSync(new URL('../.agents/active-feature.json', import.meta.url)));
-  assert.equal(active.id, 'SPEC-001');
+function activeIssues(active) {
+  const issues = [];
+  const id = /^SPEC-(\d{3})$/.exec(active.id)?.[1];
+  if (!entries.some(([entryId]) => entryId === id)) {
+    issues.push('Spec ativa fora do roadmap');
+  }
+  if (active.status !== 'approved') {
+    issues.push('Spec ativa sem aprovacao');
+  }
+  if (active.currentTask && !active.currentTask.branch?.startsWith(`feature/spec-${id}-task-`)) {
+    issues.push('Branch da tarefa fora da spec ativa');
+  }
+  return issues;
+}
+
+test('mantem specs aprovadas e seleciona uma spec ativa valida', () => {
+  const active = JSON.parse(
+    readFileSync(new URL('../.agents/active-feature.json', import.meta.url)),
+  );
+  assert.deepEqual(activeIssues(active), []);
   for (const [id, directory, status] of entries) {
     const spec = readFileSync(new URL(`${id}-${directory}/spec.md`, specsRoot), 'utf8');
     const tasks = readFileSync(new URL(`${id}-${directory}/tasks.md`, specsRoot), 'utf8');
@@ -80,6 +97,24 @@ test('mantem specs aprovadas e somente a SPEC-001 ativa ate concluir a fundacao'
       assert.match(spec, /## Aceite e regressão obrigatória/);
     }
   }
+});
+
+test('aceita ativacao sequencial e rejeita spec ou branch divergente', () => {
+  const next = {
+    id: 'SPEC-002',
+    status: 'approved',
+    currentTask: { branch: 'feature/spec-002-task-001' },
+  };
+  assert.deepEqual(activeIssues(next), []);
+  assert.deepEqual(activeIssues({ ...next, id: 'SPEC-999' }), [
+    'Spec ativa fora do roadmap',
+    'Branch da tarefa fora da spec ativa',
+  ]);
+  assert.deepEqual(
+    activeIssues({ ...next, currentTask: { branch: 'feature/spec-001-task-001' } }),
+    ['Branch da tarefa fora da spec ativa'],
+  );
+  assert.deepEqual(activeIssues({ ...next, status: 'draft' }), ['Spec ativa sem aprovacao']);
 });
 
 test('detecta link adulterado e status divergente no índice', () => {
