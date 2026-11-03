@@ -338,7 +338,7 @@ try {
   const migrated = postgresQuery('clinora_core', 'clinora_core_user',
     'CLINORA_CORE_DB_PASSWORD', 'SELECT count(*) FROM flyway_schema_history WHERE success');
   assert.equal(migrated.status, 0, `Flyway nao aplicou a migracao: ${migrated.stderr}`);
-  assert.equal(migrated.stdout.trim(), '1', 'Historico Flyway inesperado no banco core');
+  assert.equal(migrated.stdout.trim(), '2', 'Historico Flyway inesperado no banco core');
   const tenantTable = postgresQuery('clinora_core', 'clinora_core_user',
     'CLINORA_CORE_DB_PASSWORD', 'SELECT count(*) FROM tenant');
   assert.equal(tenantTable.status, 0, `Tabela tenant ausente: ${tenantTable.stderr}`);
