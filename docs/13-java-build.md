@@ -44,8 +44,11 @@ readiness em portas aleatorias.
 Testcontainers 2.0.5 valida PostgreSQL 17 em porta efemera no CI Linux:
 conexao correta, senha incorreta e isolamento entre bancos de servicos. Os
 testes ficam no modulo `clinora-test-support` e exigem `CI=true` e Docker;
-fora do CI sao marcados como skipped, sem fingir cobertura local. Nenhum
-servico Java de negocio recebe driver ou credencial de banco nesta spec.
+fora do CI sao marcados como skipped, sem fingir cobertura local. Na
+SPEC-001, nenhum servico de negocio recebia driver ou credencial de banco.
+Na SPEC-002, o `core-api` usa JDBC/Flyway para migrar somente `clinora_core`.
+`CoreIdentityMigrationTest` verifica o esquema em PostgreSQL efemero no CI;
+os testes HTTP locais usam o perfil `no-db` e nao simulam migracao.
 ArchUnit 1.5.1 verifica em cada modulo que classes de producao nao importam
 diretamente pacotes dos outros quatro servicos. A regra compartilhada vive em
 `clinora-test-support`, dependencia apenas de teste dos servicos; uma fixture

@@ -20,3 +20,23 @@ Eventos, notificações, billing, integrações, retries e DLQ. Usar publisher c
 
 ## Multi-tenancy
 Schema compartilhado inicialmente, tenant_id obrigatório, contexto de tenant na autenticação, repositories tenant-aware, constraints compostas, testes cross-tenant e RLS preparado.
+
+Na SPEC-002, a migração `V1__identity_tenants.sql` cria `tenant`,
+`external_identity`, `membership`, `tenant_unit`, `unit_assignment` e
+`professional_assignment` no banco exclusivo `clinora_core`. A identidade
+externa é única por `(issuer, subject)` e pode ter vínculos distintos em dois
+tenants. As duas tabelas de atribuição usam FKs compostas `(tenant_id, id)`
+para rejeitar referências cruzadas no próprio banco. `tenant_unit` guarda só
+o identificador mínimo da unidade; os atributos clínicos pertencem à SPEC-003.
+O vínculo ativo, papel e unidade ainda precisam ser resolvidos e autorizados
+pelo servidor na TASK-004; a migração não libera endpoints de domínio.
+
+Na SPEC-002, a migração `V1__identity_tenants.sql` cria `tenant`,
+`external_identity`, `membership`, `tenant_unit`, `unit_assignment` e
+`professional_assignment` no banco exclusivo `clinora_core`. A identidade
+externa é única por `(issuer, subject)` e pode ter vínculos distintos em dois
+tenants. As duas tabelas de atribuição usam FKs compostas `(tenant_id, id)`
+para rejeitar referências cruzadas no próprio banco. `tenant_unit` guarda só
+o identificador mínimo da unidade; os atributos clínicos pertencem à SPEC-003.
+O vínculo ativo, papel e unidade ainda precisam ser resolvidos e autorizados
+pelo servidor na TASK-004; a migração não libera endpoints de domínio.

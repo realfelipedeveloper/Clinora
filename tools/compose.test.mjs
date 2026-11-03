@@ -449,7 +449,18 @@ test('isola PostgreSQL em volume proprio e publica somente na porta reservada', 
     ),
     false,
   );
-  for (const name of ports.keys()) {
+  const core = config.services['core-api'];
+  assert.equal(
+    core.environment.CLINORA_CORE_DB_URL,
+    'jdbc:postgresql://postgres:5432/clinora_core',
+  );
+  assert.equal(core.environment.CLINORA_CORE_DB_USERNAME, 'clinora_core_user');
+  assert.equal(
+    core.environment.CLINORA_CORE_DB_PASSWORD,
+    postgres.environment.CLINORA_CORE_DB_PASSWORD,
+  );
+  assert.equal(core.depends_on.postgres.condition, 'service_healthy');
+  for (const name of [...ports.keys()].filter((service) => service !== 'core-api')) {
     assert.equal(
       Object.keys(config.services[name].environment ?? {}).some((key) =>
         key.includes('DB_PASSWORD'),
